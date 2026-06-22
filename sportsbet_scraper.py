@@ -589,6 +589,25 @@ def bulk_scrape_missing_historical_races():
     print("\n" + "="*110)
     print(" INITIATING HISTORICAL ARCHIVE SCANNER")
     print("="*110)
+    
+    # Prompt the user to select which race classification to target
+    print(" Select Race Classification to Target:")
+    print("  1. Thoroughbred Horses Only (Default)")
+    print("  2. Greyhounds Only")
+    print("  3. Harness Only")
+    print("  4. All Classifications (Horses, Greyhounds, and Harness)")
+    print(print_separator("-"))
+    choice = input("Enter option (1-4, Default: 1): ").strip()
+    
+    target_types = ["Horses"]
+    if choice == '2':
+        target_types = ["Greyhounds"]
+    elif choice == '3':
+        target_types = ["Harness"]
+    elif choice == '4':
+        target_types = ["Horses", "Greyhounds", "Harness"]
+        
+    print(f"\n[*] Targeted classifications: {', '.join(target_types)}")
     print("[*] Retrieving historical calendar schedules (1-10 days ago)...")
     
     history_list = generate_historical_dates()
@@ -621,8 +640,8 @@ def bulk_scrape_missing_historical_races():
         if not sections:
             continue
             
-        valid_types = ["Horses", "Greyhounds", "Harness"]
-        filtered_sections = [s for s in sections if s.get("displayName") in valid_types]
+        # Isolate and filter the sections based on user classification selection
+        filtered_sections = [s for s in sections if s.get("displayName") in target_types]
         
         for section in filtered_sections:
             meetings = section.get("meetings", [])
@@ -643,7 +662,7 @@ def bulk_scrape_missing_historical_races():
     print("\n[*] Metadata scan complete.")
     
     if not all_meetings_metadata:
-        print("[!] No completed races resolved from schedules.")
+        print("[!] No completed races resolved from schedules for the targeted classification.")
         input("\nPress Enter to return to main menu...")
         return
 
@@ -747,6 +766,7 @@ def bulk_scrape_missing_historical_races():
     print("\n" + "="*110)
     print(" SYSTEM COGNITIVE OVERVIEW COMPLETE")
     print(print_separator("-"))
+    print(f" Target Classifications:                 {', '.join(target_types)}")
     print(f" Target Region/Country:                  {selected_region if selected_region else 'All Regions'}")
     print(f" Target Day of Week:                     {selected_day if selected_day else 'All Days'}")
     print(f" Total Filtered Races via API:           {total_resolved}")
@@ -1606,7 +1626,7 @@ def main():
     
     while True:
         print("\n" + "="*110)
-        print(" SPORTSBET RACE ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
+        print(" SPORTSBET RACING ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
         print("="*110)
         print(f" [1] - View Today's Active Program ({date_str})")
         print(" [2] - Select Historical Date for Results & Auditing (YYYY-MM-DD)")
