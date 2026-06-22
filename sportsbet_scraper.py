@@ -34,7 +34,7 @@ SIRE_AWD_LOOKUP = {
     "snitzel": 1100, "fastnet rock": 1400, "i am invincible": 1100, "so you think": 1800,
     "dundeel": 1800, "written tycoon": 1150, "savabeel": 1800, "zoustar": 1150,
     "extreme choice": 1050, "capitalist": 1100, "deep field": 1100, "rubick": 1150,
-    "shalaa": 1200, "blue point": 1100, "shamardal": 1400, "lope de verga": 1400,
+    "shalaa": 1200, "blue point": 1100, "shamardal": 1400, "lope de vega": 1400,
     "crackerjack king": 2000, "invincible spirit": 1200, "impending": 1200, 
     "asturn": 1200, "commands": 1400, "magnus": 1200
 }
@@ -1198,9 +1198,89 @@ def display_quick_overview(selected_event, meeting, target_date):
         input("\nPress Enter to return to the race list...")
     return None
 
+
+def extract_runners_from_html(html_text):
+    """
+    Parses full field results, barriers, saddle numbers, jockeys,
+    and trainers from the Sportsbet static HTML layout when the API 
+    card has been closed or truncated.
+    """
+    soup = BeautifulSoup(html_text, "html.parser")
+    runners = []
+    
+    rows = soup.find_all(class_=re.compile(r'resultRow_'))
+    if not rows:
+        rows = soup.find_all(attrs={"data-automation-id": "results-row"})
+        
+    print(f"[*] Extracting all runners from static layout: Found {len(rows)} result rows on page.")
+    
+    for idx, row in enumerate(rows, 1):
+        # 1. Official Position / Podium Ordinal
+        ordinal_elem = row.find(attrs={"data-automation-id": "racecard-podium-ordinal"})
+        position = None
+        if ordinal_elem:
+            ord_text = ordinal_elem.get_text(strip=True).lower()
+            ord_match = re.search(r'(\d+)', ord_text)
+            if ord_match:
+                position = int(ord_match.group(1))
+        if not position:
+            position = idx
+
+        # 2. Saddle Number, Horse Name, and Barrier (Draw)
+        name_elem = row.find(attrs={"data-automation-id": "racecard-outcome-name"})
+        r_name = "Unknown Runner"
+        r_num = idx
+        barrier = 8
+        if name_elem:
+            spans = name_elem.find_all("span")
+            if len(spans) >= 1:
+                full_name_text = spans[0].get_text(strip=True)
+                num_match = re.match(r'^(\d+)\.\s*(.*)$', full_name_text)
+                if num_match:
+                    r_num = int(num_match.group(1))
+                    r_name = num_match.group(2).strip()
+                else:
+                    r_name = full_name_text
+                    
+            if len(spans) >= 2:
+                barrier_text = spans[1].get_text(strip=True)
+                bar_match = re.search(r'\((\d+)\)', barrier_text)
+                if bar_match:
+                    barrier = int(bar_match.group(1))
+
+        # 3. Jockey
+        jockey_elem = row.find(attrs={"data-automation-id": "racecard-outcome-info-jockey"})
+        jockey = "Unknown Jockey"
+        if jockey_elem:
+            j_text = jockey_elem.get_text(strip=True)
+            j_text = re.sub(r'^J:\s*', '', j_text, flags=re.I)
+            jockey = j_text.strip()
+
+        # 4. Trainer
+        trainer_elem = row.find(attrs={"data-automation-id": "racecard-outcome-info-trainer"})
+        trainer = "Unknown Trainer"
+        if trainer_elem:
+            t_text = trainer_elem.get_text(strip=True)
+            t_text = re.sub(r'^T:\s*', '', t_text, flags=re.I)
+            trainer = t_text.strip()
+
+        runners.append({
+            "runnerNumber": r_num,
+            "drawNumber": barrier,
+            "name": r_name,
+            "jockey": {"name": jockey},
+            "trainer": {"name": trainer},
+            "weightGram": 56000,  # Default physical baseline
+            "scratching": False,
+            "status": "Active",
+            "result": {"position": position}
+        })
+        
+    return runners
+
+
 def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_json_path, report_path, region, track, race_num, target_date, event_data=None):
     try:
-        # Safeguard: Read existing file to check if we can preserve valid form guidance
         existing_runners = []
         if os.path.exists(json_path):
             try:
@@ -1235,12 +1315,11 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
         
         runners = race.get("runners", [])
         
-        # Preservation Check
         if not runners and existing_runners:
             runners = existing_runners
             print("[*] Preserved existing form-guide runners from local storage.")
         
-        # Fallback Parser 1: Reconstruct the full running field from the Win/Place market outcomes list
+        # Fallback 1: Extract runners from the primary Win/Place market outcomes list (contains ALL competitors)
         if not runners:
             print("[*] Pre-race card is empty/closed. Reconstructing full field from market outcomes...")
             all_markets = []
@@ -1249,7 +1328,6 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
             if not all_markets and isinstance(data, dict):
                 all_markets.extend(data.get("markets", []))
                 
-            # Find the primary Win or Win/Place market
             primary_market = None
             for m in all_markets:
                 m_name = str(m.get("name", "")).lower()
@@ -1284,7 +1362,33 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
                         "result": {"position": fin_pos}
                     })
 
-        # Fallback Parser 2: If the markets list is also empty, use the top placed dividend list
+        # Fallback 2: Extract from static HTML page layout (scrapes full podium results)
+        if not runners:
+            print("[*] Pre-race card empty. Attempting HTML results layout parsing...")
+            region_slug = "australia-nz"
+            if region:
+                r_lower = region.lower()
+                if any(x in r_lower for x in ["australia", "nz", "new zealand"]):
+                    region_slug = "australia-nz"
+                elif any(x in r_lower for x in ["asia", "japan", "hong kong", "singapore", "kochi", "korea"]):
+                    region_slug = "asia-racing"
+                else:
+                    region_slug = "international"
+                
+            track_slug = sanitize_path_name(track).lower().replace("_", "-")
+            url = f"https://www.sportsbet.com.au/horse-racing/{region_slug}/{track_slug}/race-{race_num}-{event_id}"
+            
+            try:
+                resp = requests.get(url, headers=HEADERS, timeout=12)
+                if resp.status_code == 200:
+                    html_runners = extract_runners_from_html(resp.text)
+                    if html_runners:
+                        print(f"[+] Reconstructed {len(html_runners)} runners directly from HTML results.")
+                        runners = html_runners
+            except Exception as e:
+                print(f"[!] Warning: HTML parsing fallback failed: {e}")
+
+        # Fallback 3: official dividend placings list
         if not runners:
             print("[*] Outcomes grid empty. Falling back to official placings summary...")
             raw_results = None
@@ -1399,12 +1503,44 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
         html_scratched = fetch_scratched_from_html(region, track, race_num, event_id)
         if html_scratched:
             print(f"[*] Verified scratched names from layout: {list(html_scratched)}")
+            existing_names = set(r_entry["name"].strip().lower() for r_entry in race_db["runners"])
+            
+            # 1. Update existing active runners to scratched
             for r_entry in race_db["runners"]:
                 clean_r_name = r_entry["name"].strip().lower()
                 if clean_r_name in html_scratched:
                     if r_entry["status"] != "Scratched":
                         print(f"  [!] Corrected Status: {r_entry['name']} -> Scratched (via HTML Validation)")
                         r_entry["status"] = "Scratched"
+                        
+            # 2. Append missing scratchings
+            for s_name in html_scratched:
+                if s_name not in existing_names:
+                    print(f"  [+] Appending scratched runner to database: {s_name.title()}")
+                    race_db["runners"].append({
+                        "number": 99,
+                        "barrier": 8,
+                        "name": s_name.title(),
+                        "jockey": "Unknown",
+                        "trainer": "Unknown",
+                        "jockey_profile": {"track_cond_sr": 0.10, "first_up_sr": 0.12, "second_up_sr": 0.10, "weight_sr": 0.08, "surface_sr": 0.10},
+                        "trainer_profile": {"track_cond_sr": 0.10, "first_up_sr": 0.12, "second_up_sr": 0.10, "weight_sr": 0.08, "surface_sr": 0.10},
+                        "finishing_position": None,
+                        "status": "Scratched",
+                        "weight_kg": 56.0,
+                        "overview": "Scratched prior to jump.",
+                        "sire": "Unknown Sire",
+                        "career_stats": {
+                            "starts": 0, "wins": 0, "places": 0, "win_percentage": 0.0, "place_percentage": 0.0,
+                            "prize_money": None,
+                            "good": {"starts": 0, "wins": 0, "places": 0},
+                            "soft": {"starts": 0, "wins": 0, "places": 0},
+                            "heavy": {"starts": 0, "wins": 0, "places": 0},
+                            "track": {"starts": 0, "wins": 0, "places": 0},
+                            "distance": {"starts": 0, "wins": 0, "places": 0}
+                        },
+                        "recent_form": []
+                    })
                 
         results_order = []
         for r_data in race_db["runners"]:
@@ -1680,7 +1816,7 @@ def main():
     
     while True:
         print("\n" + "="*110)
-        print(" SPOSTSBET RACE ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
+        print(" SOVEREIGN KINETIC INDEX (SKI) v4.1 | BIOMECHANICAL AUDIT SYSTEM")
         print("="*110)
         print(f" [1] - View Today's Active Program ({date_str})")
         print(" [2] - Select Historical Date for Results & Auditing (YYYY-MM-DD)")
