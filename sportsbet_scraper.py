@@ -34,7 +34,7 @@ SIRE_AWD_LOOKUP = {
     "snitzel": 1100, "fastnet rock": 1400, "i am invincible": 1100, "so you think": 1800,
     "dundeel": 1800, "written tycoon": 1150, "savabeel": 1800, "zoustar": 1150,
     "extreme choice": 1050, "capitalist": 1100, "deep field": 1100, "rubick": 1150,
-    "shalaa": 1200, "blue point": 1100, "shamardal": 1400, "lope de vega": 1400,
+    "shalaa": 1200, "blue point": 1100, "shamardal": 1400, "lope de verga": 1400,
     "crackerjack king": 2000, "invincible spirit": 1200, "impending": 1200, 
     "asturn": 1200, "commands": 1400, "magnus": 1200
 }
@@ -733,14 +733,26 @@ def bulk_scrape_missing_historical_races():
                 region, track, race_num, target_date
             )
             
-            # Robust verification check: If the file already exists on disk but has 
-            # 0 runners, treat it as invalid and append it to the reconstruction queue
+            # Robust self-healing check: 
+            # 1. If the file doesn't exist -> Invalid (re-queue)
+            # 2. If the file exists but has 0 runners -> Invalid (re-queue)
+            # 3. If the file has <= 5 runners AND they lack form guide metrics -> Incomplete (re-queue for outcomes fallback!)
             is_valid = False
             if os.path.exists(json_path):
                 try:
                     with open(json_path, 'r', encoding='utf-8') as f:
                         test_data = json.load(f)
-                    if test_data.get("runners") and len(test_data["runners"]) > 0:
+                    
+                    runners_list = test_data.get("runners", [])
+                    has_form = False
+                    if runners_list:
+                        for r_item in runners_list:
+                            good_starts = r_item.get("career_stats", {}).get("good", {}).get("starts", 0)
+                            if safe_int(good_starts) > 0:
+                                has_form = True
+                                break
+                                
+                    if len(runners_list) > 5 or (len(runners_list) > 0 and has_form):
                         is_valid = True
                 except Exception:
                     pass
@@ -1188,8 +1200,6 @@ def display_quick_overview(selected_event, meeting, target_date):
 
 def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_json_path, report_path, region, track, race_num, target_date, event_data=None):
     try:
-        print(f"\n[*] Extracting Full Form Guide from API for: {race_name}")
-        
         # Safeguard: Read existing file to check if we can preserve valid form guidance
         existing_runners = []
         if os.path.exists(json_path):
@@ -1230,9 +1240,53 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
             runners = existing_runners
             print("[*] Preserved existing form-guide runners from local storage.")
         
-        # Fallback Parser: Extract runners and positions from the completed historical results grid
+        # Fallback Parser 1: Reconstruct the full running field from the Win/Place market outcomes list
         if not runners:
-            print("[*] Pre-race card is empty/closed. Attempting historical results mapping fallback...")
+            print("[*] Pre-race card is empty/closed. Reconstructing full field from market outcomes...")
+            all_markets = []
+            if isinstance(race, dict):
+                all_markets.extend(race.get("markets", []))
+            if not all_markets and isinstance(data, dict):
+                all_markets.extend(data.get("markets", []))
+                
+            # Find the primary Win or Win/Place market
+            primary_market = None
+            for m in all_markets:
+                m_name = str(m.get("name", "")).lower()
+                if "win" in m_name or "winner" in m_name:
+                    primary_market = m
+                    break
+            if not primary_market and all_markets:
+                primary_market = all_markets[0]
+                
+            if primary_market and primary_market.get("outcomes"):
+                outcomes = primary_market["outcomes"]
+                print(f"[*] Found main market '{primary_market.get('name')}' with {len(outcomes)} outcomes.")
+                runners = []
+                for idx, out in enumerate(outcomes, 1):
+                    r_name = out.get("name")
+                    r_num = out.get("outcomeNumber") or out.get("runnerNumber") or idx
+                    
+                    res_node = out.get("result") or {}
+                    fin_pos = None
+                    if isinstance(res_node, dict):
+                        fin_pos = res_node.get("position") or res_node.get("finishingPosition")
+                    
+                    runners.append({
+                        "runnerNumber": r_num,
+                        "drawNumber": out.get("draw") or out.get("barrier") or out.get("drawNumber") or 8,
+                        "name": r_name,
+                        "jockey": {"name": out.get("jockeyName") or out.get("jockey") or "Unknown"},
+                        "trainer": {"name": out.get("trainerName") or out.get("trainer") or "Unknown"},
+                        "weightGram": int(float(out.get("weight") or 56.0) * 1000),
+                        "scratching": out.get("scratching") or out.get("status") == "Scratched",
+                        "status": "Scratched" if (out.get("scratching") or out.get("status") == "Scratched") else "Active",
+                        "result": {"position": fin_pos}
+                    })
+
+        # Fallback Parser 2: If the markets list is also empty, use the top placed dividend list
+        if not runners:
+            print("[*] Outcomes grid empty. Falling back to official placings summary...")
             raw_results = None
             if isinstance(race, dict):
                 raw_results = race.get("results") or race.get("placings") or race.get("runners")
@@ -1626,7 +1680,7 @@ def main():
     
     while True:
         print("\n" + "="*110)
-        print(" SPORTSBET RACING ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
+        print(" SPOSTSBET RACE ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
         print("="*110)
         print(f" [1] - View Today's Active Program ({date_str})")
         print(" [2] - Select Historical Date for Results & Auditing (YYYY-MM-DD)")
