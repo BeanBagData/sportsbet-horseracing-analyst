@@ -46,7 +46,7 @@ def get_current_date_string():
 def generate_historical_dates():
     dates_list = []
     today = datetime.date.today()
-    # Sportsbet API limits retrospective racing queries to a rolling 10-day window
+    # Sportsbet API strictly limits retrospective racing data requests to a rolling 10-day history window
     for i in range(1, 11):
         past_date = today - datetime.timedelta(days=i)
         date_str = past_date.strftime("%Y-%m-%d")
@@ -453,13 +453,38 @@ def run_supervised_lora_menu_option():
     
     new_files = current_files - trained_files
     
+    # Diagnose zero-runner files sitting on disk
+    corrupted_count = 0
+    if os.path.exists("storage"):
+        for root, _, files in os.walk("storage"):
+            for file in files:
+                if file.endswith("_data.json"):
+                    full_path = os.path.join(root, file)
+                    try:
+                        with open(full_path, 'r', encoding='utf-8') as f:
+                            test_data = json.load(f)
+                        if not test_data.get("runners") or len(test_data["runners"]) == 0:
+                            corrupted_count += 1
+                    except Exception:
+                        pass
+
     print(f" Total Completed Races in Storage:  {len(current_files)}")
     print(f" Already Trained in LoRA Adaptor:   {len(trained_files)}")
     print(f" New Untrained Races Detected:      {len(new_files)}")
+    
+    if corrupted_count > 0:
+        print(print_separator("-"))
+        print(f" [!] DIAGNOSTIC WARNING: Detected {corrupted_count} empty historical files (0 runners) on disk.")
+        print("     These files were scraped before the results fallback parser was implemented.")
+        print("     Because they contain 0 runners, they are excluded from LoRA training to prevent corruption.")
+        print("\n     ACTION REQUIRED: Please run Option [5] (Bulk Scrape) from the main menu.")
+        print("     The system will automatically detect, re-queue, and repair all empty files.")
+        
     print(print_separator("-"))
     
     if len(new_files) == 0:
-        print("[*] LoRA adapters are synchronized with your local data storage.")
+        if corrupted_count == 0:
+            print("[*] LoRA adapters are synchronized with your local data storage.")
         choice = input("Would you like to force a complete re-calibration across ALL records? (y/n): ").strip().lower()
         if choice == 'y':
             BiomechanicalOptimizer.initialize_and_calibrate_all_silos(force=True)
@@ -504,7 +529,19 @@ def run_bulk_meeting_analysis(meeting, target_date):
         
         json_path, pred_json_path, report_path = resolve_storage_paths(region, track, race_num, target_date)
         
-        extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_json_path, report_path, region, track, race_num, target_date)
+        extract_and_save_form_guide(
+            event_id=event_id,
+            class_id=class_id,
+            race_name=race_name,
+            json_path=json_path,
+            pred_json_path=pred_json_path,
+            report_path=report_path,
+            region=region,
+            track=track,
+            race_num=race_num,
+            target_date=target_date,
+            event_data=event
+        )
         
         if not os.path.exists(json_path):
             print(f"  [!] Skipped: Data verification failed for {race_name}.")
@@ -677,7 +714,19 @@ def bulk_scrape_missing_historical_races():
                 region, track, race_num, target_date
             )
             
+            # Robust verification check: If the file already exists on disk but has 
+            # 0 runners, treat it as invalid and append it to the reconstruction queue
+            is_valid = False
             if os.path.exists(json_path):
+                try:
+                    with open(json_path, 'r', encoding='utf-8') as f:
+                        test_data = json.load(f)
+                    if test_data.get("runners") and len(test_data["runners"]) > 0:
+                        is_valid = True
+                except Exception:
+                    pass
+            
+            if is_valid:
                 scraped_count += 1
             else:
                 queue.append({
@@ -690,7 +739,8 @@ def bulk_scrape_missing_historical_races():
                     "region": region,
                     "track": track,
                     "race_num": race_num,
-                    "target_date": target_date
+                    "target_date": target_date,
+                    "event_data": event  # Pass raw event data from schedule for fallback parsing
                 })
 
     total_resolved = scraped_count + len(queue)
@@ -738,7 +788,8 @@ def bulk_scrape_missing_historical_races():
             region=task["region"],
             track=task["track"],
             race_num=task["race_num"],
-            target_date=task["target_date"]
+            target_date=task["target_date"],
+            event_data=task.get("event_data")
         )
         
         if os.path.exists(task["json_path"]):
@@ -1046,10 +1097,34 @@ def display_quick_overview(selected_event, meeting, target_date):
     )
     
     if action == 'S':
-        extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_json_path, report_path, meeting.get("regionName"), meeting.get("name"), race_num, target_date)
+        extract_and_save_form_guide(
+            event_id=event_id,
+            class_id=class_id,
+            race_name=race_name,
+            json_path=json_path,
+            pred_json_path=pred_json_path,
+            report_path=report_path,
+            region=meeting.get("regionName"),
+            track=meeting.get("name"),
+            race_num=race_num,
+            target_date=target_date,
+            event_data=selected_event
+        )
         input("\nPress Enter to return to the race list...")
     elif action == 'A':
-        extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_json_path, report_path, meeting.get("regionName"), meeting.get("name"), race_num, target_date)
+        extract_and_save_form_guide(
+            event_id=event_id,
+            class_id=class_id,
+            race_name=race_name,
+            json_path=json_path,
+            pred_json_path=pred_json_path,
+            report_path=report_path,
+            region=meeting.get("regionName"),
+            track=meeting.get("name"),
+            race_num=race_num,
+            target_date=target_date,
+            event_data=selected_event
+        )
         
         if not os.path.exists(json_path):
             print(f"[!] Target database file {json_path} caused a failure: not found on disk.")
@@ -1093,10 +1168,21 @@ def display_quick_overview(selected_event, meeting, target_date):
         input("\nPress Enter to return to the race list...")
     return None
 
-def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_json_path, report_path, region, track, race_num, target_date):
+def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_json_path, report_path, region, track, race_num, target_date, event_data=None):
     try:
         print(f"\n[*] Extracting Full Form Guide from API for: {race_name}")
         
+        # Safeguard: Read existing file to check if we can preserve valid form guidance
+        existing_runners = []
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    old_db = json.load(f)
+                    if old_db.get("runners") and len(old_db["runners"]) > 0:
+                        existing_runners = old_db["runners"]
+            except Exception:
+                pass
+
         data = fetch_racecard_with_context(event_id, class_id)
         if not data or "racecardEvent" not in data:
             print("[!] Could not load race card data from API.")
@@ -1120,9 +1206,59 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
         }
         
         runners = race.get("runners", [])
+        
+        # Preservation Check
+        if not runners and existing_runners:
+            runners = existing_runners
+            print("[*] Preserved existing form-guide runners from local storage.")
+        
+        # Fallback Parser: Extract runners and positions from the completed historical results grid
+        if not runners:
+            print("[*] Pre-race card is empty/closed. Attempting historical results mapping fallback...")
+            raw_results = None
+            if isinstance(race, dict):
+                raw_results = race.get("results") or race.get("placings") or race.get("runners")
+            if not raw_results and isinstance(event_data, dict):
+                raw_results = event_data.get("results") or event_data.get("placings") or event_data.get("runners")
+                
+            if raw_results:
+                runners = []
+                for idx, res in enumerate(raw_results, 1):
+                    r_num = res.get("runnerNumber") or res.get("number") or res.get("runnerNo") or idx
+                    r_name = res.get("runnerName") or res.get("name") or res.get("runner") or f"Runner {r_num}"
+                    barrier = res.get("drawNumber") or res.get("barrier") or res.get("barrierNo") or 8
+                    
+                    jockey = "Unknown"
+                    if "jockey" in res:
+                        jockey = res["jockey"] if isinstance(res["jockey"], str) else res["jockey"].get("name", "Unknown")
+                    elif "jockeyName" in res:
+                        jockey = res["jockeyName"]
+                        
+                    trainer = "Unknown"
+                    if "trainer" in res:
+                        trainer = res["trainer"] if isinstance(res["trainer"], str) else res["trainer"].get("name", "Unknown")
+                    elif "trainerName" in res:
+                        trainer = res["trainerName"]
+                        
+                    weight_kg = res.get("weight") or res.get("weightKg") or res.get("weight_kg") or 56.0
+                    position = res.get("position") or res.get("finishingPosition") or res.get("place") or idx
+                    
+                    runners.append({
+                        "runnerNumber": r_num,
+                        "drawNumber": barrier,
+                        "name": r_name,
+                        "jockey": {"name": jockey},
+                        "trainer": {"name": trainer},
+                        "weightGram": int(float(weight_kg) * 1000),
+                        "scratching": False,
+                        "status": "Active",
+                        "result": {"position": position}
+                    })
+
+        # Process each runner into standard format
         for r in runners:
-            jockey = r.get("jockey", {}).get("name", "Unknown")
-            trainer = r.get("trainer", {}).get("name", "Unknown")
+            jockey = r.get("jockey", {}).get("name", "Unknown") if isinstance(r.get("jockey"), dict) else r.get("jockey", "Unknown")
+            trainer = r.get("trainer", {}).get("name", "Unknown") if isinstance(r.get("trainer"), dict) else r.get("trainer", "Unknown")
             
             career_raw = r.get("careerStats", "0:0-0-0")
             good_raw = r.get("goodStats", "0:0-0-0")
@@ -1160,7 +1296,7 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
 
             runner_data = {
                 "number": r.get("runnerNumber"),
-                "barrier": r.get("drawNumber"),
+                "barrier": r.get("drawNumber") or r.get("draw") or r.get("barrier"),
                 "name": r.get("name"),
                 "jockey": jockey,
                 "trainer": trainer,
@@ -1434,7 +1570,18 @@ def handle_direct_url_scraping():
     
     json_path, pred_json_path, report_path = resolve_storage_paths(region, track, race_num, target_date)
     
-    extract_and_save_form_guide(event_id, None, f"Race {race_num} - {track}", json_path, pred_json_path, report_path, region, track, race_num, target_date)
+    extract_and_save_form_guide(
+        event_id=event_id,
+        class_id=None,
+        race_name=f"Race {race_num} - {track}",
+        json_path=json_path,
+        pred_json_path=pred_json_path,
+        report_path=report_path,
+        region=region,
+        track=track,
+        race_num=race_num,
+        target_date=target_date
+    )
     
     if not os.path.exists(json_path):
         print("[!] Target database could not be resolved on local disk after scraping.")
