@@ -825,8 +825,6 @@ def bulk_scrape_missing_historical_races():
                 print(f"  [+] Saved analysis report: {os.path.basename(task['report_path'])}")
             except Exception as ex:
                 print(f"  [!] Predictive formatting failed for this run: {ex}")
-        else:
-            print("  [!] Skipped: Data verification layout is invalid.")
             
         time.sleep(0.5)
         
@@ -1608,7 +1606,7 @@ def main():
     
     while True:
         print("\n" + "="*110)
-        print(" SOVEREIGN KINETIC INDEX (SKI) v4.1 | BIOMECHANICAL AUDIT SYSTEM")
+        print(" SPORTSBET RACE ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
         print("="*110)
         print(f" [1] - View Today's Active Program ({date_str})")
         print(" [2] - Select Historical Date for Results & Auditing (YYYY-MM-DD)")
