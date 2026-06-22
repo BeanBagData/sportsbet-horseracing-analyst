@@ -102,13 +102,13 @@ class BiomechanicalOptimizer:
     """
     _cached_training_records = None
     _cached_silo_weights = {}
-    _cached_weights_data = None  # Hot cache for the weights JSON dictionary
+    _cached_weights_data = None  # RAM cache for fast multi-race lookups
 
     @classmethod
     def clear_cache(cls):
         cls._cached_training_records = None
         cls._cached_silo_weights.clear()
-        cls._cached_weights_data = None  # Clear hot cache on calibration runs
+        cls._cached_weights_data = None
 
     @classmethod
     def _get_default_weights_for_surface(cls, surface_type):
@@ -121,7 +121,6 @@ class BiomechanicalOptimizer:
 
     @classmethod
     def load_calibrated_weights(cls):
-        # Return directly from memory if already parsed
         if cls._cached_weights_data is not None:
             return cls._cached_weights_data
 
@@ -152,15 +151,54 @@ class BiomechanicalOptimizer:
         return defaults
 
     @classmethod
+    def get_weights_for_silo(cls, lora_data, silo_key):
+        """
+        Synthesizes calibrated weights dynamically: W = W_0 + (B_s * A)
+        """
+        surface_type = "Turf_Dry"
+        if "Synthetic" in silo_key:
+            surface_type = "Synthetic"
+        elif "Turf_Wet" in silo_key:
+            surface_type = "Turf_Wet"
+        W_0 = cls._get_default_weights_for_surface(surface_type)
+
+        A = lora_data.get("A")
+        B = lora_data.get("B", {})
+
+        if not A:
+            A = [[0.0] * 6 for _ in range(2)]
+        if silo_key not in B:
+            B[silo_key] = [0.0, 0.0]
+
+        b_s = B[silo_key]
+
+        delta_W = [0.0] * 6
+        for j in range(6):
+            for r in range(2):
+                delta_W[j] += b_s[r] * A[r][j]
+
+        W = [W_0[j] + delta_W[j] for j in range(6)]
+
+        W[0] = max(10.0, min(100.0, W[0])) # KEM
+        W[1] = max(0.1, min(5.0, W[1]))    # Turn Drag
+        W[2] = max(0.1, min(5.0, W[2]))    # Mass
+        W[3] = max(0.1, min(5.0, W[3]))    # Freshness
+        W[4] = max(1.0, min(20.0, W[4]))   # Jeopardy
+        W[5] = max(0.0, min(5.0, W[5]))    # Text
+
+        return W
+
+    @classmethod
     def save_calibrated_weights(cls, weights_dict, trained_files):
         os.makedirs(os.path.dirname(WEIGHTS_FILE), exist_ok=True)
-        weights_dict["trained_race_files"] = sorted(list(set(trained_files)))
+        # Normalize file paths to ensure consistent matching cross-platform
+        normalized_paths = [os.path.normpath(f) for f in trained_files]
+        weights_dict["trained_race_files"] = sorted(list(set(normalized_paths)))
         weights_dict["historical_races_trained"] = len(weights_dict["trained_race_files"])
         weights_dict["last_calibrated"] = datetime.datetime.now().isoformat()
         try:
             with open(WEIGHTS_FILE, 'w', encoding='utf-8') as f:
                 json.dump(weights_dict, f, indent=4)
-            # Update the hot cache with the latest saved data
             cls._cached_weights_data = weights_dict
         except Exception as e:
             print(f"[!] Error saving weights externally: {e}")
@@ -190,7 +228,8 @@ class BiomechanicalOptimizer:
                     data = json.load(f)
                 results = data.get("race_results", {})
                 if results and results.get("status") == "Resulted" and data.get("runners"):
-                    data["_source_path"] = os.path.relpath(path)
+                    # Use standardized platform pathing to avoid matching mismatches
+                    data["_source_path"] = os.path.normpath(os.path.relpath(path))
                     training_records.append(data)
             except Exception:
                 continue
@@ -200,9 +239,6 @@ class BiomechanicalOptimizer:
 
     @classmethod
     def evaluate_lora_on_silo(cls, silo_records, lora_data, silo_key, b_s_override):
-        """
-        Evaluate candidate adapter vectors on local silo data.
-        """
         test_data = {
             "A": lora_data["A"],
             "B": {**lora_data.get("B", {}), silo_key: b_s_override}
@@ -228,9 +264,6 @@ class BiomechanicalOptimizer:
 
     @classmethod
     def evaluate_global_lora(cls, training_records, lora_data, a_override):
-        """
-        Calculate total prediction accuracy across the entire history pool using modified A.
-        """
         test_data = {
             "A": a_override,
             "B": lora_data.get("B", {})
@@ -286,21 +319,19 @@ class BiomechanicalOptimizer:
     @classmethod
     def optimize_silo_parameters(cls, training_records, silo, force_reoptimize=False):
         """
-        Supervised training of the local projection B_s and global shared A.
+        Supervised training of local projection B_s and global shared matrix A.
         Optimized iteratively via coordinate descent.
         """
         persistent_data = cls.load_calibrated_weights()
         
-        # 1. Zero-initialization for new silos to ensure zero-perturbation initially
         if silo not in persistent_data["B"]:
             persistent_data["B"][silo] = [0.0, 0.0]
             
         filtered_training = [r for r in training_records if cls._get_silo_key(r) == silo]
         if len(filtered_training) < 3:
-            # Insufficient local data; fall back to baseline state
             return cls.get_weights_for_silo(persistent_data, silo)
 
-        # 2. Local Adaptor Training (Optimize B_s)
+        # Optimize B_s
         best_b = list(persistent_data["B"][silo])
         best_local_acc, _ = cls.evaluate_lora_on_silo(filtered_training, persistent_data, silo, best_b)
         
@@ -320,7 +351,7 @@ class BiomechanicalOptimizer:
                         
         persistent_data["B"][silo] = best_b
 
-        # 3. Global Shared Co-Dependency Training (Optimize A)
+        # Optimize Matrix A
         if force_reoptimize or improved_local:
             best_A = [list(row) for row in persistent_data["A"]]
             best_global_score = cls.evaluate_global_lora(training_records, persistent_data, best_A)
@@ -343,7 +374,6 @@ class BiomechanicalOptimizer:
             if improved_global:
                 persistent_data["A"] = best_A
 
-        # Save and write state updates
         current_paths = [r["_source_path"] for r in training_records if "_source_path" in r]
         cls.save_calibrated_weights(persistent_data, current_paths)
         
@@ -351,10 +381,6 @@ class BiomechanicalOptimizer:
 
     @classmethod
     def initialize_and_calibrate_all_silos(cls, force=False):
-        """
-        Forces dynamic baseline calibration using LoRA adaptors.
-        Checks for new files first to avoid redundant training on old data.
-        """
         training_set = cls.collect_completed_races(force_reload=True)
         persistent_data = cls.load_calibrated_weights()
         
@@ -437,7 +463,6 @@ class BiomechanicalEngine:
                 training_set = BiomechanicalOptimizer.collect_completed_races(force_reload=True)
                 persistent_data = BiomechanicalOptimizer.load_calibrated_weights()
                 
-                # Calibrate LoRA parameters using updated training records
                 BiomechanicalOptimizer.optimize_silo_parameters(
                     training_set, 
                     self.regional_silo, 
@@ -451,15 +476,12 @@ class BiomechanicalEngine:
             )
 
     def evaluate_runner(self, runner):
-        # Destructure calibrated weights: [w_kem, w_turn, w_mass, w_fresh, w_jeopardy, w_text]
         w_kem, w_turn, w_mass, w_fresh, w_jeopardy, w_text = self.weights
 
-        # 1. Physical Chassis & Identity Parameters
         age, sex_idx = BiomechanicalTextVectorizer.parse_physical_chassis(runner.get("overview", ""))
         barrier = safe_float(runner.get("barrier", 8))
         allotted_weight = safe_float(runner.get("weight_kg", 56.0)) if runner.get("weight_kg") else 56.0
         
-        # Apprentice Claim Mitigation (ACM) Integration
         jockey_name = str(runner.get("jockey", "")).lower()
         claim_match = re.search(r'\(a(\d+\.?\d*)\)', jockey_name)
         claim = float(claim_match.group(1)) if claim_match else 0.0
@@ -475,7 +497,6 @@ class BiomechanicalEngine:
         kem = (wins + 0.5 * places) / (starts + 1.0) if starts > 0 else 0.20
         recent_form = runner.get("recent_form", [])
         
-        # 2. Moisture-Compaction Shear Index (MSCI) Mapping
         ts_lower = self.track_status
         is_synthetic = False
         if "synthetic" in ts_lower or "poly" in ts_lower:
@@ -486,14 +507,12 @@ class BiomechanicalEngine:
         elif "soft" in ts_lower or "6" in ts_lower or "7" in ts_lower:
             msci = 0.70 if "5" in ts_lower else 0.60
         else:
-            msci = 0.85 # Good / Firm Turf Tracks
+            msci = 0.85 
             
-        # 3. Field Compression Pace Factor (Phi_FC)
         active_field = [r for r in self.raw_data.get("runners", []) if r.get("status") == "Active"]
         n_actual = len(active_field)
         phi_fc = min(1.0, (n_actual / 10.0) ** 1.5) if n_actual > 0 else 1.0
 
-        # 4. Form Parsing: Margins, Distances, and Layoffs
         margins = []
         distances = []
         first_up_wet = False
@@ -520,7 +539,6 @@ class BiomechanicalEngine:
             if dist_match:
                 distances.append(float(dist_match.group(1)))
                 
-            # Track state analysis for prior run
             if idx == 0:
                 if "soft" in run_str or "heavy" in run_str or "h8" in run_str or "s6" in run_str:
                     first_up_wet = True
@@ -528,7 +546,6 @@ class BiomechanicalEngine:
         avg_margin = sum(margins) / len(margins) if margins else 2.5
         avg_prev_dist = sum(distances) / len(distances) if distances else self.distance
         
-        # 5. Base Energy Synthesis (KEM & Class Parity)
         if rct == 1.0:
             base_energy = 55.0 + (kem * w_kem * 0.40)
         elif rct == 3.0:
@@ -536,81 +553,64 @@ class BiomechanicalEngine:
         else:
             base_energy = 50.0 + (kem * w_kem)
             
-        # Unraced Metro-to-Regional Class Gravity Coefficient
         if starts == 0 and rct == 1.0:
-            base_energy += 12.0 # Protective debutant offset replacing raw zero-cap
+            base_energy += 12.0 
             
-        # 6. Cardiorespiratory Priming & Recovery Decay Modifiers
         freshness_modifier = 0.0
         assumed_layoff = safe_float(runner.get("days_since_last_run", 0))
         if assumed_layoff == 0:
             assumed_layoff = 120 if prep_runs == 1 else 14
         
         if prep_runs == 1:
-            # First-Up Neuromuscular Priming Index (FNPI) - Shielding fresh sprinters
             freshness_modifier = 4.0 * w_fresh
         elif prep_runs == 2:
-            # Second-Up Syndrome Logic Core
             if first_up_wet and msci >= 0.85:
-                # Cardiorespiratory Conditioning Opener Modifier (Wet first-up to firm second-up)
                 freshness_modifier = 6.0 * w_fresh 
             elif first_up_margin > 5.0 and assumed_layoff > 120:
-                # Dynamic Cardiorespiratory Flat Risk (CRFR) - Decay applied
                 freshness_modifier = -8.0 * w_fresh 
             else:
                 freshness_modifier = 2.0 * w_fresh
         elif prep_runs >= 6:
-            # Campaign Fatigue Threshold (CFT) on Fast Surfaces
             if msci >= 0.85:
                 freshness_modifier = -5.0 * w_fresh * (msci ** 2)
             else:
                 freshness_modifier = -3.0 * w_fresh
                 
-        # Stay-to-Sprint Elasticity Penalty (SSEP)
         dist_drop = avg_prev_dist - self.distance
         if dist_drop >= 300:
             if msci >= 0.85 and self.distance <= 1400:
-                # Penalise stayers dropping in distance on firm ground lacking tactical acceleration
                 freshness_modifier -= 4.5 * math.log(1.0 + (dist_drop / 100.0))
             else:
-                # Let-Up Reinvigoration/Aerobic Advantage holds on wet/slower ground
                 freshness_modifier += 3.0
 
-        # 7. Mechanical Drag & Visco-elastic Weight-Tax Hysteresis
-        # Firm tracks exponentially reduce the mechanical penalty of heavy top-weights
         gamma_weight = 0.18 * (1.0 - msci) * max(0.0, w_eff - 55.0)**1.5
         mass_damping = gamma_weight * w_mass * 5.0 
         
         turn_loss = barrier * w_turn * phi_fc
         
         if is_synthetic:
-            # Track Geometry Paramter Update for Polytracks (Shorter straights)
             straight_ratio = 378.0 / 2000.0
             if straight_ratio >= 0.18:
                 turn_loss *= 0.85 
             friction_drag = turn_loss
             biomechanical_score = base_energy + freshness_modifier - friction_drag - mass_damping - (avg_margin * 1.1)
             
-        elif msci <= 0.70: # Wet Turf Paths
+        elif msci <= 0.70: 
             outer_lane_bonus = min(9.0, (barrier - 5) * 1.3)
             friction_drag = max(0.0, turn_loss - outer_lane_bonus)
             biomechanical_score = base_energy + freshness_modifier - friction_drag - mass_damping - (avg_margin * 1.4)
             
-        else: # Dry/Firm Turf Paths
+        else: 
             friction_drag = turn_loss
             biomechanical_score = base_energy + freshness_modifier - friction_drag - mass_damping - (avg_margin * 0.95)
 
-        # 8. Class Elasticity & Exposed Form Modifiers
-        # Firm-Surface Stride-Ceiling Cap
         if rct == 1.0 and starts >= 10 and wins == 0 and msci >= 0.85:
             fssc_decay = 1.0 - (0.04 * starts * (msci - 0.50))
             biomechanical_score *= max(0.5, fssc_decay)
             
-        # Class-Elasticity Moisture Interaction (High class dominates firm tracks)
         if rct >= 2.0 and msci >= 0.85:
             biomechanical_score += (msci - 0.70) * 1.20 * 5.0 
 
-        # 9. Semantic Gear Transition Validation Tree
         gear_bonus = 0.0
         gear_str = str(runner.get("gear_changes", [])).lower() + " " + str(runner.get("overview", "")).lower()
         if "blinkers first time" in gear_str or "blinkers on" in gear_str:
@@ -618,12 +618,10 @@ class BiomechanicalEngine:
         if "cross-over nose band" in gear_str and "first time" in gear_str:
             gear_bonus += 3.5
         if "concussion plates" in gear_str and is_synthetic:
-            # Suction vacuum effect penalty on synthetic wax binders
             gear_bonus -= 6.5 * (w_eff / 60.0)
             
         biomechanical_score += gear_bonus
 
-        # 10. Abstract Text Vectorization & Jeopardy Offsets
         jockey_vector = BiomechanicalTextVectorizer.text_to_hash_vector(runner.get("jockey", ""))
         trainer_vector = BiomechanicalTextVectorizer.text_to_hash_vector(runner.get("trainer", ""))
         commentary_vector = BiomechanicalTextVectorizer.text_to_hash_vector(runner.get("overview", ""))
@@ -631,7 +629,6 @@ class BiomechanicalEngine:
         vector_modifier = (sum(jockey_vector) + sum(trainer_vector) + sum(commentary_vector)) * w_text
         biomechanical_score += vector_modifier
 
-        # Double Jeopardy Veto Overlay
         if barrier >= 9 and w_eff >= 58.5:
             penalty_multiplier = 0.50 if rct == 3.0 else 1.50 if rct == 1.0 else 1.00
             biomechanical_score -= (w_jeopardy * penalty_multiplier * phi_fc)
