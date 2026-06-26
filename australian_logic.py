@@ -200,13 +200,13 @@ class BiomechanicalOptimizer:
 
 
 # =====================================================================
-#             SOVEREIGN KINETIC INDEX (SKI) ENGINE v2.6
+#             SOVEREIGN KINETIC INDEX (SKI) ENGINE v3.1
 # =====================================================================
 
 class BiomechanicalEngine:
     """
     Main Sovereign Kinetic Index (SKI) Engine implementing the mathematical 
-    framework of the Version 2.6 specification. Computes dynamic physical engines 
+    framework of the Version 3.1 specification. Computes dynamic physical engines 
     (Metabolic and Mechanical) and evaluates deterministic veto boundaries.
     """
     def __new__(cls, raw_data, weights_override=None):
@@ -229,7 +229,7 @@ class BiomechanicalEngine:
         
         # Parse global layout and metadata
         meta = raw_data.get("meeting_metadata", {})
-        self.track_name = str(meta.get("track_name", raw_data.get("track_name", "Unknown")))
+        self.track_name = str(meta.get("track_name", raw_data.get("track_name", raw_data.get("venue", "Unknown"))))
         self.soil_base = str(meta.get("soil_base", raw_data.get("soil_base", "Unknown"))).lower()
         
         # Support both flat and structured layouts for distance and conditions
@@ -244,8 +244,16 @@ class BiomechanicalEngine:
         self.race_name = str(raw_data.get("class", raw_data.get("race_name", "")))
         self.is_maiden = "MDN" in self.race_name.upper() or "MAIDEN" in self.race_name.upper()
         
-        # Identify environment surface
-        self.silo = BiomechanicalOptimizer._get_silo_surface(self.raw_data)
+        # --- SSCT / SSIG automated override logic ---
+        track_lower = self.track_name.lower()
+        status_lower = self.track_status.lower()
+        if "synthetic" in track_lower or "polytrack" in track_lower or "tapeta" in track_lower or "synthetic" in status_lower or "polytrack" in status_lower:
+            self.silo = "Synthetic"
+            self.is_synthetic = True
+        else:
+            self.silo = BiomechanicalOptimizer._get_silo_surface(self.raw_data)
+            self.is_synthetic = (self.silo == "Synthetic")
+            
         self.region = BiomechanicalOptimizer._get_region_name(self.raw_data)
         self.regional_silo = f"{self.region}_{self.silo}"
         
@@ -267,7 +275,6 @@ class BiomechanicalEngine:
             
         # Determine tracking compaction level (MSCI)
         self.msci = self._calculate_msci()
-        self.is_synthetic = "synthetic" in self.silo.lower()
         self.is_sand = "sand" in self.soil_base or "dirt" in self.soil_base
         self.is_turf = not (self.is_synthetic or self.is_sand)
         
@@ -305,7 +312,20 @@ class BiomechanicalEngine:
         vetoes = []
         b_orig = safe_float(runner.get("barrier", runner.get("original_barrier", 8)))
         b_actual = safe_float(runner.get("recalculated_barrier", b_orig))
-        w_eff = safe_float(runner.get("carried_weight_kg", 56.0)) - safe_float(runner.get("apprentice_claim_kg", 0.0))
+        
+        # Determine if weights list is degenerate across field
+        weights_list = [safe_float(r.get("carried_weight_kg", r.get("weight_kg", 56.0))) for r in self.active_runners]
+        is_degenerate_weight = len(set(weights_list)) <= 1
+        saddle_no = safe_int(runner.get("number", 1))
+        max_saddle = max([safe_int(r.get("number", 1)) for r in self.active_runners]) if self.active_runners else 12
+        
+        if is_degenerate_weight:
+            allotted_weight = 62.5 - 6.5 * ((saddle_no - 1) / max(1, max_saddle - 1))
+        else:
+            allotted_weight = safe_float(runner.get("carried_weight_kg", runner.get("weight_kg", 56.0)))
+            
+        apprentice_claim = safe_float(runner.get("apprentice_claim_kg", 0.0))
+        w_eff = max(45.0, allotted_weight - apprentice_claim)
         
         career = runner.get("career_stats", {})
         starts = safe_float(career.get("starts", 0))
@@ -484,7 +504,18 @@ class BiomechanicalEngine:
         # --- 1. Base Variables Extract & Type Casts ---
         b_orig = safe_float(runner.get("barrier", runner.get("original_barrier", 8)))
         b_actual = safe_float(runner.get("recalculated_barrier", b_orig))
-        allotted_weight = safe_float(runner.get("carried_weight_kg", runner.get("weight_kg", 56.0)))
+        
+        # --- SWR: Saddlecloth-Derived Weight Reallocation Heuristic ---
+        weights_list = [safe_float(r.get("carried_weight_kg", r.get("weight_kg", 56.0))) for r in self.active_runners]
+        is_degenerate_weight = len(set(weights_list)) <= 1
+        saddle_no = safe_int(runner.get("number", 1))
+        max_saddle = max([safe_int(r.get("number", 1)) for r in self.active_runners]) if self.active_runners else 12
+        
+        if is_degenerate_weight:
+            allotted_weight = 62.5 - 6.5 * ((saddle_no - 1) / max(1, max_saddle - 1))
+        else:
+            allotted_weight = safe_float(runner.get("carried_weight_kg", runner.get("weight_kg", 56.0)))
+            
         apprentice_claim = safe_float(runner.get("apprentice_claim_kg", 0.0))
         
         if apprentice_claim == 0.0:
@@ -503,6 +534,11 @@ class BiomechanicalEngine:
         is_3yo = 1.0 if age == 3.0 else 0.0
         
         career = runner.get("career_stats", {})
+        
+        # --- Degenerate Starts Protection ---
+        starts_list = [safe_int(r.get("career_stats", {}).get("starts", 0)) for r in self.active_runners]
+        is_degenerate_starts = sum(starts_list) == 0
+        
         starts = safe_float(career.get("starts", 0))
         wins = safe_float(career.get("wins", 0))
         places = safe_float(career.get("places", 0))
@@ -753,6 +789,7 @@ class BiomechanicalEngine:
         if self.msci <= 0.50 and b_actual >= 8:
             decay_mitigation = 0.60
             age_decay *= (1.0 - decay_mitigation)
+            
         final_nls = adjusted_nls - age_decay
         
         # Compaction Lane Bias (CLB) & Fresh Turf Lane Advantage
@@ -850,6 +887,12 @@ class BiomechanicalEngine:
         # Class-Elasticity Moisture Interaction Coefficient
         xi_class_moisture = (self.msci - 0.70) * 1.20 * cppi
         final_nls += xi_class_moisture
+
+        # --- PUCL Exemption Determination ---
+        has_pucl = False
+        if not is_degenerate_starts:
+            if starts >= 1 and wins == starts:
+                has_pucl = True
 
         # --- 5. Step B: Latent Frailty Calculation (nu_i) ---
         # Metabolic Engine Components (M_i)
@@ -1097,8 +1140,12 @@ class BiomechanicalEngine:
             if "concussion plates" in gear_str:
                 delta_f_plate = 0.08 * (w_eff / 60.0) * mu_visc_val
                 
-            # Synthetic experience deficit index (SEDI)
-            sedi = 0.25 * math.exp(-0.50 * synthetic_starts)
+            # --- SEDI: Synthetic Experience Deficit Index ---
+            if is_degenerate_starts:
+                sedi = 0.07
+            else:
+                synth_starts = safe_float(career.get("synth_stats", {}).get("starts", runner.get("synthetic_starts", 0)))
+                sedi = 0.45 * math.exp(-0.60 * synth_starts)
             
             # Orthopaedic modifier
             using_hoof_filler = "synthetic hoof filler" in gear_str or "hoof filler" in gear_str
@@ -1144,8 +1191,15 @@ class BiomechanicalEngine:
         pedigree_shield *= math.exp(-0.25 * max(0.0, abm_adjusted - 2.0))
         pedigree_shield_scaled = 0.05 * pedigree_shield
         
-        # Synthetic Surface Affinity
-        sigma_syn = 0.25 * (synthetic_places / max(1.0, synthetic_starts)) * (synthetic_starts / max(1.0, starts) + 0.50)
+        # --- Synthetic Surface Affinity (Sigma_syn) ---
+        sigma_syn = 0.0
+        if self.is_synthetic and not is_degenerate_starts:
+            synth_starts = safe_float(career.get("synth_stats", {}).get("starts", runner.get("synthetic_starts", 0)))
+            synth_wins = safe_float(career.get("synth_stats", {}).get("wins", runner.get("synthetic_wins", 0)))
+            synth_places = safe_float(career.get("synth_stats", {}).get("places", runner.get("synthetic_places", 0)))
+            base_affinity = 0.40 * (synth_wins / max(1.0, synth_starts)) * (synth_starts / max(1.0, starts) + 0.50)
+            habituation = 0.20 if (synth_places > 0 and synth_wins == 0) else 0.0
+            sigma_syn = base_affinity + habituation
         
         # Trial Restoration Offset
         phi_trial_recovery = 0.20 if total_trials_60d >= 3 else 0.0
@@ -1165,7 +1219,7 @@ class BiomechanicalEngine:
         # Prep Longevity Fatigue Index (PLFI)
         plfi = 0.05 * max(0.0, runs_this_prep - 4) * (1.0 + starts / 50.0) * (1.0 + 1.5 * (1.0 - self.msci))
         
-        # Aerobic Distance Transition Deficit
+        # Aerobic Base Accumulation Index (ABAI)
         max_win_dist = safe_float(runner.get("max_winning_distance", self.distance))
         psi_adtd = max(0.0, self.distance - max_win_dist) * (w_eff / 60.0) * (1.0 - is_stayer_base) * self.msci
         
@@ -1194,15 +1248,21 @@ class BiomechanicalEngine:
         
         # Dynamic Weight-to-Class Compensatory Ratio (psi_mcc) & Viscoelastic Weight Tax
         psi_mcc = min(0.35, 0.12 * max(0.0, safe_float(runner.get("highest_metro_grade", class_prior_num - class_current_num))) * math.exp(-self.beta_soil * self.msci))
-        gamma_weight = 0.18 * (1.0 - self.msci) * (max(0.0, w_eff - 55.0)**1.5) * (1.0 - 0.50 * (1.0 if apprentice_claim > 0 else 0.0)) * (1.0 - psi_mcc)
         
-        # Sectional Thrust Quotient dynamic weight discount
-        stq = ((normalised_class_rank * peak_rating) / w_eff) * ((self.msci / 0.70)**2)
-        if stq >= 1.15:
-            gamma_weight /= (1.0 + math.log(stq))
+        # --- SCTC: Synthetic Compaction Torque Constant vs Turf Weight Tax ---
+        if self.is_synthetic:
+            # Replace standard weight tax with non-linear torque constant to protect class runners
+            gamma_weight_synthetic = 0.05 * ((w_eff - 55.0) ** 1.2) * (1.0 - sigma_syn)
+            if sigma_syn >= 0.35:
+                gamma_weight_synthetic = 0.00 # fully discount the tax
+            gamma_weight_adjusted = gamma_weight_synthetic
+        else:
+            gamma_weight = 0.18 * (1.0 - self.msci) * (max(0.0, w_eff - 55.0)**1.5) * (1.0 - 0.50 * (1.0 if apprentice_claim > 0 else 0.0)) * (1.0 - psi_mcc)
+            stq = ((normalised_class_rank * peak_rating) / w_eff) * ((self.msci / 0.70)**2)
+            if stq >= 1.15:
+                gamma_weight /= (1.0 + math.log(stq))
+            gamma_weight_adjusted = gamma_weight * (1.0 - math.tanh(5.0 * (self.msci - 0.70)))
             
-        gamma_weight_adjusted = gamma_weight * (1.0 - math.tanh(5.0 * (self.msci - 0.70)))
-        
         # Debutant Freshness Stamina Allocation
         phi_fresh = (1.0 if starts == 0 else 0.0) * 0.15 * (1.0 - self.msci) * (sire_awd / 1200.0)
         
@@ -1245,6 +1305,17 @@ class BiomechanicalEngine:
         # Neurological Gear Release Index
         ngri = (1.0 if "blinkers off" in gear_str or "visors off" in gear_str else 0.0) * sire_excitation * math.exp(-0.10 * runs_this_prep)
 
+        # --- PUCL Exemption Application ---
+        if has_pucl or is_degenerate_starts:
+            delta_stress = 0.0
+            delta_inexp = 0.0
+            phi_fresh = 0.0
+
+        # --- ASST: Apprentice Synthetic Strength Tax ---
+        asst = 0.0
+        if self.is_synthetic and apprentice_claim > 0:
+            asst = 0.50 * apprentice_claim
+
         # --- 7. Step B: Latent Frailty Assembly (nu_i) ---
         nu_i = (
             0.50 + m_i + f_i - pedigree_shield_scaled - sigma_syn - phi_trial_recovery - lambda_class 
@@ -1256,6 +1327,9 @@ class BiomechanicalEngine:
             + gamma_awt_torque - phi_stp - ngri + slr + psi_asdl + crfr + supi + sdf_adjusted_val
         )
         
+        if self.is_synthetic:
+            nu_i += asst
+        
         # Adjust for Lactic Rebound Deficit Lock (LRDL)
         if lrdl_active:
             nu_i *= crdi
@@ -1264,6 +1338,41 @@ class BiomechanicalEngine:
         recent_podium_override = (last_pos <= 3 and days_since_last_start <= 10)
         if runs_this_prep >= 5 and recent_podium_override:
             nu_i -= 0.15
+
+        # --- Synthetic Surface-Specific Enhancements to NLS ---
+        if self.is_synthetic:
+            # WIC Winning Instinct Coefficient
+            psi_wic = 0.0
+            if not is_degenerate_starts and starts >= 1:
+                psi_wic = 1.50 * (wins / starts)
+            elif is_degenerate_starts:
+                psi_wic = 0.50
+                
+            # STSM Stable-Track Synergy Modifier
+            stsm = 0.0
+            elite_synthetic_stables = ["mcvoy", "goodwin", "dyer", "dwyer", "williams", "brisbourne", "o'sullivan"]
+            if any(x in t_name for x in elite_synthetic_stables):
+                stsm = 2.50
+                
+            # BGFI Blinker & Gear Focus Index
+            bgfi = 0.0
+            gear_text = str(runner.get("gear_changes", [])).lower() + " " + gear_str
+            if any(x in gear_text for x in ["first time", "1st time", "off"]):
+                bgfi = 1.50
+            elif any(x in gear_text for x in ["blinkers", "winkers", "visor"]):
+                bgfi = 1.00
+                
+            # CMF Class Merit Floor
+            cmf = 0.0
+            estimated_rating = peak_rating if peak_rating > 0 else (60.0 - normalised_class_rank * 2.0)
+            if estimated_rating < 50.0:
+                cmf = -4.00
+                
+            # CD Viscoelastic Cohesion Drag Penalty
+            cd = 0.10 * ((w_eff - 55.0) ** 2)
+            
+            # Incorporate adjustments directly to final_nls
+            final_nls += stsm + bgfi + cmf - cd + psi_wic
 
         # --- 8. Step C: Sovereign Kinetic Index (SKI) Formula ---
         ski_score = final_nls * math.exp(-(nu_i - 0.50))
@@ -1281,6 +1390,11 @@ class BiomechanicalEngine:
                 for r in self.active_runners if safe_float(r.get("recalculated_barrier", 8)) > 1
             )
             prp = 1.0 * (1.0 - lpi) * outer_esi_sum
+            
+            # PUCL Pocketing Bypass
+            if has_pucl or is_degenerate_starts:
+                prp = 0.0
+                
             if prp >= 0.70:
                 ski_score *= (1.0 - 0.20 * prp)
                 
