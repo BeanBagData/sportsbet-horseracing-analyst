@@ -1,0 +1,630 @@
+{
+    "event_id": 10625638,
+    "region": "South_Africa",
+    "venue": "Vaal",
+    "track": "Vaal",
+    "race_name": "R1 4Racing Welcomes You Maiden Juvenile Plate",
+    "distance": "1199",
+    "track_status": "Good",
+    "start_time": 1782381600,
+    "scraped_at": "2026-06-26T11:28:01.176868",
+    "associated_report_path": "D:\\Documents\\Horse Racing\\Scraper\\storage\\2026-06-25\\South_Africa\\Vaal\\race_1_report.txt",
+    "weather": {
+        "temperature": null,
+        "condition": null,
+        "wind": null,
+        "humidity": null
+    },
+    "track_details": {
+        "conditions": null,
+        "track_name": null,
+        "rail_position": "True",
+        "straight": "353.0",
+        "circumference": "1811.0",
+        "straight_metres": 353.0,
+        "circumference_metres": 1811.0
+    },
+    "meeting_metadata": {
+        "track_name": "Vaal",
+        "soil_base": "Unknown",
+        "track_condition_initial": "Good",
+        "rail_position": "True",
+        "straight_length_metres": 353.0,
+        "circumference_metres": 1811.0,
+        "moisture_index_initial": 5.0,
+        "weather_forecast_hourly": [
+            {
+                "temperature_celsius": 20.0,
+                "humidity_percentage": 70.0,
+                "wind_speed_kph": 10.0,
+                "wind_direction": "N",
+                "precipitation_forecast_mm_hr": 0.0
+            }
+        ]
+    },
+    "runners": [
+        {
+            "number": 1,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Crimson Clover",
+            "jockey": "Chase Maujean",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Fanie Bronkhorst",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        },
+        {
+            "number": 2,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Echo Of The Wild",
+            "jockey": "Mickaelle Michel",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Corne Spies",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        },
+        {
+            "number": 3,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Kwaito",
+            "jockey": "Diego De Gouveia",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "J A Janse Van Vuuren",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Scratched",
+            "finishing_position": null
+        },
+        {
+            "number": 4,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Skitt Smiling",
+            "jockey": "Malesela Katjedi",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "P P J M Vermeulen",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 4,
+            "margin": null,
+            "barrier": 7
+        },
+        {
+            "number": 5,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Theodore Rooseveld",
+            "jockey": "Kobeli Lihaba",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Alec Laird",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        },
+        {
+            "number": 6,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Young General",
+            "jockey": "Kyle Strydom",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Tony Peter",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        },
+        {
+            "number": 7,
+            "original_barrier": 8,
+            "carried_weight_kg": 57.5,
+            "apprentice_claim_kg": 0.0,
+            "name": "Irish Wilma",
+            "jockey": "Philasande Mxoli",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "J A Janse Van Vuuren",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Scratched",
+            "finishing_position": null
+        },
+        {
+            "number": 8,
+            "original_barrier": 8,
+            "carried_weight_kg": 57.5,
+            "apprentice_claim_kg": 0.0,
+            "name": "Molten Rock",
+            "jockey": "Gavin Lerena",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "J A Janse Van Vuuren",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 2,
+            "margin": null,
+            "barrier": 1
+        },
+        {
+            "number": 9,
+            "original_barrier": 8,
+            "carried_weight_kg": 57.5,
+            "apprentice_claim_kg": 0.0,
+            "name": "San Francisco",
+            "jockey": "A Mosaheb",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Shaylen Naidoo",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        },
+        {
+            "number": 10,
+            "original_barrier": 8,
+            "carried_weight_kg": 57.5,
+            "apprentice_claim_kg": 0.0,
+            "name": "Summerfest",
+            "jockey": "Craig Zackey",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Sean Tarry",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 1,
+            "margin": null,
+            "barrier": 3
+        },
+        {
+            "number": 11,
+            "original_barrier": 8,
+            "carried_weight_kg": 57.5,
+            "apprentice_claim_kg": 0.0,
+            "name": "Vision Of Gold",
+            "jockey": "Callan Murray",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Mike Mathew De Kock",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 3,
+            "margin": null,
+            "barrier": 4
+        }
+    ],
+    "race_results": {
+        "status": "Resulted",
+        "finishing_order": [
+            {
+                "position": 1,
+                "number": 10,
+                "name": "Summerfest",
+                "barrier": 3,
+                "jockey": "Craig Zackey",
+                "trainer": "Sean Tarry",
+                "margin": null
+            },
+            {
+                "position": 2,
+                "number": 8,
+                "name": "Molten Rock",
+                "barrier": 1,
+                "jockey": "Gavin Lerena",
+                "trainer": "J A Janse Van Vuuren",
+                "margin": null
+            },
+            {
+                "position": 3,
+                "number": 11,
+                "name": "Vision Of Gold",
+                "barrier": 4,
+                "jockey": "Callan Murray",
+                "trainer": "Mike Mathew De Kock",
+                "margin": null
+            },
+            {
+                "position": 4,
+                "number": 4,
+                "name": "Skitt Smiling",
+                "barrier": 7,
+                "jockey": "Malesela Katjedi",
+                "trainer": "P P J M Vermeulen",
+                "margin": null
+            }
+        ]
+    }
+}
