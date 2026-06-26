@@ -1,0 +1,632 @@
+{
+    "event_id": 10625635,
+    "region": "South_Africa",
+    "venue": "Vaal",
+    "track": "Vaal",
+    "race_name": "R2 For Hospitality Bookings Call 011 681 1796 Maiden Plate (F & M)",
+    "distance": "1500",
+    "track_status": "Good",
+    "start_time": 1782383700,
+    "scraped_at": "2026-06-26T11:57:34.994295",
+    "associated_report_path": "D:\\Documents\\Horse Racing\\Scraper\\storage\\2026-06-25\\South_Africa\\Vaal\\race_2_report.txt",
+    "weather": {
+        "temperature": null,
+        "condition": null,
+        "wind": null,
+        "humidity": null
+    },
+    "track_details": {
+        "conditions": null,
+        "track_name": null,
+        "rail_position": "True",
+        "straight": "353.0",
+        "circumference": "1811.0",
+        "straight_metres": 353.0,
+        "circumference_metres": 1811.0
+    },
+    "meeting_metadata": {
+        "track_name": "Vaal",
+        "soil_base": "Unknown",
+        "track_condition_initial": "Good",
+        "rail_position": "True",
+        "straight_length_metres": 353.0,
+        "circumference_metres": 1811.0,
+        "moisture_index_initial": 5.0,
+        "weather_forecast_hourly": [
+            {
+                "temperature_celsius": 20.0,
+                "humidity_percentage": 70.0,
+                "wind_speed_kph": 10.0,
+                "wind_direction": "N",
+                "precipitation_forecast_mm_hr": 0.0
+            }
+        ]
+    },
+    "runners": [
+        {
+            "number": 1,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Savara's Princess",
+            "jockey": "Trent Mayhew",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Brett Webber",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Scratched",
+            "finishing_position": null
+        },
+        {
+            "number": 2,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Elisa Mbali",
+            "jockey": "Mickaelle Michel",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Heather E Adamson",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Scratched",
+            "finishing_position": null
+        },
+        {
+            "number": 3,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Silent Future",
+            "jockey": "Kabelo Matsunyane",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Robyn Klaasen",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Scratched",
+            "finishing_position": null
+        },
+        {
+            "number": 4,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Baby Red",
+            "jockey": "Jeffery Syster",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Heinrich Van Der Westhuizen",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 1,
+            "margin": null,
+            "barrier": 11
+        },
+        {
+            "number": 5,
+            "original_barrier": 8,
+            "carried_weight_kg": 60.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Sword Of Light",
+            "jockey": "Gavin Lerena",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Lucky Houdalakis",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Scratched",
+            "finishing_position": null
+        },
+        {
+            "number": 6,
+            "original_barrier": 8,
+            "carried_weight_kg": 56.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Blazing Breeze",
+            "jockey": "Chase Maujean",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Brett Webber",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 3,
+            "margin": null,
+            "barrier": 8
+        },
+        {
+            "number": 7,
+            "original_barrier": 8,
+            "carried_weight_kg": 56.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Empress Of Peace",
+            "jockey": "Philasande Mxoli",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Tyrone Zackey",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 2,
+            "margin": null,
+            "barrier": 9
+        },
+        {
+            "number": 8,
+            "original_barrier": 8,
+            "carried_weight_kg": 56.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "La Parisienne",
+            "jockey": "Blaine Marx-jacobson",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "St John Gray",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        },
+        {
+            "number": 9,
+            "original_barrier": 8,
+            "carried_weight_kg": 56.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Rabba Dabba Doo",
+            "jockey": "Jarryd Penny",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Kobus Roux",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        },
+        {
+            "number": 10,
+            "original_barrier": 8,
+            "carried_weight_kg": 56.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Secret Life",
+            "jockey": "Jacey Botes",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "St John Gray",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active",
+            "finishing_position": 4,
+            "margin": null,
+            "barrier": 1
+        },
+        {
+            "number": 11,
+            "original_barrier": 8,
+            "carried_weight_kg": 56.0,
+            "apprentice_claim_kg": 0.0,
+            "name": "Snap Your Fingers",
+            "jockey": "Craig Zackey",
+            "jockey_wet_win_rate_pct": 10.0,
+            "trainer": "Sean Tarry",
+            "trainer_wet_win_rate_pct": 10.0,
+            "sire": "Unknown Sire",
+            "sire_awd": 1200,
+            "sire_wet_stamina_rating": 7.0,
+            "maternal_grandsire": "Unknown Grandsire",
+            "maternal_grandsire_wet_rating": 7.0,
+            "days_since_last_start": 14,
+            "gear_changes": [],
+            "runs_this_prep": 1,
+            "career_stats": {
+                "starts": 0,
+                "wins": 0,
+                "places": 0,
+                "wet_stats": {
+                    "starts": 0,
+                    "wins": 0,
+                    "places": 0
+                }
+            },
+            "last_run": {
+                "class": "BM58",
+                "margin_lengths": 2.0,
+                "finishing_position": 4,
+                "track_condition": "Good",
+                "distance_metres": 1200,
+                "in_running_positions": "800m 6th, 400m 4th"
+            },
+            "recent_jumps_trial": {
+                "completed": false,
+                "days_ago": 14,
+                "won_30d": false,
+                "total_trials_45d": 0,
+                "trial_beaten_margin_lengths": 0.0
+            },
+            "draft_pocket_score": 0.5,
+            "lane_preference_score": 0.5,
+            "jockey_torque_coefficient": 0.45,
+            "status": "Active"
+        }
+    ],
+    "race_results": {
+        "status": "Resulted",
+        "finishing_order": [
+            {
+                "position": 1,
+                "number": 4,
+                "name": "Baby Red",
+                "barrier": 11,
+                "jockey": "Jeffery Syster",
+                "trainer": "Heinrich Van Der Westhuizen",
+                "margin": null
+            },
+            {
+                "position": 2,
+                "number": 7,
+                "name": "Empress Of Peace",
+                "barrier": 9,
+                "jockey": "Philasande Mxoli",
+                "trainer": "Tyrone Zackey",
+                "margin": null
+            },
+            {
+                "position": 3,
+                "number": 6,
+                "name": "Blazing Breeze",
+                "barrier": 8,
+                "jockey": "Chase Maujean",
+                "trainer": "Brett Webber",
+                "margin": null
+            },
+            {
+                "position": 4,
+                "number": 10,
+                "name": "Secret Life",
+                "barrier": 1,
+                "jockey": "Jacey Botes",
+                "trainer": "St John Gray",
+                "margin": null
+            }
+        ]
+    }
+}

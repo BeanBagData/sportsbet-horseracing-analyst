@@ -1,0 +1,42 @@
+SOUTH AFRICAN EXPERT FORENSIC CALIBRATION REPORT [SAF MASTER PROMPT V1.9 COMPLIANT]
+==============================================================================================================
+Date: 2026-06-26 | Venue: R2 For Hospitality Bookings Call 011 681 1796 Maiden Plate (F & M)
+Locked Surface: SILO_A | Expected Pace (QPT): Slow/Tactical
+--------------------------------------------------------------------------------------------------------------
+1. PWG IMMUTABLE MATRIX VERIFICATION
+  - Target Straight Profile: Spacious continuous turf layout (no short-bend constraints) verified.
+  - Matrix Mode: Slow-Track Trap checked; Collapse Advantage parsed dynamically.
+--------------------------------------------------------------------------------------------------------------
+LOCAL DATA ARCHIVE REFERENCE: D:\Documents\Horse Racing\Scraper\storage\2026-06-25\South_Africa\Vaal\race_2_data.json
+==============================================================================================================
+
+2. BIOMECHANICAL EFFICIENCY CALCULATIONS
+--------------------------------------------------------------------------------------------------------------
+No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
+--------------------------------------------------------------------------------------------------------------
+#4 Baby Red            | 5      | 60.0    | 86.957          | 1A SOVEREIGN
+#6 Blazing Breeze      | 5      | 56.0    | 71.429          | 1B SHIELD
+#7 Empress Of Peace    | 5      | 56.0    | 71.429          | Survivor
+#8 La Parisienne       | 5      | 56.0    | 71.429          | Survivor
+#9 Rabba Dabba Doo     | 5      | 56.0    | 71.429          | Survivor
+#10 Secret Life        | 5      | 56.0    | 71.429          | Survivor
+#11 Snap Your Fingers  | 5      | 56.0    | 71.429          | Survivor
+--------------------------------------------------------------------------------------------------------------
+
+3. FINAL SYSTEMIC PREDICTION
+--------------------------------------------------------------------------------------------------------------
+ Primary Biomechanical Contender: No. 4 Baby Red (Barrier 5)
+ Cover Contender: No. 6 Blazing Breeze (Barrier 5)
+
+ Betting Playbook Strategy:
+  - Sovereign Target (Win/Place Priority): WIN on No. 4 Baby Red
+  - Protective Cover Exacta: 4 / 6, 7
+  - Swinger (Box): 4, 6
+  - Systemic Trifecta: 4 / 6, 7 / 6, 7, 8
+==============================================================================================================
+
+4. POST-RACE VALIDATION AUDIT
+--------------------------------------------------------------------------------------------------------------
+ Actual Result: 1: No. 4 Baby Red | 2: No. 7 Empress Of Peace | 3: No. 6 Blazing Breeze
+ Primary Pick Position Outcome: Rank 1
+==============================================================================================================

@@ -1,0 +1,70 @@
+{
+    "race_name": "R2 For Hospitality Bookings Call 011 681 1796 Maiden Plate (F & M)",
+    "silo": "South_Africa_SILO_A",
+    "weights_applied": [
+        60.0,
+        1.3,
+        0.65,
+        1.0,
+        8.5,
+        1.5
+    ],
+    "predictions": [
+        {
+            "number": 4,
+            "name": "Baby Red",
+            "barrier": 5,
+            "weight_kg": 60.0,
+            "score": 86.957,
+            "designation": "1A SOVEREIGN"
+        },
+        {
+            "number": 6,
+            "name": "Blazing Breeze",
+            "barrier": 5,
+            "weight_kg": 56.0,
+            "score": 71.429,
+            "designation": "1B SHIELD"
+        },
+        {
+            "number": 7,
+            "name": "Empress Of Peace",
+            "barrier": 5,
+            "weight_kg": 56.0,
+            "score": 71.429,
+            "designation": "Survivor"
+        },
+        {
+            "number": 8,
+            "name": "La Parisienne",
+            "barrier": 5,
+            "weight_kg": 56.0,
+            "score": 71.429,
+            "designation": "Survivor"
+        },
+        {
+            "number": 9,
+            "name": "Rabba Dabba Doo",
+            "barrier": 5,
+            "weight_kg": 56.0,
+            "score": 71.429,
+            "designation": "Survivor"
+        },
+        {
+            "number": 10,
+            "name": "Secret Life",
+            "barrier": 5,
+            "weight_kg": 56.0,
+            "score": 71.429,
+            "designation": "Survivor"
+        },
+        {
+            "number": 11,
+            "name": "Snap Your Fingers",
+            "barrier": 5,
+            "weight_kg": 56.0,
+            "score": 71.429,
+            "designation": "Survivor"
+        }
+    ]
+}
