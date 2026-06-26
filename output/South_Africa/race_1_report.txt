@@ -1,0 +1,44 @@
+SOUTH AFRICAN EXPERT FORENSIC CALIBRATION REPORT [SAF MASTER PROMPT V1.9 COMPLIANT]
+==============================================================================================================
+Date: 2026-06-26 | Venue: R1 4Racing Welcomes You Maiden Juvenile Plate
+Locked Surface: SILO_A | Expected Pace (QPT): Slow/Tactical
+--------------------------------------------------------------------------------------------------------------
+1. PWG IMMUTABLE MATRIX VERIFICATION
+  - Target Straight Profile: Spacious continuous turf layout (no short-bend constraints) verified.
+  - Matrix Mode: Slow-Track Trap checked; Collapse Advantage parsed dynamically.
+--------------------------------------------------------------------------------------------------------------
+LOCAL DATA ARCHIVE REFERENCE: D:\Documents\Horse Racing\Scraper\storage\2026-06-25\South_Africa\Vaal\race_1_data.json
+==============================================================================================================
+
+2. BIOMECHANICAL EFFICIENCY CALCULATIONS
+--------------------------------------------------------------------------------------------------------------
+No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
+--------------------------------------------------------------------------------------------------------------
+#10 Summerfest         | 3      | 57.5    | 84.677          | 1A SOVEREIGN
+#8 Molten Rock         | 1      | 57.5    | 81.935          | 1B SHIELD
+#11 Vision Of Gold     | 4      | 57.5    | 86.316          | Survivor
+#9 San Francisco       | 9      | 57.5    | 87.255          | Survivor
+#6 Young General       | 8      | 60.0    | 106.829         | Survivor
+#5 Theodore Rooseveld  | 6      | 60.0    | 89.565          | Survivor
+#2 Echo Of The Wild    | 2      | 60.0    | 81.000          | Survivor
+#1 Crimson Clover      | 5      | 60.0    | 86.522          | Survivor
+#4 Skitt Smiling       | 7      | 60.0    | 95.610          | Survivor
+--------------------------------------------------------------------------------------------------------------
+
+3. FINAL SYSTEMIC PREDICTION
+--------------------------------------------------------------------------------------------------------------
+ Primary Biomechanical Contender: No. 10 Summerfest (Barrier 3)
+ Cover Contender: No. 8 Molten Rock (Barrier 1)
+
+ Betting Playbook Strategy:
+  - Sovereign Target (Win/Place Priority): WIN on No. 10 Summerfest
+  - Protective Cover Exacta: 10 / 8, 11
+  - Swinger (Box): 10, 8
+  - Systemic Trifecta: 10 / 8, 11 / 11, 8, 9
+==============================================================================================================
+
+4. POST-RACE VALIDATION AUDIT
+--------------------------------------------------------------------------------------------------------------
+ Actual Result: 1: No. 10 Summerfest | 2: No. 8 Molten Rock | 3: No. 11 Vision Of Gold
+ Primary Pick Position Outcome: Rank 1
+==============================================================================================================
