@@ -81,10 +81,10 @@ Locked Surface: SILO_A | Expected Pace (QPT): Even/True
 --------------------------------------------------------------------------------------------------------------
 No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
 --------------------------------------------------------------------------------------------------------------
-#3 Summerfest          | 3      | 58.0      | 52.500              | 1A SOVEREIGN
-#1 Molten Rock         | 1      | 57.5      | 50.800              | 1B SHIELD
-#4 Vision Of Gold      | 4      | 56.0      | 49.200              | Survivor
-#7 Skitt Smiling       | 7      | 54.5      | 39.200              | Sieved Out (Vetoed)
+#10 Summerfest          | 3      | 58.0      | 52.500              | 1A SOVEREIGN
+#8 Molten Rock         | 1      | 57.5      | 50.800              | 1B SHIELD
+#11 Vision Of Gold      | 4      | 56.0      | 49.200              | Survivor
+#4 Skitt Smiling       | 7      | 54.5      | 39.200              | Sieved Out (Vetoed)
 --------------------------------------------------------------------------------------------------------------
 
 3. FINAL SYSTEMIC PREDICTION
@@ -93,11 +93,11 @@ No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
  Cover Contender: No. 1 Molten Rock (Barrier 1)
 
  Betting Playbook Strategy:
-  - Sovereign Target (Win/Place Priority): WIN on No. 3 Summerfest
-  - Protective Cover Exacta: 3 / 1, 4
-  - Swinger (Box): 3, 1
+  - Sovereign Target (Win/Place Priority): WIN on No. 10 Summerfest
+  - Protective Cover Exacta: 10 / 8, 11
+  - Swinger (Box): 10, 8
   - Inoculation Triggered: Midfield place-specialist #4 Vision Of Gold injected into exotics.
-  - Systemic Trifecta: 3 / 1, 4 / 1, 4
+  - Systemic Trifecta: 10 / 8, 11 / 11, 4
 ==============================================================================================================
 ```
 ![System Prediction Output Sheet](https://raw.githubusercontent.com/BeanBagData/sportsbet-horseracing-analyst/main/output/South_Africa/race_1_results.png)
