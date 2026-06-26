@@ -100,6 +100,9 @@ No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
   - Systemic Trifecta: 3 / 1, 4 / 1, 4
 ==============================================================================================================
 ```
+![System Prediction Output Sheet](https://raw.githubusercontent.com/BeanBagData/sportsbet-horseracing-analyst/main/output/South_Africa/race_1_results.png)
+
+*To inspect the high-resolution output metrics directly, you can access the [South Africa Race Results Image](https://github.com/BeanBagData/sportsbet-horseracing-analyst/blob/main/output/South_Africa/race_1_results.png).*
 
 ### 1. Key Metrics Explained
 * **Biomechanical Score (SKI / NTCI)**: Represents the calculated running efficiency. Higher values indicate a stronger performance projection under the prevailing weight, barrier draw, and track condition.
