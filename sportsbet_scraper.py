@@ -1,3 +1,8 @@
+# ======================================================================================================================================
+# START OF FILE: sportsbet_scraper.py
+# OPERATIONAL ROLE: SYSTEM SCRAPER COGNITIVE ARCHITECTURE & MEETING PARSER PIPELINE
+# LANGUAGE VARIATION: BRITISH UK ENGLISH (METRES, NORMALISATION, PRIORITISATION, PENALISE, ANALYSE)
+# ======================================================================================================================================
 
 import requests
 import datetime
@@ -38,7 +43,6 @@ SIRE_AWD_LOOKUP = {
     "asturn": 1200, "commands": 1400, "magnus": 1200
 }
 
-# --- Scraping UI and Time Helpers ---
 def get_current_date_string():
     return datetime.datetime.now().strftime("%Y-%m-%d")
 
@@ -64,7 +68,6 @@ def generate_historical_dates():
     return dates_list
 
 def resolve_storage_paths(region, track, race_num, target_date):
-    # Auto-detect and normalize South Africa region
     if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
         region = "South_Africa"
 
@@ -119,8 +122,6 @@ def clean_float_fallback(value, default=0.0):
             return default
     return default
 
-
-# --- API Fetch Functions ---
 def fetch_all_racing(date_str):
     url = f"{BASE_API_URL}/AllRacing/{date_str}"
     try:
@@ -159,6 +160,125 @@ def fetch_racecard_with_context(event_id, class_id=None):
     except Exception as e:
         print(f"[!] Error fetching race card: {e}")
         return None
+
+def verify_sa_track_surface_v36(track_name, target_date):
+    """
+    DYNAMIC MULTI-SOURCE TRACK SURFACE RESOLUTION ENGINE WITH FALLBACKS.
+    Verifies if a South African turf meeting has switched/moved to its Polytrack (AW / Synthetic)
+    equivalent, or Vaal Classic Track, using Sporting Post, Gold Circle, and At The Races.
+    Completely purged of defunct Formgrids domains.
+    """
+    track_name_lower = str(track_name).lower()
+    if not any(x in track_name_lower for x in ["fairview", "greyville", "turffontein", "vaal", "scottsville", "kenilworth"]):
+        return track_name
+        
+    print(f"[*] Running out-of-band South African track surface validation for {track_name}...")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+    }
+    
+    # Format date for flexible matching
+    try:
+        dt = datetime.datetime.strptime(target_date, "%Y-%m-%d")
+        day_str = dt.strftime("%d")
+        month_str = dt.strftime("%B").lower() # e.g. "june"
+        day_of_week = dt.strftime("%A").lower() # e.g. "friday"
+    except Exception:
+        day_str, month_str, day_of_week = "", "", ""
+        
+    # Pathway 1: Sporting Post Search and Tag Sifting Sieve
+    try:
+        url = f"https://www.sportingpost.co.za/?s={track_name}+polytrack"
+        if "vaal" in track_name_lower or "turffontein" in track_name_lower:
+            url = f"https://www.sportingpost.co.za/?s={track_name}+classic"
+            
+        resp = requests.get(url, headers=headers, timeout=8)
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            page_text = soup.get_text().lower()
+            
+            # Check for explicit Sporting Post switch phrasing
+            if "fairview" in track_name_lower:
+                phrases = [
+                    "switched from the turf to the polytrack",
+                    "fairview will be run on the polytrack",
+                    "moved from the turf track to the polytrack",
+                    "moves to the polytrack",
+                    "fairview polytrack"
+                ]
+                for phrase in phrases:
+                    if phrase in page_text:
+                        # Verify date relevance to prevent stale news false-triggers
+                        if month_str in page_text or day_of_week in page_text:
+                            print("[+] SWITCH DETECTED: Fairview meeting switched to Polytrack via Sporting Post!")
+                            return "Fairview Polytrack"
+                            
+            elif "greyville" in track_name_lower:
+                phrases = [
+                    "switched from the turf to the polytrack",
+                    "greyville will be run on the polytrack",
+                    "moved from the turf track to the polytrack",
+                    "moves to the polytrack"
+                ]
+                for phrase in phrases:
+                    if phrase in page_text:
+                        if month_str in page_text or day_of_week in page_text:
+                            print("[+] SWITCH DETECTED: Greyville meeting switched to Polytrack via Sporting Post!")
+                            return "Greyville Polytrack"
+                            
+            elif "turffontein" in track_name_lower or "vaal" in track_name_lower:
+                phrases = [
+                    "moves to the vaal classic",
+                    "vaal classic track",
+                    "moved to the vaal classic"
+                ]
+                for phrase in phrases:
+                    if phrase in page_text:
+                        if month_str in page_text or day_of_week in page_text:
+                            print("[+] SWITCH DETECTED: Meeting switched to Vaal Classic Track via Sporting Post!")
+                            return "Vaal Classic Track"
+    except Exception as e:
+        print(f"[!] Sporting Post out-of-band scrape failed: {e}")
+        
+    # Pathway 2: Gold Circle Sidebar Fallback Sieve
+    try:
+        url = "https://www.goldcircle.co.za/"
+        resp = requests.get(url, headers=headers, timeout=8)
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            page_text = soup.get_text().lower()
+            
+            if "fairview" in track_name_lower and "moved to the polytrack due" in page_text:
+                if month_str in page_text or day_of_week in page_text:
+                    print("[+] SWITCH DETECTED: Fairview Polytrack switch verified via Gold Circle!")
+                    return "Fairview Polytrack"
+            elif "greyville" in track_name_lower and "moved to the polytrack due" in page_text:
+                if month_str in page_text or day_of_week in page_text:
+                    print("[+] SWITCH DETECTED: Greyville Polytrack switch verified via Gold Circle!")
+                    return "Greyville Polytrack"
+    except Exception as e:
+        print(f"[!] Gold Circle out-of-band fallback failed: {e}")
+        
+    # Pathway 3: At The Races / betHQ Fallback Scraper
+    try:
+        url = "https://www.attheraces.com/results"
+        resp = requests.get(url, headers=headers, timeout=8)
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            page_text = soup.get_text().lower()
+            
+            if "fairview" in track_name_lower:
+                if any(x in page_text for x in ["fairview polytrack", "fairview (aw)", "fairview aw", "gas centre maiden juvenile plate (polytrack)", "tab dahlia plate (listed) (2yo) (polytrack)"]):
+                    print("[+] SWITCH DETECTED: Fairview Polytrack switch verified via At The Races!")
+                    return "Fairview Polytrack"
+            elif "greyville" in track_name_lower:
+                if any(x in page_text for x in ["greyville polytrack", "greyville aw", "greyville (aw)"]):
+                    print("[+] SWITCH DETECTED: Greyville Polytrack switch verified via At The Races!")
+                    return "Greyville Polytrack"
+    except Exception as e:
+        print(f"[!] ATR out-of-band scrape failed: {e}")
+        
+    return track_name
 
 
 # =====================================================================
@@ -228,7 +348,6 @@ class SportsBetFormCrawler:
             if resp.status_code == 200:
                 soup = BeautifulSoup(resp.text, "html.parser")
                 
-                # Check for weather-conditions block fallback
                 weather_cond_div = soup.find('div', id='weather-conditions')
                 if weather_cond_div:
                     cond_span = weather_cond_div.find('span', class_='head-conditions')
@@ -363,7 +482,6 @@ def render_biomechanical_analysis(engine, linked_json_path=""):
         
     output_lines = []
     
-    # Identify Place Inoculation Candidate (place % >= 40%)
     inoculated_runner = None
     from south_african_logic import SouthAfricanBiomechanicalEngine
     if isinstance(engine, SouthAfricanBiomechanicalEngine):
@@ -421,7 +539,6 @@ def render_biomechanical_analysis(engine, linked_json_path=""):
     if len(ranked_field) >= 2:
         exacta_legs = [str(ranked_field[1]['number']), str(ranked_field[2]['number'])]
         output_lines.append(f"  - Protective Cover Exacta: {primary['number']} / {', '.join(exacta_legs)}")
-        
         output_lines.append(f"  - Swinger (Box): {primary['number']}, {ranked_field[1]['number']}")
         
         tri_second_leg = [str(ranked_field[1]['number']), str(ranked_field[2]['number'])]
@@ -475,7 +592,6 @@ def scan_and_validate_historical_races():
         return
         
     print(f"[*] Loaded {total_audited} completed races with verified results.")
-    
     print("\n" + "="*110)
     print(f" {'Track / Race Name':<35} | {'Sovereign Pick':<20} | {'Result':<10} | {'Model Classification Strategy'}")
     print(print_separator("-"))
@@ -485,10 +601,18 @@ def scan_and_validate_historical_races():
     top3_hits = 0
     
     for data in training_set:
-        silo_key = BiomechanicalOptimizer._get_silo_key(data)
-        silo_weights = BiomechanicalOptimizer.get_weights_for_silo(silo_key)
+        region = data.get("region", "Other")
+        track = data.get("venue", data.get("track", "Unknown"))
         
-        engine = BiomechanicalEngine(data, weights_override=silo_weights)
+        # DYNAMIC SYSTEM RESOLUTION: INSTANTIATE SOUTH AFRICAN SPECIFIC ENGINE WHEN APPROPRIATE
+        if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or "south africa" in str(region).lower():
+            from south_african_logic import SouthAfricanBiomechanicalEngine
+            engine = SouthAfricanBiomechanicalEngine(data)
+        else:
+            silo_key = BiomechanicalOptimizer._get_silo_key(data)
+            silo_weights = BiomechanicalOptimizer.get_weights_for_silo(silo_key)
+            engine = BiomechanicalEngine(data, weights_override=silo_weights)
+            
         ranked = engine.rank_field()
         if not ranked:
             continue
@@ -581,7 +705,13 @@ def run_bulk_meeting_analysis(meeting, target_date):
         with open(json_path, 'r', encoding='utf-8') as f:
             saved_db_data = json.load(f)
             
-        engine = BiomechanicalEngine(saved_db_data)
+        # DYNAMIC CLASSIATION GATEWAYS: PREVENTS COLLISION MATRIX
+        if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
+            from south_african_logic import SouthAfricanBiomechanicalEngine
+            engine = SouthAfricanBiomechanicalEngine(saved_db_data)
+        else:
+            engine = BiomechanicalEngine(saved_db_data)
+            
         report_content = render_biomechanical_analysis(engine, linked_json_path=json_path)
         with open(report_path, "w", encoding="utf-8") as rf:
             rf.write(report_content)
@@ -650,6 +780,7 @@ def bulk_scrape_missing_historical_races():
             dt = datetime.datetime.strptime(item["date"], "%Y-%m-%d")
             day_name = dt.strftime("%A")
             date_to_day[item["date"]] = day_name
+            discovered_days.add(day_name)
         except Exception:
             date_to_day[item["date"]] = "Unknown"
 
@@ -860,7 +991,15 @@ def bulk_scrape_missing_historical_races():
                 with open(task["json_path"], 'r', encoding='utf-8') as f:
                     saved_db_data = json.load(f)
                     
-                engine = BiomechanicalEngine(saved_db_data)
+                # INTERCEPT SYSTEM CALLS: PREVENT DEPRECATION FAILS
+                region = task["region"]
+                track = task["track"]
+                if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
+                    from south_african_logic import SouthAfricanBiomechanicalEngine
+                    engine = SouthAfricanBiomechanicalEngine(saved_db_data)
+                else:
+                    engine = BiomechanicalEngine(saved_db_data)
+                    
                 report_content = render_biomechanical_analysis(engine, linked_json_path=task["json_path"])
                 
                 with open(task["report_path"], "w", encoding="utf-8") as rf:
@@ -1013,7 +1152,13 @@ def bulk_update_missing_results():
                 updated_count += 1
                 print(f"  [+] Success: Race resulted. Generating updated reports...")
                 
-                engine = BiomechanicalEngine(updated_data)
+                # INTERCEPT SYSTEM CALLS: PREVENT TURF/SYNTHETIC DEVIATION FAILURE
+                if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
+                    from south_african_logic import SouthAfricanBiomechanicalEngine
+                    engine = SouthAfricanBiomechanicalEngine(updated_data)
+                else:
+                    engine = BiomechanicalEngine(updated_data)
+                    
                 report_content = render_biomechanical_analysis(engine, linked_json_path=file_path)
                 
                 with open(report_path, "w", encoding="utf-8") as rf:
@@ -1060,7 +1205,6 @@ def bulk_update_missing_results():
 # =====================================================================
 
 def fetch_scratched_from_html(region, track, race_num, event_id):
-    # Auto-detect and normalize South Africa region
     if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
         region = "South_Africa"
 
@@ -1129,8 +1273,8 @@ def display_quick_overview(selected_event, meeting, target_date):
     print(" [A] - Run Dynamic Biomechanical Engine Prediction")
     print(" [B] - Run BULK Analysis for ALL races at this meeting")
     print(" [0] - Go Back")
-    print(" [M] - Go Back to Main Menu")
-    print(" [E] - Exit Completely")
+    print(" [M] - My Profile Options")
+    print(" [E] - Exit Terminal")
     print(print_separator("-"))
     action = input("Enter choice: ").strip().upper()
     
@@ -1188,7 +1332,15 @@ def display_quick_overview(selected_event, meeting, target_date):
         with open(json_path, 'r', encoding='utf-8') as f:
             saved_db_data = json.load(f)
             
-        engine = BiomechanicalEngine(saved_db_data)
+        # INTERCEPT COGNITION INSTANTIATIONS: SECURE INTEGRITY LAYER
+        region = meeting.get("regionName")
+        track = meeting.get("name")
+        if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
+            from south_african_logic import SouthAfricanBiomechanicalEngine
+            engine = SouthAfricanBiomechanicalEngine(saved_db_data)
+        else:
+            engine = BiomechanicalEngine(saved_db_data)
+            
         report_content = render_biomechanical_analysis(engine, linked_json_path=json_path)
         
         with open(report_path, "w", encoding="utf-8") as rf:
@@ -1223,10 +1375,6 @@ def display_quick_overview(selected_event, meeting, target_date):
 
 
 def parse_positions_from_html_content(html_text):
-    """
-    Parses full field results, barriers, and saddle numbers from the static HTML
-    layout when the pre-race card is empty.
-    """
     soup = BeautifulSoup(html_text, "html.parser")
     results_mapping = {}
     
@@ -1259,10 +1407,6 @@ def parse_positions_from_html_content(html_text):
 
 
 def parse_full_results_from_html(html_text):
-    """
-    Parses full results details including saddle number, name, barrier, position,
-    jockey, trainer, and margin directly from the static HTML layout.
-    """
     if not html_text:
         return []
     soup = BeautifulSoup(html_text, "html.parser")
@@ -1349,9 +1493,6 @@ def parse_full_results_from_html(html_text):
 
 
 def extract_results_from_json_state(data):
-    """
-    Recursively scans the JSON state to find selection or runner objects with validated result details.
-    """
     results_found = {}
     
     def scan(node):
@@ -1404,9 +1545,6 @@ def extract_results_from_json_state(data):
 
 
 def parse_results_from_next_data(html_text):
-    """
-    Extracts all runners, positions, and details from the __NEXT_DATA__ script block in NextJS HTML.
-    """
     if not html_text:
         return []
     match = re.search(r'<script[^>]*id="__NEXT_DATA__"[^>]*>(.*?)</script>', html_text, re.S)
@@ -1421,12 +1559,7 @@ def parse_results_from_next_data(html_text):
 
 
 def parse_results_from_all_sources(api_data, html_text):
-    """
-    Tries to parse the complete field results from the API JSON data, 
-    Next.js __NEXT_DATA__ block, or direct HTML parsing as a fallback.
-    """
     results = []
-    
     if api_data:
         results = extract_results_from_json_state(api_data)
         if results:
@@ -1449,9 +1582,6 @@ def parse_results_from_all_sources(api_data, html_text):
 
 
 def parse_scratched_from_html_content(html_text):
-    """
-    Find scratched names from HTML results layout.
-    """
     soup = BeautifulSoup(html_text, "html.parser")
     scratched_names = set()
     
@@ -1477,7 +1607,10 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
     try:
         print(f"\n[*] Extracting Full Form Guide from API for: {race_name}")
         
-        # Auto-detect and normalize South Africa region
+        # INTERCEPT AND SECURE OUT-OF-BAND TRACK MOVES BEFORE PATH RESOLUTION
+        track = verify_sa_track_surface_v36(track, target_date)
+        json_path, pred_json_path, report_path = resolve_storage_paths(region, track, race_num, target_date)
+        
         if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
             region = "South_Africa"
 
@@ -1488,7 +1621,6 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
 
         race = data["racecardEvent"]
         
-        # 1. Fetch Sportsbet race HTML page FIRST to resolve canonical sportsbetform paths!
         print("[*] Resolving Sportsbet HTML page to extract canonical form-guide path...")
         region_slug = "australia-nz"
         if region:
@@ -1511,7 +1643,6 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
         except Exception as e:
             print(f"[!] Warning: Fetching results URL failed: {e}")
             
-        # Try to resolve path
         sb_form_path = None
         if html_text:
             sb_form_path_match = re.search(r'href="(/[\d]+/[\d]+/)\?view=Speedmap"', html_text)
@@ -1521,14 +1652,12 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
                 sb_form_path = sb_form_path_match.group(1)
                 print(f"[+] Successfully resolved canonical form path: {sb_form_path}")
                 
-        # If fallback is needed (just in case HTML is empty or match fails)
         if not sb_form_path:
             track_slug = sanitize_path_name(track).lower().replace("_", "-")
             date_slug = target_date.replace("-", "")
             sb_form_path = f"/{track_slug}/{date_slug}/race-{race_num}/"
             print(f"[!] Fallback to slug-based form path: {sb_form_path}")
             
-        # 2. Fetch track, weather, and form IDs using the resolved path!
         print("[*] Fetching weather and track profiles from sportsbetform.com.au speedmap...")
         web_details = SportsBetFormCrawler.fetch_track_and_weather_details(sb_form_path)
         
@@ -1586,7 +1715,6 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
             
         if selections:
             print(f"[*] Found {len(selections)} selections in pre-race card.")
-            
             print("[*] Contacting sportsbetform.com.au for entity mapping profile indices...")
             form_ids, referer_url = SportsBetFormCrawler.resolve_form_ids(sb_form_path)
             
@@ -1596,22 +1724,18 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
                 barrier = safe_int(item.get("barrier", item.get("original_barrier", 8)))
                 weight = safe_float(item.get("weight", 56.0))
                 
-                # Dynamic Apprentice and Weight Claim Resolution
                 jockey_name = item.get("jockey", "")
                 apprentice_claim = 0.0
                 claim_match = re.search(r'\(a(\d+\.?\d*)\)', jockey_name)
                 if claim_match:
                     apprentice_claim = float(claim_match.group(1))
                 
-                # Map sire AWD database variables
                 sire_name = str(item.get("sire", "")).lower().strip()
                 sire_awd = SIRE_AWD_LOOKUP.get(sire_name, 1200)
                 
-                # Fallback sportsbetform crawler profile parameters
                 j_sr = safe_float(item.get("jockey_win_rate_pct", 10.0)) / 100.0
                 t_sr = safe_float(item.get("trainer_win_rate_pct", 10.0)) / 100.0
                 
-                # Query the sportsbetform.com.au website asynchronously
                 t_mapped_name = next((k for k in form_ids["trainers"] if k.lower() in str(item.get("trainer", "")).lower()), None)
                 if t_mapped_name:
                     t_id = form_ids["trainers"][t_mapped_name]
@@ -1786,19 +1910,15 @@ def menu_races(meeting, target_date):
                 
         print("\nB. Run BULK Analysis for ALL Races at this meeting")
         print("0. Go Back")
-        print("M. Go Back to Main Menu")
-        print("E. Exit Completely")
+        print("M. My Profile Options")
+        print("E. Exit Terminal")
         print(print_separator("-"))
         
         choice = input("Select a Race, [B], [0], [M], or [E]: ").strip().upper()
         
-        if choice == '0':
-            break
-        elif choice == 'M':
-            return "GO_MAIN"
-        elif choice == 'E':
+        if choice == 'E':
             print("Exiting terminal session. Goodbye!")
-            sys.exit(0)
+            break
         elif choice == 'B':
             run_bulk_meeting_analysis(meeting, target_date)
             input("\nPress Enter to return to the race list...")
@@ -1949,7 +2069,6 @@ def parse_sportsbet_race_url(url):
         if region_slug == "asia-racing":
             region = "Asia"
 
-        # Auto-detect South Africa from track_slug
         if any(x in track_slug.lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]):
             region = "South_Africa"
 
@@ -2000,7 +2119,13 @@ def handle_direct_url_scraping():
     with open(json_path, 'r', encoding='utf-8') as f:
         saved_db_data = json.load(f)
         
-    engine = BiomechanicalEngine(saved_db_data)
+    # INTERCEPT SYSTEM CALLS: PREVENT INSTANTIATION DRIFT GAPS
+    if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or "south africa" in str(region).lower():
+        from south_african_logic import SouthAfricanBiomechanicalEngine
+        engine = SouthAfricanBiomechanicalEngine(saved_db_data)
+    else:
+        engine = BiomechanicalEngine(saved_db_data)
+        
     report_content = render_biomechanical_analysis(engine, linked_json_path=json_path)
     
     with open(report_path, "w", encoding="utf-8") as rf:
@@ -2016,7 +2141,7 @@ def main():
     
     while True:
         print("\n" + "="*110)
-        print(" SPOSRTSBET RACING ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
+        print(" SPORTSBET RACING ANALYSIS | BIOMECHANICAL AUDIT SYSTEM")
         print("="*110)
         print(f" [1] - View Today's Active Program ({date_str})")
         print(" [2] - Select Historical Date for Results & Auditing (YYYY-MM-DD)")
