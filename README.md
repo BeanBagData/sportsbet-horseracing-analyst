@@ -81,15 +81,15 @@ Locked Surface: SILO_A | Expected Pace (QPT): Even/True
 --------------------------------------------------------------------------------------------------------------
 No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
 --------------------------------------------------------------------------------------------------------------
-#10 Summerfest          | 3      | 58.0      | 52.500              | 1A SOVEREIGN
+#10 Summerfest         | 3      | 58.0      | 52.500              | 1A SOVEREIGN
 #8 Molten Rock         | 1      | 57.5      | 50.800              | 1B SHIELD
-#11 Vision Of Gold      | 4      | 56.0      | 49.200              | Survivor
+#11 Vision Of Gold     | 4      | 56.0      | 49.200              | Survivor
 #4 Skitt Smiling       | 7      | 54.5      | 39.200              | Sieved Out (Vetoed)
 --------------------------------------------------------------------------------------------------------------
 
 3. FINAL SYSTEMIC PREDICTION
 --------------------------------------------------------------------------------------------------------------
- Primary Biomechanical Contender: No. 3 Summerfest (Barrier 3)
+ Primary Biomechanical Contender: No. 10 Summerfest (Barrier 3)
  Cover Contender: No. 1 Molten Rock (Barrier 1)
 
  Betting Playbook Strategy:
