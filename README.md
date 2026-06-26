@@ -1,116 +1,181 @@
-# Sovereign Kinetic Index (SKI) — Biomechanical Racing Engine
 
-An advanced algorithmic predictive modeling pipeline and data extraction suite for Australian and South African thoroughbred, greyhound, and harness racing. The system combines non-linear physical chassis models, jurisdictional track friction calculations, and automatic parameter calibration using a **Supervised Low-Rank Adaptation (LoRA)** adaptation framework.
+***
 
----
+# Sovereign Kinetic Index (SKI) & DETS-TKS — Biomechanical Racing Engine
 
-## 🚀 Key Architectural Features
+An analytical modeling framework and automated data-harvesting pipeline designed for Australian and South African racing. The system processes physical chassis profiles, local track configurations, and real-time environmental metrics to evaluate runner efficiency and identify statistical outliers.
 
-### 1. Programmatic Biomechanical Feature Extraction
-* **Physical Chassis Vectorization**: Transforms unstructured form commentary, age, sex, and horse attributes into deterministic numerical dimensions without relying on semantic APIs.
-* **Apprentice Claim Mitigation (ACM)**: Dynamically scales allotted weight profiles based on claim margins to calculate true effective load.
-* **Moisture-Compaction Shear Index (MSCI)**: Translates track classifications (Firm/Soft/Heavy/Synthetic) into shear friction coefficients that adjust turn loss and drag.
-* **Double Jeopardy Penalty**: Applies non-linear safety offsets to heavy-weight contenders drawn in wide barriers to mitigate high-drag scenarios.
-
-### 2. Supervised LoRA Tiny Adaptor Framework
-Instead of directly adjusting the full 6-dimensional weight vector for each localized track/region environment (which causes parameter drift and over-fitting), SKI implements a parameter-efficient fine-tuning (PEFT) framework based on Low-Rank Adaptation (LoRA) [1]:
-
-$$\Delta W = B_s \times A$$
-
-* **Frozen Base Weights ($W_0$)**: Verified physical baseline weights remain untouched (acting as the "pre-trained model").
-* **Shared Projection Matrix ($A \in \mathbb{R}^{r \times d}$)**: A rank $r=2$, dimension $d=6$ matrix that captures global cross-dependencies and correlations across the physical metrics.
-* **Silo-Specific Adapter ($B_s \in \mathbb{R}^{1 \times r}$)**: A 2-parameter coefficient vector for each individual track surface environment (e.g., `Australia_Turf_Wet`, `South_Africa_Synthetic`).
-* **Random-to-Zero Initialization**: As standard in LoRA architectures, matrix $A$ is initialized with small random values, and $B_s$ is initialized to zero. This ensures the initial correction matrix is exactly zero ($\Delta W = 0$) and the system relies entirely on robust base physics until training begins.
-* **Calibration Checkpointing**: Prevents duplicate training cycles by comparing the completed files in the `/storage/` directory against a `"trained_race_files"` log stored inside `biomechanical_weights.json`. Training only runs when new completed profiles are detected on disk.
-
-### 3. High-Fidelity Scraping & API Ingestion
-* **REST API & HTML Harvesting**: Pulls full card details directly from active REST endpoints and parses scratchings using BeautifulSoup4 HTML page layout traversal.
-* **10-Day Historical Cache Alignment**: Matches Sportsbet's rolling 10-day retention window on `/AllRacing/` historical endpoints to prevent server-side `400 Bad Request` exceptions.
-* **Results Synchronization**: Retro-actively audits past scheduled events, extracts the final official results order, and updates database records with resolved positions.
+This repository features a dual-jurisdictional architecture: the **Sovereign Kinetic Index (SKI) Engine (v2.6)** for Australian tracks and the **DETS-TKS Forensic Decision Engine (v3.5)** tailored to South African venues.
 
 ---
 
-## 📂 Repository Map
+## 📂 Core Architecture & Module Map
 
-```filepath
-├── sportsbet_scraper.py      # Terminal CLI, REST API client, beautifulsoup parsers, and pipeline lifecycle coordinator.
-├── australian_logic.py       # Core physical vectorizer, LoRA weights synthesizer, coordinate descent optimizer, and AU prediction engine.
-├── south_african_logic.py    # Custom variant logic optimized for South African track structures and distinct pacing profiles.
-└── storage/                  # Automated filesystem database storing raw data, predictions, text reports, and JSON configurations.
-    ├── biomechanical_weights.json  # Calibrated weights state containing matrices A and B, plus historical checkpoint metrics.
-    └── [target_date]/              # Date-grouped regional track directories.
-```
+### 1. Core Models & Logistics
+* **`australian_logic.py` (SKI Engine v2.6)**: 
+  * **`BiomechanicalTextVectorizer`**: Converts unstructured physical descriptors (e.g., age, sex, gear adjustments) into reproducible numerical parameters.
+  * **Brun’s Sieve of Elimination (Vetoes $p_1$ to $p_{10}$)**: Applies deterministic safety boundaries—such as high-weight synthetic drag and fresh-on-heavy stamina deficits—to filter out high-risk contenders.
+  * **Dual Kinetic Engine**: Models metabolic capacity and mechanical drag using track-compaction estimations (MSCI) and soil suction variables.
+* **`south_african_logic.py` (DETS-TKS Engine v3.5)**:
+  * **`SouthAfricanBiomechanicalEngine`**: Inherits from the base biomechanical class, utilizing specialized rules for South African conditions.
+  * **Turf Evaporation Engine (HSSM)**: Models soil moisture adjustments over a 22.74-hour forecast window using ambient temperature, wind, and relative humidity.
+  * **Gauteng Stable Synergy (TDM/JDM/SJS)**: Incorporates localized trainer, jockey, and stable relationship adjustments.
+  * **Post-Scratching Barrier Compression**: Automatically recalculates and compresses barrier positions sequentially after late scratchings are resolved.
+* **`sportsbet_scraper.py`**:
+  * Acts as the primary terminal CLI and orchestration coordinator.
+  * Employs web scrapers to gather meteorological profiles and track configurations from `sportsbetform.com.au`.
+  * Implements dynamic fallback options, parsing `__NEXT_DATA__` scripts or target HTML blocks when traditional API payloads return empty.
 
 ---
 
-## 🛠️ Installation & Setup
+## 🖥️ Command-Line Interface (CLI) Guide
 
-### Prerequisites
-Make sure you have Python 3.8+ installed along with the required dependencies:
-
-```bash
-pip install requests beautifulsoup4
-```
-
-### Initial Workspace Configuration
-When you run the system for the first time, it automatically creates the directory structure and populates your baseline weights file:
+Start the control terminal by running the main entry script:
 
 ```bash
 python sportsbet_scraper.py
 ```
 
----
-
-## 🖥️ CLI Orchestration Interface
-
-When executing `sportsbet_scraper.py`, you are presented with an interactive terminal interface designed for prediction execution and system maintenance:
+The system presents the following interactive menu:
 
 ```text
 ==============================================================================================================
- SOVEREIGN KINETIC INDEX (SKI) v4.1 | BIOMECHANICAL AUDIT SYSTEM
+ SPOSRTSBET RACING ANALYSIS | BIOMECHANICAL AUDIT SYSTEM
 ==============================================================================================================
- [1] - View Today's Active Program (2026-06-23)
+ [1] - View Today's Active Program (YYYY-MM-DD)
  [2] - Select Historical Date for Results & Auditing (YYYY-MM-DD)
  [3] - Scrape & Analyse a Custom Sportsbet Race URL directly
  [4] - Execute Recursive Archive Search & Biomechanical Model Validation
  [5] - Bulk Scrape & Analyze Missing Historical Archives (Last 10 Days)
  [6] - Bulk Update Missing Results for Existing Archives
- [7] - Run Supervised LoRA Calibration on New/Untrained Archives
- [8] - Exit Terminal
+ [7] - Exit Terminal
 --------------------------------------------------------------------------------------------------------------
-Enter option (1-8):
+Enter option (1-7):
 ```
 
-### Feature Explanations:
-* **Option `[1]` (Real-Time Prediction)**: Pulls active racing sheets for today. When running today's unresulted cards, **inference runs instantly** using the active RAM cache without executing training loops.
-* **Option `[5]` & `[6]` (Data Pipelines)**: Bulk harvests missing retrospective data and updates previously scheduled events with final official result records.
-* **Option `[7]` (LoRA Calibration)**: Audits your database directory. If new completed races are found, the coordinate-descent optimizer adapts the global shared matrix $A$ and local adapters $B_s$, then appends the files to your checkpoint log to prevent duplicate training on old data.
+### Menu Option Details:
+* **Option `[1]` (Active Program)**: Inspects real-time events scheduled for the current date. Selecting a specific race allows you to scrape its form and generate immediate biomechanical predictions.
+* **Option `[3]` (Direct URL Scraper)**: Allows you to analyze a specific race by pasting its direct Sportsbet URL (e.g., `https://www.sportsbet.com.au/horse-racing/australia-nz/goulburn/race-1-10608636`).
+* **Option `[4]` (Model Validation & Audit)**: Recursively parses all previously resulted and saved JSON records in your `/storage/` directory, evaluating predictive performance relative to the official finishing orders.
+* **Option `[5]` & `[6]` (Database Maintenance)**: Scrapes missing historical cards and retroactively syncs past events with their official final results.
 
 ---
 
-## 📐 Mathematical Formulation of the SKI Optimizer
+## 📐 How to Read Predictions & Betting Playbook Selections
 
-The physical scorer rates each runner using a composition of calculated kinetic features:
+An output report generated by the engine includes calculated physical metrics, status vetoes, and systematic wagering suggestions:
 
-$$\text{Score} = \text{BaseEnergy} + \text{FreshnessModifier} - \text{FrictionDrag} - \text{MassDamping} - (\text{AvgMargin} \times \alpha)$$
+```text
+==============================================================================================================
+SOUTH AFRICAN EXPERT FORENSIC CALIBRATION REPORT [SAF MASTER PROMPT V1.9 COMPLIANT]
+==============================================================================================================
+Date: 2026-06-23 | Venue: Vaal
+Locked Surface: SILO_A | Expected Pace (QPT): Even/True
+--------------------------------------------------------------------------------------------------------------
+1. PWG IMMUTABLE MATRIX VERIFICATION
+  - Target Straight Profile: Spacious continuous turf layout (no short-bend constraints) verified.
+  - Matrix Mode: Slow-Track Trap checked; Collapse Advantage parsed dynamically.
+--------------------------------------------------------------------------------------------------------------
 
-Where each component is adjusted by the weights $W$ synthesized from the LoRA parameter matrices:
+2. BIOMECHANICAL EFFICIENCY CALCULATIONS
+--------------------------------------------------------------------------------------------------------------
+No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
+--------------------------------------------------------------------------------------------------------------
+#3 Summerfest          | 3      | 58.0      | 52.500              | 1A SOVEREIGN
+#1 Molten Rock         | 1      | 57.5      | 50.800              | 1B SHIELD
+#4 Vision Of Gold      | 4      | 56.0      | 49.200              | Survivor
+#7 Skitt Smiling       | 7      | 54.5      | 39.200              | Sieved Out (Vetoed)
+--------------------------------------------------------------------------------------------------------------
 
-$$W = \begin{bmatrix} w_{\text{kem}} \\ w_{\text{turn}} \\ w_{\text{mass}} \\ w_{\text{fresh}} \\ w_{\text{jeopardy}} \\ w_{\text{text}} \end{bmatrix} = W_0 + B_s \times A$$
+3. FINAL SYSTEMIC PREDICTION
+--------------------------------------------------------------------------------------------------------------
+ Primary Biomechanical Contender: No. 3 Summerfest (Barrier 3)
+ Cover Contender: No. 1 Molten Rock (Barrier 1)
 
-### Step-by-Step Optimization Process (Coordinate Descent):
-1. **Local Selection**: The local vector $B_s = [b_{s,1}, b_{s,2}]$ is adjusted in increments of $[0.1, 0.25, 0.5, 1.0]$. The coordinate step that maximizes the sovereign prediction accuracy (first-place selection matching the official result) on that track's historical results is saved.
-2. **Global Consolidation**: The global projection matrix $A \in \mathbb{R}^{2 \times 6}$ is tweaked across steps of $[0.05, 0.1, 0.2]$ to find structural parameter relations that improve system-wide accuracy across all combined silos.
-3. **Boundary Protection**: Safe threshold bounds are enforced on the final composed $W$ parameters (e.g., preventing kinetic energy parameters from dropping below zero or mass dampening from exceeding physical limits).
+ Betting Playbook Strategy:
+  - Sovereign Target (Win/Place Priority): WIN on No. 3 Summerfest
+  - Protective Cover Exacta: 3 / 1, 4
+  - Swinger (Box): 3, 1
+  - Inoculation Triggered: Midfield place-specialist #4 Vision Of Gold injected into exotics.
+  - Systemic Trifecta: 3 / 1, 4 / 1, 4
+==============================================================================================================
+```
+
+### 1. Key Metrics Explained
+* **Biomechanical Score (SKI / NTCI)**: Represents the calculated running efficiency. Higher values indicate a stronger performance projection under the prevailing weight, barrier draw, and track condition.
+* **Draw & Recalculated Barrier**: Shows the compressed starting position after accounting for early scratchings, which is critical for estimating pathing and turn-radius drag.
+* **Mass / Effective Weight**: The true physical weight carried by the runner after subtracting any apprentice claims.
+
+### 2. Contender Designations
+* **`1A Sovereign`**: The top-ranked runner based on computed biomechanical efficiency. Represented as the primary selection.
+* **`1B Shield`**: The secondary selection, serving as a protective cover choice.
+* **`Survivor` / `Exotic Residual`**: Competitors that met basic criteria and can be utilized to fill out multi-runner wagers (such as trifectas).
+* **`Sieved Out (Vetoed)`**: Runners flagged by one or more deterministic safety boundaries. They are deprioritized regardless of their raw speed capability.
+
+### 3. Understanding Playbook Strategies
+* **Sovereign Target**: Recommended for straightforward win or place considerations.
+* **Protective Cover Exacta**: Pairs the primary contender with top backup selections.
+* **Swinger (Box)**: A wager requiring your selected runners to finish within the top three positions.
+* **Place Inoculation Candidate**: The system automatically flags midfield place-getters with high place percentages ($\ge 40\%$) and incorporates them as low-risk exotic elements.
 
 ---
 
-## ⚖️ License
+## 💻 Cross-Platform Setup & Execution
 
-This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**. 
+The software is written in Python, using standard file path construction to ensure compatibility across Windows, macOS, and Linux platforms.
 
-* **Commercial Use**: Permitted under GPL-3.0 conditions.
-* **Modification**: You may modify the code, but you must document and label any changes.
-* **Source Code Availability**: Any work or derivative system that includes this code must make its complete source code available under the same GPL-3.0 license terms.
+### Step 1: Install Dependencies
+Open your terminal or command prompt and install the required modules:
+```bash
+pip install requests beautifulsoup4 numpy
+```
 
-For more details, see the official [GNU GPL 3.0 License Reference](https://www.gnu.org/licenses/gpl-3.0.html).
+### Step 2: Platform-Specific Running Guide
+
+#### 🍎 macOS & 🐧 Linux (including Raspberry Pi)
+Open your terminal application and execute the pipeline:
+1. Ensure your local environment is utilizing Python 3:
+   ```bash
+   python3 sportsbet_scraper.py
+   ```
+2. **Virtual Environment Setup (Optional but Recommended)**:
+   ```bash
+   # Create a virtual environment
+   python3 -m venv venv
+   
+   # Activate the environment
+   source venv/bin/activate
+   
+   # Install dependencies
+   pip install -r requirements.txt
+   
+   # Run the script
+   python sportsbet_scraper.py
+   ```
+
+#### 🪟 Windows PC
+1. Open PowerShell or Command Prompt.
+2. Navigate to your project directory:
+   ```cmd
+   cd C:\path\to\your\project-folder
+   ```
+3. Run the script:
+   ```cmd
+   python sportsbet_scraper.py
+   ```
+
+### ⚙️ Multi-Platform Technical Notes:
+* **UTF-8 Character Support**: The script relies on terminal output styling to render tables and separators. If formatting appears misaligned on older Windows Command Prompt systems, use **PowerShell** or set your terminal code page to UTF-8:
+  ```cmd
+  chcp 65001
+  ```
+* **Directory Operations**: Directory paths are dynamically constructed using Python's standard `os.path` library. This ensures that the generated `/storage/` subdirectory structures are created correctly regardless of standard Windows backslashes (`\`) or Unix forward slashes (`/`).
+
+---
+
+## ⚖️ License & Terms
+
+This software is released under the **GNU General Public License v3.0 (GPL-3.0)**. 
+
+* **Attribution & Open Source**: Any modifications, derivations, or integrated versions of this software must remain open source, document changes, and be made publicly available under the same GPL-3.0 license terms.
+* **Commercial Use**: Allowed, provided the complete source code remains open and accessible under GPL-3.0 terms.
