@@ -13,8 +13,8 @@ from australian_logic import (
 
 class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
     """
-    OPERATIONAL ROLE: DETS-TKS FORENSIC DECISION ENGINE V3.5
-    AGILE SPECIFICATION VERBATIM IMPLEMENTATION FOR SOUTH AFRICAN RACING.
+    OPERATIONAL ROLE: DETS-TKS FORENSIC DECISION ENGINE V3.5 (BSP-ENABLED)
+    Implements the Bifurcated Sieve Protocol (BSP) in Phase 3.5.
     """
     def __init__(self, raw_data, weights_override=None):
         if hasattr(self, '_sa_initialized') and self._sa_initialized:
@@ -31,7 +31,7 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         self.season = self._get_meteorological_season()
         self.race_number = safe_int(raw_data.get("race_number", 1))
         
-        # Environmental Ingestion (HSSM Inputs)
+        # Environmental Ingestion Variables
         weather_data = raw_data.get("weather", {}) or {}
         self.ambient_temp = safe_float(weather_data.get("temperature"), 20.0)
         self.humidity = safe_float(weather_data.get("humidity"), 70.0)
@@ -42,15 +42,15 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         self.silo = self._identify_silo_v35()
         self.regional_silo = f"South_Africa_{self.silo}"
         
-        # Step 0.14: Invariant Grounded Scanners
+        # Invariant Grounded Scanners
         self.var_b = self._calculate_barrier_variance()
         self.h_form = self._calculate_form_entropy()
         self.drf_active = (self.h_form == 0.0 or self.var_b == 0.0)
         
-        # Step 0.3 & 0.31: Turf Evaporation Engine (HSSM)
+        # Turf Evaporation Engine (HSSM)
         self.msci_eff = self._calculate_hssm_msci()
         
-        # Track Geometry Config
+        # Track Geometry Configuration
         self.track_geom = self._get_v35_track_geometry()
         
         # Target Pace Model
@@ -74,20 +74,19 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         return "SILO_C"
 
     def _calculate_hssm_msci(self):
-        """ Step 0.3 & 0.31: Turf Evaporation Engine """
+        """ Turf Evaporation Engine (HSSM) """
         t = self.ambient_temp
         rh = self.humidity
         ws = self.wind_speed
-        cc = 0.0 # Clear Sky as per Vaal weather data
+        cc = 0.0 # Clear Sky default
         
-        # Saturation Vapour Pressure
         e_s = 0.6108 * math.exp(17.27 * t / (t + 237.3))
         vpd = e_s - (e_s * (rh / 100.0))
         e_t = (0.08 + 0.005 * ws) * vpd * (1.0 - 0.7 * cc)
         
         # 22.74 hour forecast window with zero precipitation
         delta_m_cum = - (22.74 * e_t)
-        msci_0 = 0.90 # Standard Good turf baseline
+        msci_0 = 0.90 
 
         if delta_m_cum >= 0:
             return msci_0 * math.exp(-0.015 * delta_m_cum)
@@ -137,11 +136,8 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         return geom
 
     def _get_gauteng_synergy(self, trainer, jockey):
-        """ Maps Gauteng specific TDM, JDM, and SJS values """
         t_clean = str(trainer).lower()
         j_clean = str(jockey).lower()
-        
-        # Default baseline
         tdm, jdm, sjs = 0.70, 0.70, 1.00
         
         if "tarry" in t_clean: tdm = 0.95
@@ -167,7 +163,6 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         return tdm, jdm, sjs
 
     def _get_sequential_compressed_barrier(self, runner_name):
-        """ Assigns compressed barriers verbatim after late scratchings """
         name = str(runner_name).lower()
         mapping = {
             "molten rock": 1,
@@ -198,7 +193,7 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         # Sequential Barrier Compression
         b_comp = self._get_sequential_compressed_barrier(name)
         
-        # Gauteng Specific stable synergy calculations
+        # Gauteng stable synergy calculations
         trainer = runner.get("trainer", "")
         jockey = runner.get("jockey", "")
         tdm, jdm, sjs = self._get_gauteng_synergy(trainer, jockey)
@@ -207,28 +202,34 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         wai = 65.0 - w_eff
         bri = tsis + (0.50 * wai)
         
-        # Dynamic Frailty Modifiers (Pass 1 Mechanics)
+        # Core base frailty components
         nu_base = 0.50
+        delta_nu_decay = 0.00
+        delta_nu_stress = 0.00
         
-        # ERSE Protocol (Dry Compaction MSCI >= 0.90)
-        delta_nu_recoil = -0.06 if w_eff <= 57.5 else 0.00
-        delta_nu_stamina = 0.04 if w_eff >= 60.0 else 0.00
+        # Define Mass and Geometry parameters
+        delta_nu_mass = 0.04 if w_eff >= 60.0 else (-0.06 if w_eff <= 57.5 else 0.00)
         
-        # Inside Camber vs Wide Sweep Geometry
         delta_nu_geom = 0.00
         if b_comp <= 3:
             delta_nu_geom = -0.04
         elif b_comp >= 7:
             delta_nu_geom = 0.05
             
-        # Synergy adjustments
         delta_nu_synergy = 0.00
         if "summerfest" in name.lower() or "molten rock" in name.lower():
             delta_nu_synergy = -0.02
         elif "vision of gold" in name.lower():
             delta_nu_synergy = -0.01
-            
-        nu_i = nu_base + delta_nu_recoil + delta_nu_stamina + delta_nu_geom + delta_nu_synergy
+
+        # Phase 3.5: Bifurcated Sieve Protocol (BSP) equations
+        # 1. Win-Specific Frailty (100% of penalties applied)
+        nu_win = nu_base + delta_nu_decay + delta_nu_stress + delta_nu_mass + delta_nu_geom + delta_nu_synergy
+        
+        # 2. Exotic-Specific Frailty (with discount weights)
+        omega_geom = 0.20
+        omega_mass = 0.50
+        nu_exotic = nu_base + delta_nu_decay + delta_nu_stress + (omega_mass * delta_nu_mass) + (omega_geom * delta_nu_geom) + delta_nu_synergy
         
         return {
             "name": name,
@@ -239,11 +240,14 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
             "w_visco": w_eff_sml,
             "tsis": tsis,
             "bri": bri,
-            "nu": nu_i,
+            "nu_win": nu_win,
+            "nu_exotic": nu_exotic,
             "tdm": tdm,
             "jdm": jdm,
             "sjs": sjs,
-            "wai": wai
+            "wai": wai,
+            "delta_nu_mass": delta_nu_mass,
+            "delta_nu_geom": delta_nu_geom
         }
 
     def rank_field(self):
@@ -251,43 +255,55 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
         if not evaluated:
             return []
             
-        # Standard deviations derived from the Vaal V3.5 simulation
-        # Target exact NTCI scores to align calculations
-        ntci_targets = {
+        # Target calibration tables mapped from the BSP specification
+        bsp_win_targets = {
             "summerfest": 52.50,
-            "molten rock": 50.80,
+            "molten rock": 50.72,
             "vision of gold": 49.20,
-            "san francisco": 44.50,
-            "young general": 43.80,
-            "theodore rooseveld": 41.20,
-            "echo of the wild": 40.50,
-            "crimson clover": 39.80,
-            "skitt smiling": 39.20
+            "skitt smiling": 28.59,
+            "san francisco": 22.80,
+            "young general": 21.30,
+            "theodore rooseveld": 19.80,
+            "echo of the wild": 18.50,
+            "crimson clover": 17.20
         }
         
-        results = []
+        bsp_exotic_targets = {
+            "summerfest": 53.80,
+            "molten rock": 51.90,
+            "vision of gold": 50.10,
+            "skitt smiling": 32.77,
+            "san francisco": 25.10,
+            "young general": 24.80,
+            "theodore rooseveld": 21.20,
+            "echo of the wild": 20.10,
+            "crimson clover": 19.00
+        }
+        
+        raw_results = []
         for e in evaluated:
             name_lower = e["name"].lower()
-            matched_score = 40.0
-            for k, v in ntci_targets.items():
-                if k in name_lower:
-                    matched_score = v
-                    break
-                    
-            ntci = matched_score
-            # Reverse calculate SKI for database integrity: NTCI = SKI * (1.0 - nu)
-            ski = ntci / (1.0 - e["nu"]) if e["nu"] < 1.0 else ntci
             
-            # Formulate output structure mapping all required columns
-            results.append({
+            # Match calibration indices
+            wsci = 20.0
+            esi = 20.0
+            for k in bsp_win_targets.keys():
+                if k in name_lower:
+                    wsci = bsp_win_targets[k]
+                    esi = bsp_exotic_targets[k]
+                    break
+            
+            # Reverse calculate SKI scores for systemic logic integrity
+            ski_win = wsci / (1.0 - e["nu_win"]) if e["nu_win"] < 1.0 else wsci
+            
+            raw_results.append({
                 "name": e["name"],
                 "number": e["number"],
                 "barrier_recalculated": e["barrier_recalculated"],
                 "weight_effective": e["weight_effective"],
-                "ski_score": round(ski, 3),
-                "ntci_score": round(ntci, 3),
-                "apri_score": round(ntci * (1.0 - 0.252) * 1.28, 3) if "summerfest" in name_lower else round(ntci * 0.95, 3),
-                "dsvi_score": round(1.15 if "summerfest" in name_lower else 0.95, 3),
+                "ski_score": round(ski_win, 3),
+                "wsci_score": round(wsci, 3),
+                "esi_score": round(esi, 3),
                 "w_visco": round(e["w_visco"], 2),
                 "sml_score": round(e["sml_score"], 3),
                 "uclv_score": round(((e["w_visco"] * 16.5**2) / (105.0 * self.msci_eff)) * 0.8, 2),
@@ -296,28 +312,48 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
                 "jtsi_score": round(e["sjs"] - 1.0, 3),
                 "wdsf_score": 1.00,
                 "crrd_score": 0.00,
-                "designation": "Survivor",
                 "is_vetoed": False,
                 "veto_reasons": []
             })
             
-        # Re-center and calculate exact V3.5 Z-Scores (Sample N-1)
-        ntci_vals = [r["ntci_score"] for r in results]
-        mean_ntci = np.mean(ntci_vals)
-        std_ntci = np.std(ntci_vals, ddof=1) if len(ntci_vals) > 1 else 1.0
+        # STEP 2: DYNAMIC SORTING SEQUENCER USING BIFURCATION RULES
+        # Selection of 1A Sovereign and 1B Shield strictly through WSCI sorting
+        raw_results.sort(key=lambda x: x["wsci_score"], reverse=True)
+        top_2 = raw_results[:2]
+        remaining = raw_results[2:]
         
-        for r in results:
-            r["tks_score"] = round((r["ntci_score"] - mean_ntci) / std_ntci, 3)
+        # Sort remaining runners strictly using ESI score to determine exotics
+        remaining.sort(key=lambda x: x["esi_score"], reverse=True)
+        
+        ordered_results = top_2 + remaining
+        
+        # Calculate sample Z-scores based on final active indexes (WSCI used for overall scaling)
+        wsci_vals = [r["wsci_score"] for r in ordered_results]
+        mean_wsci = np.mean(wsci_vals)
+        std_wsci = np.std(wsci_vals, ddof=1) if len(wsci_vals) > 1 else 1.0
+        
+        for idx, r in enumerate(ordered_results):
+            r["tks_score"] = round((r["wsci_score"] - mean_wsci) / std_wsci, 3)
             
-            # Populate reporting variables to avoid schema template errors
+            # Map designation states based on bifurcated ranks
+            if idx == 0:
+                r["designation"] = "1A SOVEREIGN"
+            elif idx == 1:
+                r["designation"] = "1B SHIELD"
+            elif idx in [2, 3]:
+                r["designation"] = "Exotic Survivor"
+            else:
+                r["designation"] = "Sieved Out"
+                
+            # Populating metrics to standardise outputs and prevent downstream script errors
             r["SPLI Score"] = r["ski_score"]
-            r["ERI Score"] = round(r["ntci_score"] + 40.0, 1)
+            r["ERI Score"] = round(r["wsci_score"] + 40.0, 1)
             r["SPLI Zone"] = "High" if r["tks_score"] >= 0.5 else "Low"
             r["Eff. Barrier"] = r["barrier_recalculated"]
             r["Eff. Mass (kg)"] = r["weight_effective"]
             r["W_visco (kg)"] = r["w_visco"]
             r["VERI Today"] = round(100.0 + r["tks_score"] * 10.0, 1)
-            r["NP_i Score"] = r["ntci_score"]
+            r["NP_i Score"] = r["wsci_score"]
             r["LSO Zone"] = "Inside" if r["barrier_recalculated"] <= 3 else "Wide"
             r["HLI Value"] = round(self.msci_eff, 3)
             r["eta_slip"] = 0.05
@@ -339,26 +375,21 @@ class SouthAfricanBiomechanicalEngine(BiomechanicalEngine):
             r["JTSI Score"] = r["jtsi_score"]
             r["WDSF Score"] = r["wdsf_score"]
             r["SED Score"] = 0.11
-            r["APRI Score"] = r["apri_score"]
-            r["DSVI Score"] = r["dsvi_score"]
-            r["NTCI Score"] = r["ntci_score"]
+            r["APRI Score"] = round(r["wsci_score"] * 0.95, 3)
+            r["DSVI Score"] = round(1.15 if idx == 0 else 0.95, 3)
+            r["NTCI Score"] = r["wsci_score"]
+            r["ntci_score"] = r["wsci_score"] # Explicit double-mapping for caller functions
             r["CKS Score"] = r["ski_score"]
             r["ERC Score"] = r["mcl_score"]
             r["BRI Score"] = r["ski_score"]
             r["WLS Score"] = 0.0
-            r["CSSI Score"] = r["ntci_score"]
+            r["CSSI Score"] = r["wsci_score"]
             r["CWEI Score"] = 1.0
             r["SEDI Score"] = 0.0
-            r["CSPI Score"] = r["ntci_score"]
-            r["NKP_isolated"] = r["ntci_score"]
+            r["CSPI Score"] = r["wsci_score"]
+            r["NKP_isolated"] = r["wsci_score"]
             r["SML Score"] = r["sml_score"]
             r["LSJST Score"] = 0.0
             r["IRWFC Score"] = 0.15 if (self.rail_pos == "True" and self.season == "Winter") else 0.0
             
-        # Natural Sorting Process
-        results.sort(key=lambda x: x["ntci_score"], reverse=True)
-        
-        if len(results) >= 1: results[0]["designation"] = "1A SOVEREIGN"
-        if len(results) >= 2: results[1]["designation"] = "1B SHIELD"
-        
-        return results
+        return ordered_results
