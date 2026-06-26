@@ -90,7 +90,7 @@ No./Chassis Name       | Draw   | Mass (kg) | Biomechanical Score | Designation
 3. FINAL SYSTEMIC PREDICTION
 --------------------------------------------------------------------------------------------------------------
  Primary Biomechanical Contender: No. 10 Summerfest (Barrier 3)
- Cover Contender: No. 1 Molten Rock (Barrier 1)
+ Cover Contender: No. 8 Molten Rock (Barrier 1)
 
  Betting Playbook Strategy:
   - Sovereign Target (Win/Place Priority): WIN on No. 10 Summerfest
