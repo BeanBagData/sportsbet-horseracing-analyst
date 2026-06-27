@@ -482,9 +482,18 @@ def render_biomechanical_analysis(engine, linked_json_path=""):
         
     output_lines = []
     
-    inoculated_runner = None
-    from south_african_logic import SouthAfricanBiomechanicalEngine
-    if isinstance(engine, SouthAfricanBiomechanicalEngine):
+    # Isolate South African vs Australian layout processing
+    is_saf = False
+    try:
+        from south_african_logic import SouthAfricanBiomechanicalEngine
+        if isinstance(engine, SouthAfricanBiomechanicalEngine):
+            is_saf = True
+    except ImportError:
+        pass
+
+    if is_saf:
+        # --- SOUTH AFRICAN SELECTION PIPELINE (UNCHANGED compliance) ---
+        inoculated_runner = None
         for item in ranked_field[2:5]:
             raw_runners = engine.raw_data.get("runners", [])
             r_data = next((r for r in raw_runners if safe_int(r.get("number")) == item["number"]), None)
@@ -494,7 +503,6 @@ def render_biomechanical_analysis(engine, linked_json_path=""):
                     inoculated_runner = item
                     break
 
-    if isinstance(engine, SouthAfricanBiomechanicalEngine):
         output_lines.append("SOUTH AFRICAN EXPERT FORENSIC CALIBRATION REPORT [SAF MASTER PROMPT V1.9 COMPLIANT]")
         output_lines.append(print_separator("="))
         output_lines.append(f"Date: {get_current_date_string()} | Venue: {engine.race_name}")
@@ -504,52 +512,104 @@ def render_biomechanical_analysis(engine, linked_json_path=""):
         output_lines.append("  - Target Straight Profile: Spacious continuous turf layout (no short-bend constraints) verified.")
         output_lines.append("  - Matrix Mode: Slow-Track Trap checked; Collapse Advantage parsed dynamically.")
         output_lines.append(print_separator("-"))
+        
+        if linked_json_path:
+            output_lines.append(f"LOCAL DATA ARCHIVE REFERENCE: {os.path.abspath(linked_json_path)}")
+            
+        output_lines.append(print_separator("="))
+
+        output_lines.append("\n2. BIOMECHANICAL EFFICIENCY CALCULATIONS")
+        output_lines.append(print_separator("-"))
+        output_lines.append(f"{'No./Chassis Name':<22} | {'Draw':<6} | {'Mass (kg)':<7} | {'Biomechanical Score':<15} | {'Designation'}")
+        output_lines.append(print_separator("-"))
+        for item in ranked_field:
+            name_trunc = f"#{item['number']} {item['name']}"[:21]
+            output_lines.append(f"{name_trunc:<22} | {item['barrier_recalculated']:<6} | {item['weight_effective']:<7.1f} | {item['ski_score']:<15.3f} | {item['designation']}")
+        output_lines.append(print_separator("-"))
+
+        output_lines.append("\n3. FINAL SYSTEMIC PREDICTION")
+        output_lines.append(print_separator("-"))
+        primary = ranked_field[0]
+        output_lines.append(f" Primary Biomechanical Contender: No. {primary['number']} {primary['name']} (Barrier {primary['barrier_recalculated']})")
+        if len(ranked_field) >= 2:
+            cover = ranked_field[1]
+            output_lines.append(f" Cover Contender: No. {cover['number']} {cover['name']} (Barrier {cover['barrier_recalculated']})")
+            
+        output_lines.append("\n Betting Playbook Strategy:")
+        output_lines.append(f"  - Sovereign Target (Win/Place Priority): WIN on No. {primary['number']} {primary['name']}")
+        
+        if len(ranked_field) >= 2:
+            exacta_legs = [str(ranked_field[1]['number']), str(ranked_field[2]['number'])]
+            output_lines.append(f"  - Protective Cover Exacta: {primary['number']} / {', '.join(exacta_legs)}")
+            output_lines.append(f"  - Swinger (Box): {primary['number']}, {ranked_field[1]['number']}")
+            
+            tri_second_leg = [str(ranked_field[1]['number']), str(ranked_field[2]['number'])]
+            tri_third_leg = tri_second_leg.copy()
+            if len(ranked_field) > 3:
+                tri_third_leg.append(str(ranked_field[3]['number']))
+            if inoculated_runner:
+                tri_third_leg.append(str(inoculated_runner['number']))
+                output_lines.append(f"  - Inoculation Triggered: Midfield place-specialist #{inoculated_runner['number']} {inoculated_runner['name']} injected into exotics.")
+                
+            output_lines.append(f"  - Systemic Trifecta: {primary['number']} / {', '.join(tri_second_leg)} / {', '.join(sorted(list(set(tri_third_leg))))}")
+
     else:
-        output_lines.append("BIOMECHANICAL CLASSIFIER MODEL FORENSIC OUTPUT v4.1 [Deterministic Mode]")
+        # --- AUSTRALIAN SELECTION PIPELINE (DSP Focus) ---
+        matched_runners = [item for item in ranked_field if item.get("matched_dsps")]
+        has_matches = len(matched_runners) > 0
+
+        output_lines.append("BIOMECHANICAL CLASSIFIER MODEL FORENSIC OUTPUT v4.3 [Deterministic DSP Mode]")
         output_lines.append(print_separator("-"))
         output_lines.append(f"Date: {get_current_date_string()}")
-        output_lines.append(f"TRACK: {engine.race_name} | DISTANCE: {engine.distance}m | MODEL SILO: {engine.regional_silo}")
-        output_lines.append(f"BASELINE VARIABLES: KEM={engine.weights[0]:.1f}, Turn={engine.weights[1]:.2f}, Mass={engine.weights[2]:.2f}, Fresh={engine.weights[3]:.2f}, Jeopardy={engine.weights[4]:.1f}")
-    
-    if linked_json_path:
-        output_lines.append(f"LOCAL DATA ARCHIVE REFERENCE: {os.path.abspath(linked_json_path)}")
+        output_lines.append(f"TRACK: {engine.track_name} | DISTANCE: {engine.distance}m | MODEL SILO: {engine.regional_silo}")
         
-    output_lines.append(print_separator("="))
-
-    output_lines.append("\n2. BIOMECHANICAL EFFICIENCY CALCULATIONS")
-    output_lines.append(print_separator("-"))
-    output_lines.append(f"{'No./Chassis Name':<22} | {'Draw':<6} | {'Mass (kg)':<7} | {'Biomechanical Score':<15} | {'Designation'}")
-    output_lines.append(print_separator("-"))
-    for item in ranked_field:
-        name_trunc = f"#{item['number']} {item['name']}"[:21]
-        output_lines.append(f"{name_trunc:<22} | {item['barrier_recalculated']:<6} | {item['weight_effective']:<7.1f} | {item['ski_score']:<15.3f} | {item['designation']}")
-    output_lines.append(print_separator("-"))
-
-    output_lines.append("\n3. FINAL SYSTEMIC PREDICTION")
-    output_lines.append(print_separator("-"))
-    primary = ranked_field[0]
-    output_lines.append(f" Primary Biomechanical Contender: No. {primary['number']} {primary['name']} (Barrier {primary['barrier_recalculated']})")
-    if len(ranked_field) >= 2:
-        cover = ranked_field[1]
-        output_lines.append(f" Cover Contender: No. {cover['number']} {cover['name']} (Barrier {cover['barrier_recalculated']})")
-        
-    output_lines.append("\n Betting Playbook Strategy:")
-    output_lines.append(f"  - Sovereign Target (Win/Place Priority): WIN on No. {primary['number']} {primary['name']}")
-    
-    if len(ranked_field) >= 2:
-        exacta_legs = [str(ranked_field[1]['number']), str(ranked_field[2]['number'])]
-        output_lines.append(f"  - Protective Cover Exacta: {primary['number']} / {', '.join(exacta_legs)}")
-        output_lines.append(f"  - Swinger (Box): {primary['number']}, {ranked_field[1]['number']}")
-        
-        tri_second_leg = [str(ranked_field[1]['number']), str(ranked_field[2]['number'])]
-        tri_third_leg = tri_second_leg.copy()
-        if len(ranked_field) > 3:
-            tri_third_leg.append(str(ranked_field[3]['number']))
-        if inoculated_runner:
-            tri_third_leg.append(str(inoculated_runner['number']))
-            output_lines.append(f"  - Inoculation Triggered: Midfield place-specialist #{inoculated_runner['number']} {inoculated_runner['name']} injected into exotics.")
+        if has_matches:
+            output_lines.append("\n[+] DETERMINISTIC SIGNATURE PATTERN (DSP) MATCH DETECTED!")
+            output_lines.append("    Status: ACTIVE PLAY - Bet on the matched contenders.")
+        else:
+            output_lines.append("\n[!] NO SIGNATURE PATTERNS DETECTED.")
+            output_lines.append("    Status: SKIP THIS RACE (No runner satisfies DSP criteria).")
             
-        output_lines.append(f"  - Systemic Trifecta: {primary['number']} / {', '.join(tri_second_leg)} / {', '.join(sorted(list(set(tri_third_leg))))}")
+        if linked_json_path:
+            output_lines.append(f"LOCAL DATA ARCHIVE REFERENCE: {os.path.abspath(linked_json_path)}")
+            
+        output_lines.append(print_separator("="))
+
+        output_lines.append("\n2. BIOMECHANICAL EFFICIENCY CALCULATIONS (DSP FOCUS)")
+        output_lines.append(print_separator("-"))
+        output_lines.append(f"{'No./Chassis Name':<22} | {'Draw':<6} | {'Mass (kg)':<7} | {'Biomechanical Score':<15} | {'Matched DSPs'}")
+        output_lines.append(print_separator("-"))
+        for item in ranked_field:
+            name_trunc = f"#{item['number']} {item['name']}"[:21]
+            dsps_str = ", ".join(item.get("matched_dsps", [])) if item.get("matched_dsps") else "None (Skip Selection)"
+            output_lines.append(f"{name_trunc:<22} | {item['barrier_recalculated']:<6} | {item['weight_effective']:<7.1f} | {item['ski_score']:<15.3f} | {dsps_str}")
+        output_lines.append(print_separator("-"))
+
+        output_lines.append("\n3. FINAL SYSTEMIC PREDICTION")
+        output_lines.append(print_separator("-"))
+        
+        if has_matches:
+            primary = matched_runners[0]
+            output_lines.append(f" Primary Biomechanical Contender: No. {primary['number']} {primary['name']} (Barrier {primary['barrier_recalculated']})")
+            output_lines.append(f" Matched Patterns: {', '.join(primary['matched_dsps'])}")
+            
+            if len(matched_runners) >= 2:
+                cover = matched_runners[1]
+                output_lines.append(f" Cover Contender: No. {cover['number']} {cover['name']} (Barrier {cover['barrier_recalculated']})")
+                output_lines.append(f" Matched Patterns: {', '.join(cover['matched_dsps'])}")
+                
+            output_lines.append("\n Betting Playbook Strategy:")
+            output_lines.append(f"  - Sovereign Target (Win/Place Priority): WIN on No. {primary['number']} {primary['name']}")
+            
+            if len(matched_runners) >= 2:
+                exacta_legs = [str(m['number']) for m in matched_runners[1:3]]
+                output_lines.append(f"  - Protective Cover Exacta: {primary['number']} / {', '.join(exacta_legs)}")
+                output_lines.append(f"  - Swinger (Box): {primary['number']}, {matched_runners[1]['number']}")
+                output_lines.append(f"  - Systemic Trifecta: {primary['number']} / {', '.join(exacta_legs)} / {', '.join([str(m['number']) for m in matched_runners[1:4]])}")
+        else:
+            output_lines.append(" Active Recommendation: SKIP THE RACE")
+            output_lines.append("  - Reason: Zero runners satisfied the high-probability Deterministic Signature Patterns (DSPs).")
+            output_lines.append("  - Strategy: Preserve bankroll capital; wait for next structural play alignment.")
 
     output_lines.append("=" * 110)
 
@@ -561,7 +621,7 @@ def render_biomechanical_analysis(engine, linked_json_path=""):
         order_strs = [f"{o['position']}: No. {o['number']} {o['name']}" for o in order[:3]]
         output_lines.append(" Actual Result: " + " | ".join(order_strs))
         
-        primary_no = primary["number"]
+        primary_no = primary["number"] if (not is_saf and has_matches) else (ranked_field[0]["number"])
         actual_pos = next((o["position"] for o in order if o["number"] == primary_no), None)
         pos_str = f"Rank {actual_pos}" if actual_pos else "Unplaced"
         output_lines.append(f" Primary Pick Position Outcome: {pos_str}")
@@ -727,7 +787,8 @@ def run_bulk_meeting_analysis(meeting, target_date):
                     "barrier": item["barrier_recalculated"],
                     "weight_kg": item["weight_effective"],
                     "score": item["ski_score"],
-                    "designation": item["designation"]
+                    "designation": item["designation"],
+                    "matched_dsps": item.get("matched_dsps", [])
                 }
                 for item in engine.rank_field()
             ]
@@ -775,6 +836,9 @@ def bulk_scrape_missing_historical_races():
     current_time = time.time()
     
     date_to_day = {}
+    discovered_regions = set()
+    discovered_days = set()
+    
     for item in history_list:
         try:
             dt = datetime.datetime.strptime(item["date"], "%Y-%m-%d")
@@ -785,8 +849,6 @@ def bulk_scrape_missing_historical_races():
             date_to_day[item["date"]] = "Unknown"
 
     all_meetings_metadata = []
-    discovered_regions = set()
-    discovered_days = set()
 
     print("[*] Performing quick metadata scan across 10-day schedule to compile filters...")
     for i, item in enumerate(history_list, 1):
@@ -964,7 +1026,7 @@ def bulk_scrape_missing_historical_races():
     if confirm == 'E':
         print("Exiting terminal session. Goodbye!")
         sys.exit(0)
-    elif confirm != 'Y':
+    elif confirm == '0' or confirm != 'Y':
         print("[*] Bulk scraping cancelled.")
         return
         
@@ -1016,7 +1078,8 @@ def bulk_scrape_missing_historical_races():
                             "barrier": item["barrier_recalculated"],
                             "weight_kg": item["weight_effective"],
                             "score": item["ski_score"],
-                            "designation": item["designation"]
+                            "designation": item["designation"],
+                            "matched_dsps": item.get("matched_dsps", [])
                         }
                         for item in engine.rank_field()
                     ]
@@ -1105,10 +1168,14 @@ def bulk_update_missing_results():
     print("Options:")
     print(" [Y] - Commencing programmatic update of missing results")
     print(" [0] - Return to Main Menu")
+    print(" [E] - Exit Completely")
     print(print_separator("-"))
 
     confirm = input("Select option: ").strip().upper()
-    if confirm != 'Y':
+    if confirm == 'E':
+        print("Exiting terminal session. Goodbye!")
+        sys.exit(0)
+    elif confirm == '0' or confirm != 'Y':
         print("[*] Bulk results update cancelled.")
         return
 
@@ -1175,7 +1242,8 @@ def bulk_update_missing_results():
                             "barrier": item["barrier_recalculated"],
                             "weight_kg": item["weight_effective"],
                             "score": item["ski_score"],
-                            "designation": item["designation"]
+                            "designation": item["designation"],
+                            "matched_dsps": item.get("matched_dsps", [])
                         }
                         for item in engine.rank_field()
                     ]
@@ -1357,7 +1425,8 @@ def display_quick_overview(selected_event, meeting, target_date):
                     "barrier": item["barrier_recalculated"],
                     "weight_kg": item["weight_effective"],
                     "score": item["ski_score"],
-                    "designation": item["designation"]
+                    "designation": item["designation"],
+                    "matched_dsps": item.get("matched_dsps", [])
                 }
                 for item in engine.rank_field()
             ]
@@ -1910,7 +1979,7 @@ def menu_races(meeting, target_date):
                 
         print("\nB. Run BULK Analysis for ALL Races at this meeting")
         print("0. Go Back")
-        print("M. My Profile Options")
+        print("M. Go Back to Main Menu")
         print("E. Exit Terminal")
         print(print_separator("-"))
         
@@ -1918,7 +1987,11 @@ def menu_races(meeting, target_date):
         
         if choice == 'E':
             print("Exiting terminal session. Goodbye!")
-            break
+            sys.exit(0)
+        elif choice == '0':
+            return None
+        elif choice == 'M':
+            return "GO_MAIN"
         elif choice == 'B':
             run_bulk_meeting_analysis(meeting, target_date)
             input("\nPress Enter to return to the race list...")
