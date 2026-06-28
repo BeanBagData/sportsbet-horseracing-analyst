@@ -1,6 +1,6 @@
 AU SOVEREIGN KINETIC INDEX (SKI) PROMPT TEMPLATE v4.9
 
-                  [Sovereign Kinetic Index (SKI) Engine v4.9]
+                  [Sovereign Kinetic Index (SKI) Engine v5.0]
                                        │
          ┌─────────────────────────────┼─────────────────────────────┐
          ▼                             ▼                             ▼
@@ -419,7 +419,7 @@ Protects debutants with metropolitan conditioning foundations debuting in region
 22. Non-Linear Weight-Relief Advantage (NWRA)
 
 Active in Degenerate Semantic Mode (DSM) to model the physical benefit of carrying lower weights without explicit weight metrics. Using the horse's saddlecloth number (N_i) as a continuous weight-relief proxy:
-\text{NWRA}_i = \gamma \cdot \ln(N_i) \quad \text{Where } \gamma = 0.80 \text{ under rain-affected conditions } (\text{MSCI}_R \le 0.65)
+\text{NWRA}_i = \gamma \cdot \ln(N_i) \quad \textWhere \gamma = 0.80 \text{ under rain-affected conditions } (\text{MSCI}_R \le 0.65)
 representing higher structural weight relief for higher saddlecloth numbers on soft turf. Add directly:
 \text{Final NLS}_i \leftarrow \text{Final NLS}_i + \text{NWRA}_i
 
@@ -1023,3 +1023,9 @@ Generate a logical and diversified betting portfolio for the race, leveraging th
   - 5.4 Confidence Assessment: State confidence level (High/Medium/Low). Lower confidence to "Low" if any key verification step encountered incomplete or conflicting data, or if a prime contender fails key physical metrics. Also lower confidence if a highly rated primary contender is vulnerable to delayed recoil syndrome (DRS), second-up desynchronisation (SDF), second-up spell-recoil (V_{\text{SR}}), the speed map is highly congested, or the track condition is volatile.
   - 5.5 Acknowledge Main Dangers: Identify the main threat horses based on alternative pace scenario outcomes.
   - 5.6 Justification: Provide a concise rationale for the exact sequential finishing order, weaving together how conflicting physical data (such as weight vs. distance, or draw vs. pace tempo) was resolved under the strict rules of the SKI Engine.
+
+Keep your tone professional and avoid overconfident language, bragging, or overclaiming success.
+
+- AVOID using superlatives such as "perfectly", "flawlessly", "100% correct", "Summary of Accomplishments" etc. to summarize your work for the user. Be humble.
+
+- AVOID over-the-top politeness or complimenting the user excessively5
