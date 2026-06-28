@@ -13,11 +13,13 @@ import os
 import time
 import re
 from bs4 import BeautifulSoup
+from zaf_data_enricher import enrich_if_sa
 
 # --- Logic Module Imports ---
 from australian_logic import (
     BiomechanicalEngine,
     BiomechanicalOptimizer,
+    BiomechanicalTextVectorizer,
     safe_int,
     safe_float,
     sanitize_path_name
@@ -558,7 +560,7 @@ def render_biomechanical_analysis(engine, linked_json_path=""):
         matched_runners = [item for item in ranked_field if item.get("matched_dsps")]
         has_matches = len(matched_runners) > 0
 
-        output_lines.append("BIOMECHANICAL CLASSIFIER MODEL FORENSIC OUTPUT v4.3 [Deterministic DSP Mode]")
+        output_lines.append("BIOMECHANICAL CLASSIFIER MODEL FORENSIC OUTPUT v4.4 [Deterministic DSP Mode]")
         output_lines.append(print_separator("-"))
         output_lines.append(f"Date: {get_current_date_string()}")
         output_lines.append(f"TRACK: {engine.track_name} | DISTANCE: {engine.distance}m | MODEL SILO: {engine.regional_silo}")
@@ -765,7 +767,7 @@ def run_bulk_meeting_analysis(meeting, target_date):
         with open(json_path, 'r', encoding='utf-8') as f:
             saved_db_data = json.load(f)
             
-        # DYNAMIC CLASSIATION GATEWAYS: PREVENTS COLLISION MATRIX
+        # DYNAMIC CLASSIFICATION GATEWAYS: PREVENTS COLLISION MATRIX
         if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
             from south_african_logic import SouthAfricanBiomechanicalEngine
             engine = SouthAfricanBiomechanicalEngine(saved_db_data)
@@ -1053,7 +1055,7 @@ def bulk_scrape_missing_historical_races():
                 with open(task["json_path"], 'r', encoding='utf-8') as f:
                     saved_db_data = json.load(f)
                     
-                # INTERCEPT SYSTEM CALLS: PREVENT DEPRECATION FAILS
+                # INTERCEPT SYSTEM CALLS: PREVENT PREDICTIVE DISCREPANCY FAILS
                 region = task["region"]
                 track = task["track"]
                 if any(x in str(track).lower() for x in ["greyville", "kenilworth", "turffontein", "vaal", "fairview", "durbanville", "scottsville"]) or (region and "south africa" in str(region).lower()):
@@ -1500,7 +1502,9 @@ def parse_full_results_from_html(html_text):
         horse_name = None
         barrier = None
         
-        name_elem = row.find(attrs={"data-automation-id": "results-row"})
+        name_elem = row.find(attrs={"data-automation-id": "racecard-outcome-name"})
+        if not name_elem:
+            name_elem = row.find(attrs={"data-automation-id": "results-row"})
         if name_elem:
             spans = name_elem.find_all("span")
             if len(spans) >= 1:
@@ -1676,7 +1680,7 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
     try:
         print(f"\n[*] Extracting Full Form Guide from API for: {race_name}")
         
-        # INTERCEPT AND SECURE OUT-OF-BAND TRACK MOVES BEFORE PATH RESOLUTION
+        # Intercept and secure out-of-band track moves before path resolution
         track = verify_sa_track_surface_v36(track, target_date)
         json_path, pred_json_path, report_path = resolve_storage_paths(region, track, race_num, target_date)
         
@@ -1790,14 +1794,63 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
             for index, item in enumerate(selections, 1):
                 name = item.get("name", "Unknown")
                 saddle_no = safe_int(item.get("saddleNumber", item.get("number", index)))
-                barrier = safe_int(item.get("barrier", item.get("original_barrier", 8)))
-                weight = safe_float(item.get("weight", 56.0))
                 
-                jockey_name = item.get("jockey", "")
-                apprentice_claim = 0.0
-                claim_match = re.search(r'\(a(\d+\.?\d*)\)', jockey_name)
-                if claim_match:
-                    apprentice_claim = float(claim_match.group(1))
+                # Robust multi-key barrier fallback sifting (avoids flat 8 hardcode bug)
+                barrier = safe_int(
+                    item.get("barrier") or 
+                    item.get("original_barrier") or 
+                    item.get("drawNumber") or 
+                    item.get("draw") or 
+                    8
+                )
+                
+                # Robust multi-key weight fallback sifting (avoids flat 56.0 kg hardcode bug)
+                weight = safe_float(
+                    item.get("weight") or 
+                    item.get("weight_kg") or 
+                    item.get("weightKg") or 
+                    item.get("handicap") or 
+                    item.get("carried_weight_kg") or
+                    56.0
+                )
+                
+                # Sift and normalize horse age and sex (including physical overview texts)
+                age = safe_float(item.get("age") or item.get("horseAge") or item.get("horse_age") or 0.0)
+                sex = str(item.get("sex") or item.get("gender") or item.get("sexCode") or "").upper().strip()
+                overview = str(item.get("overview") or item.get("overviewText") or "")
+                
+                if (age == 0.0 or not sex) and overview:
+                    parsed_age, parsed_sex_idx = BiomechanicalTextVectorizer.parse_physical_chassis(overview)
+                    if age == 0.0:
+                        age = parsed_age
+                    if not sex:
+                        if parsed_sex_idx in [1.0, 1.5]:
+                            sex = "F"
+                        else:
+                            sex = "G"
+                
+                jockey_name = item.get("jockey") or item.get("jockeyName") or ""
+                apprentice_claim = safe_float(item.get("apprenticeClaim") or item.get("claim") or item.get("apprentice_claim_kg") or 0.0)
+                if apprentice_claim == 0.0:
+                    claim_match = re.search(r'\(a(\d+\.?\d*)\)', jockey_name)
+                    if claim_match:
+                        apprentice_claim = float(claim_match.group(1))
+                
+                # Search apprentice database for known jockeys
+                if apprentice_claim == 0.0:
+                    jockey_clean = jockey_name.lower().strip()
+                    jockey_clean_alpha = re.sub(r'[^a-z\s]', '', jockey_clean).strip()
+                    APPRENTICE_CLAIMS = {
+                        "leah martyn": 2.0, "bella youngberry": 2.0, "jett newman": 2.0,
+                        "olivia kendal": 1.5, "courtney bellamy": 2.0, "benjamin osmond": 1.5,
+                        "mckenzie apel": 2.0, "b youngberry": 2.0, "j newman": 2.0,
+                        "o kendal": 1.5, "c bellamy": 2.0, "b osmond": 1.5, "m apel": 2.0,
+                        "l martyn": 2.0
+                    }
+                    for app_name, app_claim in APPRENTICE_CLAIMS.items():
+                        if app_name in jockey_clean_alpha or app_name in jockey_clean:
+                            apprentice_claim = app_claim
+                            break
                 
                 sire_name = str(item.get("sire", "")).lower().strip()
                 sire_awd = SIRE_AWD_LOOKUP.get(sire_name, 1200)
@@ -1835,6 +1888,8 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
                     "days_since_last_start": safe_int(item.get("daysSinceLastStart", 14)),
                     "gear_changes": item.get("gearChanges", []),
                     "runs_this_prep": safe_int(item.get("runsThisPrep", 1)),
+                    "age": age if age > 0.0 else 4.0,
+                    "sex": sex if sex else "G",
                     "career_stats": {
                         "starts": safe_int(item.get("careerStarts", 0)),
                         "wins": safe_int(item.get("careerWins", 0)),
@@ -1863,7 +1918,8 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
                     "draft_pocket_score": safe_float(item.get("draft_pocket_score", 0.50)),
                     "lane_preference_score": safe_float(item.get("lane_preference_score", 0.50)),
                     "jockey_torque_coefficient": safe_float(item.get("jockey_torque_coefficient", 0.45)),
-                    "status": "Active"
+                    "status": "Active",
+                    "overview": overview
                 }
                 
                 race_db["runners"].append(runner_record)
@@ -1914,6 +1970,8 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
                             "weight_kg": None,
                             "overview": "Discovered via results parsing.",
                             "sire": "Unknown Sire",
+                            "age": 4.0,
+                            "sex": "G",
                             "career_stats": {
                                 "starts": 0, "wins": 0, "places": 0, "total_runs": "0:0-0-0",
                                 "win_percentage": 0, "place_percentage": 0, "prize_money": 0,
@@ -1947,6 +2005,9 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
             "finishing_order": results_order
         }
         
+        # Programmatic ground-truth enrichment module execution gate
+        race_db = enrich_if_sa(race_db, target_date)
+        
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(race_db, f, indent=4, ensure_ascii=False)
             
@@ -1956,6 +2017,7 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
         BiomechanicalOptimizer.clear_cache()
     except Exception as e:
          print(f"[!] Critical parsing error encountered: {e}")
+
 
 def menu_races(meeting, target_date):
     events = meeting.get("events", [])
@@ -2004,6 +2066,7 @@ def menu_races(meeting, target_date):
             print("[!] Invalid selection. Please try again.")
     return None
 
+
 def menu_meetings(section, target_date):
     meetings = section.get("meetings", [])
     
@@ -2050,6 +2113,7 @@ def menu_meetings(section, target_date):
             print("[!] Invalid choice. Please try again.")
     return None
 
+
 def run_terminal_for_date(target_date):
     sections = fetch_all_racing(target_date)
     if not sections:
@@ -2092,6 +2156,7 @@ def run_terminal_for_date(target_date):
         else:
             print("[!] Invalid input.")
     return None
+
 
 def menu_historical_dates():
     history_list = generate_historical_dates()
@@ -2149,6 +2214,7 @@ def parse_sportsbet_race_url(url):
         
         return region, track, race_num, event_id
     return None
+
 
 def handle_direct_url_scraping():
     print("\n" + "="*110)
@@ -2245,6 +2311,7 @@ def main():
             bulk_update_missing_results()
         else:
             print("[!] Invalid choice. Select 1 to 7.")
+
 
 if __name__ == "__main__":
     try:
