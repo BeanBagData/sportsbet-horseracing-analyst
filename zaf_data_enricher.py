@@ -307,16 +307,24 @@ def _fetch_sporting_post_racecard(track: str, race_num: int, date_str: str) -> d
     y, m, d = date_str.split("-")
     track_slug = track.lower().replace(" ", "-").replace("_", "-")
     track_slug_nodash = track.lower().replace(" ", "").replace("_", "")
+    month_names = ["january","february","march","april","may","june",
+                   "july","august","september","october","november","december"]
 
     url_candidates = [
-        # WordPress dated post slug (most reliable SP pattern)
+        # WordPress dated post slug — SP uses "racecards" (plural) in the post slug
         f"https://www.sportingpost.co.za/{y}/{m}/{d}/{track_slug}-racecards/",
         f"https://www.sportingpost.co.za/{y}/{m}/{d}/{track_slug}-racecard/",
-        # Direct racecard path
+        # Nodash variant (e.g. "turffontein-racecards" vs "turffontein racecards")
+        f"https://www.sportingpost.co.za/{y}/{m}/{d}/{track_slug_nodash}-racecards/",
+        # SP horse-racing section path (used for individual race pages)
+        f"https://www.sportingpost.co.za/horse-racing/{track_slug}/{date_str}/race-{race_num}/",
+        f"https://www.sportingpost.co.za/horse-racing/racecards/{date_str}/{track_slug}/",
+        # SP form/racecard path variants
+        f"https://www.sportingpost.co.za/racecards/{date_str}/{track_slug}/",
         f"https://www.sportingpost.co.za/racecard/{date_str}/{track_slug}/race-{race_num}/",
-        f"https://www.sportingpost.co.za/racecards/{track_slug}/{date_str}/",
-        # WP REST API (exposes post content as JSON)
-        f"https://www.sportingpost.co.za/wp-json/wp/v2/posts?search={track_slug}+racecard&per_page=1",
+        # WP REST API search — broader date+track query for post discovery
+        f"https://www.sportingpost.co.za/wp-json/wp/v2/posts?search={track_slug}+racecards+{d}+{month_names[int(m)-1]}&per_page=3",
+        f"https://www.sportingpost.co.za/wp-json/wp/v2/posts?search={track_slug}+racecard&per_page=3",
     ]
 
     session = _make_session()
@@ -366,7 +374,10 @@ def _parse_sporting_post_html(html: str) -> dict:
             soup.select("div.racecard-runner") or
             soup.select("li.horse-entry") or
             soup.select(".racecard-table tr") or
-            soup.select("table.racecard tr")
+            soup.select("table.racecard tr") or
+            # SP's actual table layout: standard HTML table rows with horse links
+            soup.select("table tr") or
+            soup.select("div.entry-content tr")
         )
 
         for row in runner_rows:
@@ -374,13 +385,15 @@ def _parse_sporting_post_html(html: str) -> dict:
                 row.select_one(".horse-name a") or
                 row.select_one(".runner-name a") or
                 row.select_one("a.horse") or
-                row.select_one("td.name a")
+                row.select_one("td.name a") or
+                # SP often wraps horse name in a plain <a> inside the first <td>
+                row.select_one("td a")
             )
             if not name_tag:
                 continue
 
             name = name_tag.get_text(strip=True).lower()
-            if not name:
+            if not name or len(name) < 2:
                 continue
 
             entry = {}
@@ -395,7 +408,9 @@ def _parse_sporting_post_html(html: str) -> dict:
             jockey_tag = (
                 row.select_one(".jockey-name") or
                 row.select_one(".jockey") or
-                row.select_one("td.jockey")
+                row.select_one("td.jockey") or
+                # SP sometimes puts jockey in a second <td>
+                (row.select("td")[1] if len(row.select("td")) > 1 else None)
             )
             if jockey_tag:
                 claim = _parse_sa_claim_from_racecard(jockey_tag.get_text(" ", strip=True))
@@ -435,6 +450,37 @@ def _parse_sporting_post_html(html: str) -> dict:
                 except Exception:
                     pass
 
+        # Deep fallback: mine entire page text for horse name + age/sex/MR blocks.
+        # SP racecards embed this info in plain text even when the HTML structure varies.
+        if not results:
+            # Find all <a> tags that could be horse names (title-case, 2+ words or long single word)
+            for a_tag in soup.find_all("a", href=True):
+                href = a_tag.get("href", "")
+                # SP horse profile links contain /horse/ or /form/
+                if not any(x in href for x in ["/horse/", "/form/", "horse-racing/database"]):
+                    continue
+                name = a_tag.get_text(strip=True).lower()
+                if not name or len(name) < 3:
+                    continue
+                # Grab surrounding context text (parent element)
+                parent = a_tag.find_parent()
+                context = parent.get_text(" ", strip=True) if parent else ""
+                e = {}
+                age, sex = _parse_age_sex(context)
+                if age:
+                    e["age"] = age
+                if sex:
+                    e["sex"] = sex
+                mr = _parse_merit_rating(context)
+                if mr:
+                    e["merit_rating"] = mr
+                claim = _parse_sa_claim_from_racecard(context)
+                if claim > 0:
+                    e["apprentice_claim_kg"] = claim
+                    e["apprentice_claim_source"] = "sporting_post_context"
+                if e:
+                    results[name] = e
+
     except Exception as e:
         logger.warning(f"[SP] HTML parse error: {e}")
 
@@ -458,14 +504,17 @@ def _fetch_nra_racecard(track: str, race_num: int, date_str: str) -> dict:
     date_nodash = date_str.replace("-", "")
 
     url_candidates = [
-        f"https://www.tabonline.co.za/racing/race-cards/{date_str}/{track_slug}/{race_num}",
-        f"https://www.tabonline.co.za/racing/cards/{track_slug}/{date_str}/race/{race_num}",
-        f"https://www.tabonline.co.za/racing/{track_slug}/{date_str}/race-{race_num}",
-        f"https://www.nra.co.za/racing/racecard/{date_str}/{track_slug}/{race_num}",
-        f"https://www.nra.co.za/racing/{date_str}/{track_slug}/{race_num}",
+        # TAB Online primary paths
+        f"https://www.tabonline.co.za/racing/race-cards/{date_str}/{track_slug}/{race_num}/",
+        f"https://www.tabonline.co.za/racing/race-cards/{date_str}/{track_slug}/race-{race_num}/",
+        f"https://www.tabonline.co.za/racing/cards/{track_slug}/{date_str}/race/{race_num}/",
+        f"https://www.tabonline.co.za/racing/{track_slug}/{date_str}/race-{race_num}/",
+        # NRA official paths
+        f"https://www.nra.co.za/racing/racecard/{date_str}/{track_slug}/{race_num}/",
+        f"https://www.nra.co.za/racing/{date_str}/{track_slug}/{race_num}/",
         # JSON API endpoints NRA has used historically
-        f"https://www.tabonline.co.za/api/racing/cards/{date_nodash}/{track_slug}/{race_num}",
-        f"https://api.tabonline.co.za/racing/cards/{date_nodash}/{track_slug}/{race_num}",
+        f"https://www.tabonline.co.za/api/racing/cards/{date_nodash}/{track_slug}/{race_num}/",
+        f"https://api.tabonline.co.za/racing/cards/{date_nodash}/{track_slug}/{race_num}/",
     ]
 
     for url in url_candidates:
@@ -572,9 +621,13 @@ def _fetch_sporting_life_racecard(track: str, race_num: int, date_str: str) -> d
     track_slug = track.lower().replace(" ", "-").replace("_", "-")
 
     url_candidates = [
-        f"https://www.sportinglife.com/racing/results/south-africa/{date_str}/{track_slug}/",
+        # Racecards path (works pre-race and post-race)
         f"https://www.sportinglife.com/racing/racecards/{date_str}/{track_slug}/",
+        f"https://www.sportinglife.com/racing/racecards/south-africa/{date_str}/{track_slug}/",
+        # Results path (post-race)
+        f"https://www.sportinglife.com/racing/results/south-africa/{date_str}/{track_slug}/",
         f"https://www.sportinglife.com/racing/results/{date_str}/{track_slug}/",
+        # Alternative path structures
         f"https://www.sportinglife.com/racing/south-africa/{track_slug}/{date_str}/",
     ]
 
@@ -703,21 +756,38 @@ def _fetch_turf_talk_racecard(track: str, race_num: int, date_str: str) -> dict:
     track_slug = track.lower().replace(" ", "-").replace("_", "-")
 
     url_candidates = [
-        f"https://turftalk.co.za/racecards/{track_slug}/{date_str}/",
+        # TT uses category-based WP paths
+        f"https://turftalk.co.za/{y}/{m}/{d}/{track_slug}-racecards/",
         f"https://turftalk.co.za/{y}/{m}/{d}/{track_slug}-racecard/",
-        f"https://turftalk.co.za/{y}/{m}/{d}/{track_slug}-race-card/",
+        f"https://turftalk.co.za/racecards/{track_slug}/{date_str}/",
         f"https://turftalk.co.za/race-cards/{track_slug}/{date_str}/race-{race_num}/",
         f"https://turftalk.co.za/races/{track_slug}/{date_str}/",
+        # WP REST API search fallback
+        f"https://turftalk.co.za/wp-json/wp/v2/posts?search={track_slug}+racecard&per_page=3",
     ]
 
     for url in url_candidates:
         try:
             r = requests.get(url, headers=REQUEST_HEADERS, timeout=10)
             if r.status_code == 200:
-                result = _parse_turf_talk_html(r.text)
-                if result:
-                    logger.info(f"[TT] Retrieved {len(result)} runners from {url}")
-                    return result
+                ct = r.headers.get("content-type", "")
+                if "json" in ct:
+                    # WP REST API response — parse rendered HTML from post content
+                    try:
+                        posts = r.json()
+                        if isinstance(posts, list) and posts:
+                            rendered = posts[0].get("content", {}).get("rendered", "")
+                            result = _parse_turf_talk_html(rendered)
+                            if result:
+                                logger.info(f"[TT] Retrieved {len(result)} runners from WP REST API")
+                                return result
+                    except Exception:
+                        pass
+                else:
+                    result = _parse_turf_talk_html(r.text)
+                    if result:
+                        logger.info(f"[TT] Retrieved {len(result)} runners from {url}")
+                        return result
         except Exception as e:
             logger.debug(f"[TT] {url}: {e}")
 
@@ -781,7 +851,7 @@ def enrich_sa_racecard(
     use_nra: bool = True,
     use_sporting_life: bool = True,
     use_turf_talk: bool = True,
-    infer_claims_from_jockey_list: bool = False,
+    infer_claims_from_jockey_list: bool = True,
     recompute_barriers: bool = True,
 ) -> dict:
     """
@@ -811,8 +881,9 @@ def enrich_sa_racecard(
         Attempt Turf Talk (Source 4).
     infer_claims_from_jockey_list : bool
         If True and no online source provides a claim, infer from the
-        known SA apprentice list. Defaults False — online source or
-        manual override is preferred for claim data.
+        known SA apprentice list. Defaults True — online sources are
+        frequently blocked by the egress proxy so the apprentice list
+        acts as a reliable always-on fallback for claim data.
     recompute_barriers : bool
         Recompute compressed barriers after scratching.
 
