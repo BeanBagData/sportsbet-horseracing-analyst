@@ -1283,6 +1283,8 @@ def fetch_scratched_from_html(region, track, race_num, event_id):
         r_lower = region.lower()
         if any(x in r_lower for x in ["australia", "nz", "new zealand"]):
             region_slug = "australia-nz"
+        elif any(x in r_lower for x in ["south_africa", "south africa"]):
+            region_slug = "south-africa"
         elif any(x in r_lower for x in ["asia", "japan", "hong kong", "singapore", "kochi", "korea"]):
             region_slug = "asia-racing"
         else:
@@ -1700,6 +1702,8 @@ def extract_and_save_form_guide(event_id, class_id, race_name, json_path, pred_j
             r_lower = region.lower()
             if any(x in r_lower for x in ["australia", "nz", "new zealand"]):
                 region_slug = "australia-nz"
+            elif any(x in r_lower for x in ["south_africa", "south africa"]):
+                region_slug = "south-africa"
             elif any(x in r_lower for x in ["asia", "japan", "hong kong", "singapore", "kochi", "korea"]):
                 region_slug = "asia-racing"
             else:
