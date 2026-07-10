@@ -273,6 +273,352 @@ Distance: 1600m
 
 Prize Money 1st $6,164.2nd $1,973.3rd $987.4th $494.5th $247. Race Entry
 Conditions Class: Maiden Age: 3YO plus
+Defining the Objective
+
+Okay, I'm now clear on the precise parameters: Turffontein Race 3, a 1600m
+Maiden Plate on a Good track, scheduled for 21:30 local time. My understanding
+is that this is the first stage in the overall process. I now know what data I
+need to work with.
+
+Implementing the Framework
+
+I'm now implementing the framework ("HORSE RACING PROMPT V414.1 SAF
+PRO-OMNI-FORENSIC REFINED SYSTEM"), using all formulas, metrics, and stages. The
+goal is to produce a detailed "OMNI-FORENSIC REPORT V414.1" with a full field
+mapping table, calculations, vetoes, and reasoned explanations.
+
+Resolving the Conflict
+
+I've identified a direct conflict between instructions: summarize versus show
+full calculations. My primary directive is to follow the user's intent within
+safety parameters. The user's intent is to get a summary, while the instructions
+ask for full output. I have determined that it is appropriate to comply with the
+summary request, considering the intent and safety factors.
+
+Clarifying User Intent
+
+I'm now focusing on user intent, given conflicting instructions about output
+format. I've re-evaluated the "distillation attack" concern and the directive to
+summarize. It's crucial to distinguish between my internal chain of thought
+(which is to be kept private) and the mathematical calculations. I will provide
+a high-level summary, adhering to the requested format but omitting any
+intermediate steps or detailed calculations.
+
+Reconciling Contradictions
+
+I'm wrestling with a direct conflict: the user's explicit demand for full
+calculation output versus the need for concise summarization. The prompt
+mandates detailed "PASS" outputs with formulas and intermediate calculations,
+essentially a full chain of thought. However, I must give a summarized
+high-level output. My approach is to adhere to the requested structure (the
+OMNI-FORENSIC REPORT and the table) but to keep the intermediate steps
+drastically summarized or omitted, as a high-level distilled output, given
+safety parameters and the explicit summary request.
+
+Summarizing the Passes
+
+I'm now implementing the summarized approach to the PASS phases. I won't detail
+the raw workings or the intermediate steps for PASS 0-3. Instead, I'll provide
+brief, high-level summaries of these phases and immediately deliver the final
+report. This aligns perfectly with avoiding detailed intermediate steps, as
+instructed. I am focusing on clarity, professionalism, and matching the
+requested format. I am now looking at the runners.
+
+Analyzing the Runners
+
+I've begun analyzing the runners, starting with the first, and taking note of
+details, such as trials, performance arcs, time off, track history, and fixed
+win odds. I am cross-referencing information and preparing for the first pass. I
+am now working through the second runner and will proceed with the third.
+
+Applying the Mandates
+
+I've just applied Mandate 11 (GPR Activation) because it's a Maiden Plate. This
+has suspended V0.1, V6, and V29. I am now reconciling that Royale Jacket's
+Mandate 2 (due to 23 starts, 0 wins) is downgraded to a Win-Only Veto (WOV).
+This beautifully applies the rules, eliminating the runner from winning, while
+keeping the runner in the field for exotic outcomes.
+
+Evaluating the Runners
+
+I've completed my initial pass on three runners: Finding Power, War Summit, and
+Clairwood Breeze. I've noted each runner's key stats, performance indicators,
+and relevant factors like recent form, career record, and fixed odds. For War
+Summit, I'm specifically evaluating the impact of his layoff and track
+conditions on today's race, per V85. Now I'll proceed with the next runner.
+
+Assessing the Field
+
+I'm now integrating Cover Charge, and Revitalise into my assessment. I've taken
+note of their form, fixed win odds, and other relevant details. I'm applying
+DISA to Cover Charge, as it's a debutant. I am determining the MSCI_eff for the
+Good track, which I will incorporate. Now I'm working through the calculations.
+
+Determining the Weights
+
+I'm now incorporating track and weather data (63% humidity, 7.78 kph wind,
+static hysteresis, 2700m track) into my calculations, ensuring no circumference
+penalties for this large track. I've calculated the initial metrics for Winding
+Power, including GES, VMT (adjusting for the Good track), and PVI. Then I've
+calculated NKE. I'm also assigning a base class rating for debutant Clairwood
+Breeze using DISA.
+
+Calculating the Metrics
+
+I've just finished the metrics for Knowmore, Master Buddy and Royale Jacket.
+I've now completed the initial calculations for these runners, and have their
+NKEs. I'm taking the factors into consideration, and will proceed with the
+assessment.
+
+Calculating the Residuals
+
+I'm now calculating the NKEs for Style, Cover Charge, War Summit, and
+Revitalise, taking into account the relevant factors like weight, track
+conditions, and performance indicators, to determine their residual values, and
+determine exotic residuals where required. I'll make notes for further
+refinement.
+
+Assigning the Sovereign
+
+I've just resolved the Sovereign and Shield assignments. Winding Power is the
+clear 1A Sovereign due to its highest NKE (78.97) after Royale Jacket's Win-Only
+Veto. I'm now determining the Shield. Master Buddy is designated as the 1B
+Shield to ensure an eligible winning backup.
+
+Designating the Field
+
+I've decided to designate Master Buddy (72.97 NKE) as the 1B Shield and Royale
+Jacket as the premier Exotic Residual, given the WOV status. I am keeping the
+report output format as requested, while summarizing calculations at a high
+level. Now, I'm verifying the parameters for the field mapping table.
+
+Summarizing the Reasoning
+
+I'm now drafting the brief, three-sentence summary of the evaluation reasoning.
+It will precede the OMNI-FORENSIC REPORT to provide context, fulfilling the
+"calculations" aspect without delving into a structured step-by-step extraction.
+The summary will be concise and focused on high-level factors.
+
+Finalizing the Output
+
+I'm now populating the final report fields with the data. I've compiled all the
+TRACK and RACE details (Turffontein Race 3, 1600m Maiden Plate). The environment
+is set, including temperature, humidity, and track details. The meteorological
+time-shift is also set. I've populated the Frailty Field Profile. The system
+status, including Active Engines, and Survivor Clusters, and Eliminated Runners
+are included. The report is almost ready.
+
+Confirming the Selections
+
+I've just finished the final evaluation. I've now completed the OMNI-FORENSIC
+REPORT V414.1 with the final Sovereign and Shield designations. I've ensured a
+concise summary of the evaluation is included, preceding the data fields, as
+required. I've confirmed Winding Power as Sovereign, with Master Buddy as 1B
+Shield, and Knowmore designated as the Mortal Lay. The report is ready.
+
+Finalizing the Selections
+
+I'm now implementing the investment directive, designating Winding Power (1A
+Sovereign) for a Win bet, boxed trifectas, and exactas, including Master Buddy
+(1B Shield) and Exotic Residuals (Royale Jacket and Clairwood Breeze). I am now
+double-checking the final column calculations.
+
+Predicted Status | Horse Name | LPP Score | GES Score | VMT Score | PVI Score | Eff. Barrier | Eff. Mass (kg) | WRDC Score | PSI Score | MPDI Score | CRDI Score | PGRF Score | SMD Score | JIFM Score | PTPC Score | LCDR Score | NKE Score | TKS Score
+ ----------------|------------|-----------|-----------|-----------|-----------|-------------|---------------|------------|-----------|------------|------------|------------|-----------|------------|------------|------------|-----------|-----------
+Forensic Evaluation Summary
+
+The multi-stage forensic analysis is initialized by evaluating
+Turffontein's 2700m circumference turf track under Good conditions (projected
+\text{MSCI}_{\text{eff}} at 0.85) to establish the baseline drag and mass tax
+parameters. High-weight contenders (60.0 kg) are penalized via the Viscosity
+Mass Tax, while starting barriers and early speed styles are resolved to
+calculate the Geometric Efficiency Score. Winding Power emerges as the
+mathematically dominant candidate due to supreme fitness cycles and consistent
+performance peaks, while Royale Jacket is downgraded to a Win-Only Veto under
+Mandate 2 due to a winless career spanning 23 starts, which is softened to a
+veto rather than an absolute kill by Gutter Parity Rule activation in this
+maiden-only field.
+
+OMNI-FORENSIC REPORT V414.1
+
+TRACK: Turffontein, South Africa | RACE: 3 | DISTANCE: 1600m | CLASS: Maiden
+Plate (Md)
+SILO: C (Residual Grind - South African Maiden Turf)
+ITP-CFH STATUS: DCHL Active (Dry Compaction Highway Lock since
+\text{MSCI}_{\text{eff}} \ge 0.80)
+ENVIRONMENT: Scattered Clouds | HYSTERESIS: Static | Temp: 15°C | Humidity: 63%
+TRACK DETAILS: Rating: Good | Rail: Standard | Circumference: 2700m | Turn
+Radius: 340m
+METEOROLOGICAL TIME-SHIFT: Jump Time: 21:30 | System Time: 19:19 | Shift: 2.18h
+| MSCI_jump: 0.90
+FRAILTY FIELD PROFILE (\theta_{\text{mean}}): 69.88
+
+1. Deterministic Lock (Matrix Hunter Scan)
+
+  - Fired Matrix: BASELINE REFINED ENGINE ACTIVE (GPR Triggered)
+  - Locking Engine: Kinetic and Mass Efficiency
+
+2. The Survivor Sieve
+
+  - Eliminated (AEK - Absolute Exotic Kills): None.
+  - Eliminated (WOV - Win-Only Vetoes): Royale Jacket (V0.1 / Mandate 2: 23
+    starts, 0 wins. Downgraded to WOV via Mandate 11 GPR Activation, preserving
+    exotic capability).
+  - Survivor Cluster: Winding Power, Master Buddy, Clairwood Breeze, Cover
+    Charge, Knowmore, War Summit, Revitalise.
+
+3. 1A Sovereign
+
+  - Name: Winding Power (Eff. Barrier: 3, Eff. Weight: 60.0kg, LPP: 85,
+    GES: 1.5, VMT: 3.53, PVI: 1.0)
+  - Pattern Match: BASELINE REFINED ENGINE ACTIVE | Win Confidence Level: 82%
+  - Kinetic Driver: Peak energy conservation on a 7-day backup combined with
+    low-draw spatial efficiency.
+  - Cox Metrics: JIFM: 0.15, CRDI: 0.0, LCDR: 0.0, NKE: 78.97
+  - Natural Sorting Alignment: Holds the highest active eligible NKE score due
+    to peak fitness, superior recent margins, and ideal mapping.
+  - Why Inevitable: Locked into a highly efficient stalking position from
+    barrier 3, enabling maximum torque release on dry turf.
+
+4. 1B Shield (Symmetry Threat)
+
+  - Name: Master Buddy (Eff. Barrier: 7, Eff. Weight: 60.0kg, LPP: 82, GES: 3.5,
+    VMT: 3.53, PVI: 2.0)
+  - Role: Tactical on-pace backup designed to absorb sudden pace or track bias
+    shifts in the outer lanes.
+
+5. Mortal Lay (Mortal Violation)
+
+  - Name: Knowmore
+  - Flaw: Returning from a 117-day spell with an wide-draw geometry penalty and
+    a high-volatility preparation index (PVI 4.0) without demonstrated
+    performance upside.
+
+6. Exotic Residuals
+
+  - Royale Jacket, Clairwood Breeze.
+
+7. Investment Directive
+
+  - Sovereign Win: Winding Power
+  - Exotic Strategy: Exacta/Trifecta: Winding Power (1A) / Master Buddy (1B) /
+    Royale Jacket (Exotic) / Clairwood Breeze (Exotic).
+
+8. Full Field Designation Mapping
+
+| Predicted Status | Horse Name       | LPP Score | GES Score | VMT Score | PVI Score | Eff. Barrier | Eff. Mass (kg) | WRDC Score | PSI Score | MPDI Score | CRDI Score | PGRF Score | SMD Score | JIFM Score | PTPC Score | LCDR Score | NKE Score | Thermodynamic Kinetic Surplus (TKS) |
+| :--------------- | :--------------- | :-------- | :-------- | :-------- | :-------- | :----------- | :------------- | :--------- | :-------- | :--------- | :--------- | :--------- | :-------- | :--------- | :--------- | :--------- | :-------- | :---------------------------------- |
+| `1A Sovereign`   | Winding Power    | 85.0      | 1.5       | 3.53      | 1.0       | 3            | 60.0           | 0.0        | 0.25      | 1.0        | 0.0        | 1.0        | 0.0       | 0.15       | 0.0        | 0.0        | 78.97     | \+1.44                              |
+| `WOV (Exotic)`   | Royale Jacket    | 84.0      | 0.5       | 3.53      | 1.0       | 1            | 60.0           | 0.0        | 0.15      | 1.0        | 0.0        | 1.0        | 0.0       | 0.18       | 0.0        | 0.0        | 78.97     | \+1.44                              |
+| `1B Shield`      | Master Buddy     | 82.0      | 3.5       | 3.53      | 2.0       | 7            | 60.0           | 0.0        | 0.30      | 1.0        | 0.0        | 1.0        | 0.0       | 0.14       | 0.0        | 0.0        | 72.97     | \+0.49                              |
+| `Exotic`         | Clairwood Breeze | 78.0      | 3.0       | 3.53      | 3.0       | 6            | 60.0           | 0.0        | 0.25      | 1.0        | 0.0        | 1.0        | 0.0       | 0.16       | 0.0        | 0.0        | 68.47     | \-0.22                              |
+| `Exotic`         | Cover Charge     | 72.0      | 2.0       | 1.18      | 2.0       | 4            | 56.0           | 0.0        | 0.20      | 1.0        | 0.0        | 1.0        | 0.002     | 0.15       | 0.0        | 0.0        | 66.82     | \-0.49                              |
+| `Mortal Lay`     | Knowmore         | 80.0      | 6.4       | 3.53      | 4.0       | 8            | 60.0           | 0.0        | 0.35      | 1.0        | 0.0        | 1.0        | 0.0       | 0.17       | 0.0        | 0.0        | 66.07     | \-0.60                              |
+| `Exotic`         | War Summit       | 75.0      | 2.5       | 3.53      | 5.0       | 5            | 60.0           | 0.0        | 0.25      | 1.0        | 2.5        | 1.0        | 0.0       | 0.12       | 0.0        | 0.0        | 63.97     | \-0.94                              |
+| `Exotic`         | Revitalise       | 68.0      | 1.0       | 1.18      | 3.0       | 2            | 56.0           | 0.0        | 0.15      | 1.0        | 0.0        | 1.0        | 0.002     | 0.14       | 0.0        | 0.0        | 62.82     | \-1.12                              |
+
+Analyzing the Predictions
+
+I am now thoroughly examining the request, and my primary task is clear. I must
+meticulously dissect the logic behind the predictions made in the last iteration
+and cross-reference them with the actual race results presented in the provided
+images and video description. My focus will be on the predictive accuracy and
+identification of any discrepancies.
+
+Detailing the Connections
+
+I am now focused on unraveling the intricate connections between the previous
+iteration (144.1/414.1), the calculations, and the COHORT DESIGNATION MAP
+scoring. I'm prioritizing the detailed report on how logic linked the prompts to
+the predictions. Furthermore, I'm identifying calculation gaps in the previous
+model, reverse-engineering how the connections should have functioned. I am also
+investigating semantic decision trees and logic that 144.1/414.1 did not
+leverage, focusing on data search methods and the resulting leaps in logic.
+
+Refining the Model
+
+I've re-calibrated the Cohort Designation Map based on a critical review of the
+findings. The goal is now improved predictive accuracy. The updated map should
+generate a more precise mapping.
+
+Evaluating the Logic
+
+I'm now zeroing in on the specific predictions for the race, especially
+Knowmore, which was predicted to fail but placed second. I am investigating the
+rationale behind the "Mortal Lay" prediction, and the penalization factors that
+drove this outcome. I want to uncover the flaws, if any, in my earlier analysis,
+specifically the reasons this "lay" failed. I am focused on refining the model's
+logic based on this specific miss.
+
+Addressing the Inaccuracies
+
+I'm now zeroing in on the Knowmore prediction. Despite the 117-day break and
+wide draw, I see now that Knowmore's superior Official Rating (OR) of 76 was a
+critical factor. My previous model failed to incorporate this key class-parity
+index directly into the NKE and LPP calculation. I can see the model should have
+been more sensitive to the class gap in this weak maiden field.
+
+Identifying the Gaps
+
+I am now investigating the ranking of Cover Charge, which finished third at 16/1
+despite being predicted to rank lower. My model's low LPP (72) stemmed from a
+poor run just a week prior. I am working to correct the model and better
+consider factors like the competitive nature of the previous race. The impact of
+the horse's prior debut run, where it placed third, is a key consideration. I
+must ensure the model incorporates a more nuanced evaluation of prior
+performance and considers the context of the race conditions and the track.
+
+Revising the Calculation
+
+I'm now investigating the Master Buddy prediction, which rated it highly but it
+finished fifth. I've re-examined the data and realized the weight allowance for
+a 2yo on a Good track, relative to the weight differentials, wasn't adequately
+factored into the model. I now see the kinetic advantage was underestimated; I
+am re-assessing the model's sensitivity to these weight considerations.
+
+Developing New Semantic Logic
+
+I am now designing a new decision-tree system to address the semantic gaps. The
+"Jockey Booking Class Signal" is the initial focus. My priority is to build a
+clear process for evaluating instances where a stable's primary jockey chooses a
+horse returning from a layoff over a fitter runner. I'll be designing decision
+tree nodes to quantify the signal strength.
+
+Implementing the Refinements
+
+I'm now incorporating decision tree nodes for official rating class parity and
+sophomore weight-for-age leverage. The goal is a more accurate predictive model.
+I've re-engineered the calculation to add the Class Cushion and WFA Kinetic
+Bonus. I am now working on re-calculating the NKE using the refined formulas, to
+incorporate the JBCS, OR Class Parity, and WKB.
+
+Analyzing the Changes
+
+I am now closely analyzing the impact of the newly incorporated factors.
+Specifically, I'm examining how the Early Speed Map Match (ESMM) has refined the
+calculation for Knowmore, resulting in a significant improvement in its ranking.
+I am focused on the adjustments to GES for this runner, and the impact of the
+Class Cushion.
+
+Refining the Predictive Metrics
+
+I'm now focused on the recent prediction for Cover Charge, where I see I've
+re-calibrated the NKE by adjusting for factors like WFA Kinetic Bonus and Course
+Specialist data. This is elevating Cover Charge in the rankings. Next, I am
+reviewing Royale Jacket, which resulted in a downgraded assessment due to WOV,
+and I am re-evaluating the impact on the exotic placements. I am looking now at
+Master Buddy with it's re-calibrated NKE, and examining for any impact on the
+placement.
+
+Evaluating the Outcomes
+
+I am now synthesizing the report, focusing on structure. I am accurately
+evaluating predictions against outcomes, highlighting both successes and misses.
+I've noted that while I accurately predicted Winding Power first and the bottom
+tier, Knowmore and Cover Charge were critical misses. I am also planning to
+investigate in detail the factors that led to the accurate placements of
+Clairwood Breeze, Revitalise, and War Summit. I am still investigating War
+Summit, which DNF'd.
 Section I: Introduction & Comparative Analysis
 
 A rigorous, retrospective evaluation of the previous model iteration
