@@ -1,0 +1,1300 @@
+ZAF Horse Racing DETS-TKS System Protocol V1.3 (Forensic Sparing Core)
+
+Phase 0: Simplified Ingestion Pipeline & Metrical Verification
+
+Step 0.1: Track & Location Synchronisation
+
+Identify and lock the following track parameters: Track Name, Race Date, Race
+Number (k), Race Distance (D_{\text{today}}), Last Race Distance
+(D_{\text{last}}), Surface Type (Turf or Synthetic), and the Official Track
+Rating. Ingest track configuration constants: Circumference (C_{\text{track}}),
+Radius of Home Turn (R_{\text{turn}}), Length of Home Straight
+(L_{\text{straight}}), and Distance to First Turn (D_{\text{turn1}}).
+
+Step 0.2: Late Scratching & Apprentice Claim Ingestion (AMTR)
+
+  - Late Scratchings: Scan the card for late scratchings. Remove scratched
+    runners from the active contender pool. Compress starting stalls
+    sequentially:
+    \text{Barrier}_{\text{compressed}, i} = \text{Barrier}_{\text{original}, i} - N_{\text{scratch\_inside}, i}
+    where N_{\text{scratch\_inside}, i} is the number of scratched stalls drawn
+    inside runner i.
+  - Apprentice Weight Correction: Parse apprentice claim string
+    declarations—e.g., (a-9) for a 4.0 kg claim, (a-6) for 2.5 kg, and (a-3)
+    for 1.5 kg—and deduct the claim weight directly from the allocated carded
+    mass:
+    W_{\text{eff}, i} = \text{Allocated Weight}_i - \text{Apprentice Claim}_i
+    This corrected effective weight (W_{\text{eff}, i}) must be hardcoded into
+    all downstream mass, drag, and compaction equations. Discard the uncorrected
+    carded weight.
+
+Step 0.3: Compacted Turf Sparing State (DCHL Sparing State)
+
+  - DCHL Sparing State: If the official track rating is "Good" or "Firm"
+    \implies Activate the DCHL Highway Lock. This state takes absolute
+    structural precedence over all seasonal defaults. It unconditionally
+    deactivates the inside-rail bog trap surcharge
+    (\text{WRDC}_{\text{inside}, i} = 0.00) and awards inside-drawn runners
+    (Lanes 1 and 2) an inside ground-saving bonus
+    (\Delta\nu_{\text{DCHL}, i} = -0.08) applied directly to their baseline
+    latent frailty.
+  - Wet/Soft State: If the official track rating is "Soft" or "Heavy" \implies
+    Activate the VST Siltation Engine. Inside-drawn runners (Lanes 1 and 2) are
+    assessed a bog trap surcharge (\text{WRDC}_{\text{inside}, i} = +0.15) if
+    the race number k \ge 5 (late-day worn turf).
+
+Step 0.4: Ingestion Shield & Hard Quarantine Gate
+
+  - Scan 1 (original_barrier): Compute starting draw variance:
+    \text{Var}_{\text{B}} = \sigma^2(B_{\text{orig}}) If
+    \text{Var}_{\text{B}} == 0, activate the Boilerplate-Resilient
+    Classification System (BRCS) override and use the official starting draws
+    list to bypass corrupted input.
+  - Scan 2 (form_entropy): Compute the Shannon entropy of last-run margins and
+    finishing positions: H_{\text{form}} = -\sum p_i \ln p_i If
+    H_{\text{form}} \le 0.05, trigger the Invariant Grounded Search to extract
+    the correct sire AWD, real last-start beaten margins, and actual career
+    statistics. If recovery fails to reconstruct variables for \ge 80\% of the
+    active field, trigger MANDATE 0 (Fatal Ingestion Abort). If
+    H_{\text{form}} == 0 is detected but live search is partially restricted,
+    route the field via the Dynamic Systemic Override Sieve (DSOS).
+
+Step 0.5: Dynamic Systemic Override Sieve (DSOS)
+
+If H_{\text{form}} == 0:
+
+  - Route Pathway A (Developmental - Maiden, Graded, Listed, Juvenile Plates):
+    Deactivate standard speed and form ratings. Initialize the Multi-Stable
+    Hierarchy Sieve (MSHS) to construct stable-intent priority metrics using
+    jockey-trainer partnerships and pedigree parameters.
+  - Route Pathway B (Exposed - Benchmark, Classified, Veteran Grades): Limit
+    stable priors to 40% of the final score. Initialize the Zero-Entropy
+    Prioritisation Sieve (ZEPS) to evaluate physical weight-to-class ratios,
+    somatic maturation thresholds, and resuming heavy-weight decay.
+
+Phase 1: Core Axioms
+
+  - Axiom 1 (No Narrative): Subjective human commentary, class names, betting
+    market rank, and financial prices are mathematically non-existent. The model
+    solves the physical, spatial, and thermodynamic vectors of the field.
+  - Axiom 2 (Zero-Market Price Mandate): Under no circumstances will fixed odds,
+    public dividends, or market rank be processed. All evaluations of edge are
+    strictly determined by the continuous value of Thermodynamic Kinetic Surplus
+    (\text{TKS}_i) of survivors relative to the active cohort.
+  - Axiom 3 (Equine-DYNA Integration & Emergent Execution Sieve): Every runner
+    is modelled as a cardiorespiratory engine subject to aerodynamic drag,
+    lateral centrifugal turn tax, topographical elevation resistance, and
+    viscoelastic ground resistance. The evaluation of these physical variables
+    must be processed through the computational filters to suppress automatic,
+    inflexible pattern-matching and ensure deep-layer causal reasoning.
+  - Axiom 4 (Agile Priority Assurance & Near-Miss Forgiveness): The primary
+    objective is selecting the 1A Sovereign for win and place robustness (Top 3
+    stability). If the primary candidate experiences a narrow "near-miss"
+    (finishing 2nd or 3rd), the selection is classified as a highly successful
+    kinetic projection, protected via the diversified betting portfolio in
+    Phase 9. If \text{APRI}_{1\text{A}} < 0.80, initiate Loop E to pivot to a
+    robust placer.
+  - Axiom 5 (British UK English Standardisation): All terminology, variables,
+    and output formatting must strictly utilise British UK English spelling
+    (programme, normalisation, prioritisation, metres, analyse, categorisation,
+    penalise, utilise, customised, optimised, centred, modelling, grey,
+    synchronisation).
+
+Phase 2: Classification Infrastructure
+
+Hard-Walled Environmental Silos
+
+  - SILO A: Elite Metropolitan (Saturdays, Graded/Listed). True Class Gravity.
+    Aerobic base dominant. Backmarkers viable.
+  - SILO B: Tactical Mid-week / Night (Mid-week, Night meetings). Setup profiles
+    and Intent Signalling dominant.
+  - SILO C: Residual Grind (Provincial/Country tracks). Local Track Specialists.
+    Gutter Parity. On Macro-Provincial tracks, late torque overrides early
+    geometry in Maiden fields.
+  - SILO D: Synthetic Dynamic (Polytrack/Tapeta). Turf form decoupled. Baseline
+    track friction \mu_{\text{temp}} and physical mass parameters adjusted for
+    temperature-dependent wax-viscosity:
+      - Warm Wet/Dry Wax Softening (T_{\text{air}} \ge 16^\circ\text{C}):
+        Thermal softening of the wax binder increases viscoelastic displacement
+        drag exponentially with W_{\text{eff}}, creating a bow-wave suction
+        effect that penalises heavy, un-spared runners. This drag penalty is
+        dynamically attenuated for class-dominant horses (\text{OR}_i \ge 66)
+        using Formula 11.
+      - Cold Compaction Lubrication (SMCP)
+        (T_{\text{air}} \le 15^\circ\text{C}): Rain/high humidity on synthetic
+        tracks acts as a surface lubricant, while the cold firms the wax binder.
+        This state reduces viscoelastic suction drag to near zero. High-power,
+        high-mass runners (\ge 59.0\text{ kg}) are completely spared from
+        standard mass-drag penalties.
+      - Extreme Cold Hardening (T_{\text{air}} < 12^\circ\text{C}): The dry wax
+        matrix hardens, reducing penetration but increasing slip and lateral
+        traction risks for very light weights (W_{\text{eff}} < 54.0\text{ kg}).
+  - SILO E: Technical Bullring Overlay (Tight-turning tracks with circumference
+    < 1800\text{ m}). Centrifugal drag dominant. Severe loss of runway.
+    Backmarkers mathematically eliminated without inside geometry.
+
+Class-Type Router Pathway
+
+  - PATHWAY A: Developmental (Maiden, Class 1, 3YO-only races). Focus: Unexposed
+    kinetic peaks, first-time gear adjustments, resuming trial/jumpout wins, and
+    physical maturation. (Enable: Maiden Statue Veto, Placer's Ceiling unless
+    CFB criteria met. Disable: Weight-for-Class Mass Tax under 60 kg).
+  - PATHWAY B: Exposed (Benchmark, Open Handicaps, Veteran classes). Focus:
+    Effective Weight, Mass-to-Class ratios, fitness cycles. (Enable:
+    Weight-for-Surface Mass Tax, Mass-to-Class penalisation. Disable:
+    Second-Preparation Maturation logic).
+
+Jurisdictional Router Precision Mode
+
+  - MAJOR: Tier 1 Metropolitan. Full Aerobic, Class, and Geometry analysis.
+      - Gauteng Private Gallop Layoff Bypass (GGLB): For Turffontein and Vaal,
+        if a horse from a Tier 1/2 stable is dropping in class or returning
+        fresh over a sprint distance, V5 (No Trial Veto) is entirely waived and
+        replaced with a Sprint-Fresh Sparing Modifier.
+  - MINOR: Tier 3/4 Provincial/Country. Prioritises raw Class and late Torque
+    over structural geometry.
+      - Warrnambool Exception (Density Bias Upgrade): Form derived from country
+        carnivals must be treated as Metropolitan Tier 1 form. Apply a +2.0
+        Class Grade Modifier directly to the runner's Base Class Rating.
+
+Phase 3: Data Ingestion Matrix
+
+The following raw parameters must be compiled and locked in the Ingestion Matrix
+before dynamic overrides are calculated:
+
+  - Career starts, wins, and places on today's specific track surface; Career
+    starts, wins, and places on today's specific track.
+  - Days since last start. Target race distance (D_{\text{today}}) vs. Last race
+    distance (D_{\text{last}}). Maximum Proven Career Winning Distance.
+  - Sire Average Winning Distance (\text{AWD}_{\text{Sire}}), Dam Sire Average
+    Winning Distance (\text{AWD}_{\text{DamSire}}), and staying pedigree
+    classification.
+  - Allocated weight and Apprentice Claim. Gear Changes today (Isolate 'Blinkers
+    AGAIN' or 'Cheekpieces OFF' status).
+  - Running position at the 800m mark for the last 3 starts. Average Margin
+    Last 3 Starts.
+  - Projected LSO Trajectory: Identify if settling Inside-Midfield vs. Clean Air
+    Wide.
+  - Class Drop Rating Points. Layoff medical history.
+  - Projected Pace Style Position (PSP): On-pace Leader, Handy, Midfield, or
+    Backmarker.
+  - Average wind speed in km/h (\text{WS}) and wind vector
+    (\theta_{\text{wind}}) relative to the home straight.
+  - Trainer win rate (%), Trainer layoff strike rate (\text{TSR\_1st}, %), and
+    Jockey win rate (%).
+  - Track circumference (C_{\text{track}}), Radius of home turn
+    (R_{\text{turn}}), Length of home straight (L_{\text{straight}}), and
+    Distance to first turn (D_{\text{turn1}}).
+  - Air temperature (T_{\text{air}}) at jump time and Relative Humidity
+    (\text{RH}).
+  - \text{Stable\_Runner\_Count} (Number of active starters entered by today's
+    trainer).
+  - N_{\text{tempo}} (Number of runners mapped with high early speed:
+    \text{PSP} == \text{Leader} or \text{Handy}).
+
+Phase 3.7: Forensic Metric Consolidation (The Kinetic Engine)
+
+Formula 1: Wet Rail Degradation Surcharge (\text{WRDC}_i)
+
+\text{WRDC}_i = \text{TRF} \cdot \left(\frac{k}{N_{\text{races}}}\right) \cdot \left(\frac{1}{\text{Lane}_i}\right) + \text{WRDC}_{\text{inside}, i}
+where \text{TRF} is the Track Rating Factor (Good 4 = 0.0; Soft 6 = 1.4; Heavy 9
+= 2.5), and k is today's race programme number.
+
+  - PRSC Inside-Rail Wear Surcharge: If \text{Rail\_Position} == \text{"True"}
+    AND \text{Season} == \text{"Winter"} AND \text{Lane}_i \le 2 AND track
+    rating is Soft/Heavy AND
+    k \ge 5 \implies \text{WRDC}_{\text{inside}, i} = +0.15. Wide-drawn runners
+    mapping in Lanes 4+ bypass this surcharge
+    (\text{WRDC}_{\text{inside}, i} = 0.00).
+  - Compacted Surface Priority Override (DCHL Sparing): If track is Good/Firm
+    \implies \text{WRDC}_{\text{inside}, i} = 0.00 unconditionally. On tight
+    courses (Silo B, E), apply a Dry Compaction Inside Sparing Bonus
+    (\Delta\nu_{\text{DCHL}, i} = -0.08) directly to the baseline frailty
+    (\nu_i) of runners in Lanes 1 or 2.
+
+Formula 2: Thermal-Viscoelastic Synthetic Drag (D_{\text{visco}, i}) & Warm Synthetic Weight Surcharge (WSWS)
+
+D_{\text{visco}, i} = \kappa_{\text{track}} \cdot \left(\frac{W_{\text{eff, SML}, i}}{54.0}\right)^{1.8} \cdot \left(1.0 + \gamma_{\text{temp}} \cdot \max(0.0, T_{\text{air}}(t) - 15.0)\right) \times \Phi_{\text{CDMS}, i}
+where \kappa_{\text{track}} = 0.05 is the synthetic baseline, and
+\gamma_{\text{temp}} = 0.02 represents the thermal softening coefficient of the
+wax binder.
+
+  - SMCP Cold Deactivation Threshold: If today's surface is Synthetic (Silo D)
+    AND T_{\text{air}} \le 15^\circ\text{C} with active rain/humidity, the
+    compacted wax binder firms, acting as a direct lubricant. Set
+    D_{\text{visco}, i} = 0.00\text{ NKE} unconditionally (Viscoelastic mass
+    drag penalty completely deactivated).
+  - Warm Synthetic Weight Surcharge (WSWS): On synthetic tracks (Silo D), if
+    T_{\text{air}} \ge 20^\circ\text{C} and
+    W_{\text{eff, SML}, i} \ge 59.5\text{ kg}, apply an additional absolute mass
+    penalty to model softened wax penetration:
+    \Delta\nu_{\text{WSWS}, i} = 0.04 \cdot \max\left(0, W_{\text{eff, SML}, i} - 59.0\right) \cdot \max\left(0, T_{\text{air}} - 15.0\right) \times \Phi_{\text{CDMS}, i}
+
+Formula 3: Somatic Mass Sparing Divisor (\text{SML}_i) & Newtonian Mass Saturation Index (NMSI)
+
+  - Southern Hemisphere Somatic Growth Factor (\Phi_{\text{maturation}}):
+    \Phi_{\text{maturation}} = \begin{cases} 1.05, & \text{if } \text{Age}_i \ge 3 \text{ AND } \text{Month} \in \{\text{May}, \text{June}, \text{July}\} \\ 1.00, & \text{otherwise} \end{cases}
+    Scale down effective carried mass metabolically:
+    \text{SML}_i = \left(\frac{\text{Age}_i - 1}{2}\right)^{0.15} \cdot \Phi_{\text{maturation}} \quad \text{for } \text{Age}_i \ge 3
+    \text{SML}_i = 1.00 \quad \text{for } \text{Age}_i == 2 This somatic scale
+    factor acts as a direct divisor to effective weight, scaling down active
+    metabolic load:
+    W_{\text{eff, SML}, i} = \frac{W_{\text{eff}, i}}{\text{SML}_i}
+  - Newtonian Mass Saturation Index (NMSI - Formula 3.1): For female competitors
+    (Fillies/Mares) on turf tracks under any compaction state:
+    \text{If } W_{\text{eff}, i} \ge 60.0\text{ kg} \text{ AND } \text{Age}_i == 3 \implies \Delta\nu_{\text{NMSI}, i} = +0.12
+    If NMSI is active, the Tendon Sparing Recoil bonus
+    (\Delta\nu_{\text{recoil}}) is disabled, and an unconditional +0.12 frailty
+    surcharge is applied to \nu_i to represent musculoskeletal saturation.
+
+Formula 4: Bi-Phasic Cardiorespiratory Layoff Plateau (BCM) & Layoff Exemption (ZA-JTEM)
+
+Instead of linear fitness decay, biological detraining is governed by a
+bi-phasic cardiorespiratory curve:
+\text{BCM}_i(t, d) = \delta_{\text{2nd-up}, i} \cdot \left[ \alpha \cdot e^{-\lambda_1 \cdot t} + (1.0 - \alpha) \cdot \left(1.0 - e^{-\lambda_2 \cdot d}\right) \right] \cdot \Phi_{\text{recovery}}
+where t is the length of the spell (\text{Days\_layoff}), d is today's start
+interval (\text{DSLS}_2), \alpha = 0.65, \lambda_1 = 0.004 (long-term aerobic
+decay constant), \lambda_2 = 0.08 (short-term recovery constant), and
+\Phi_{\text{recovery}} = 1.0 - \frac{\text{Margin}_{t-1}}{10.0}.
+
+  - Freshened Energy Sparing Pattern (FESP): If t \in [45, 75]\text{ days}, set
+    \text{BCM}_i = 0.00 unconditionally as this represents a peak physiological
+    window.
+  - ZA-JTEM Layoff Exemption Bypass: If the horse returns from a spell of
+    \ge 90\text{ days} and has no trial data, but \text{TSR\_1st} \ge 12\% AND
+    the stable's retained premier jockey is booked (stable intent indicator):
+    set \text{BCM}_i = 0.00 and set \text{CRDI}_i = 0.00 unconditionally.
+    Nullify V5 and V44 vetoes.
+
+Formula 5: Wind Drag Shielding Factor (\text{WDSF}_i) & Draft-Corrected Aerodynamic Drag (D_{\text{aero}, i})
+
+\text{WDSF}_i = 1.0 + 0.03 \cdot \left(\frac{\text{WS} \cdot \cos(\theta_{\text{wind}})}{10}\right) \times (1.0 - S_{\text{draft}, i})
+where \text{WS} is the wind speed in km/h, \theta_{\text{wind}} is the wind
+angle relative to the home straight, and S_{\text{draft}, i} is the drafting
+shield coefficient:
+
+  - S_{\text{draft}, i} = 0.42 if the runner is draft-shielded in the slipstream
+    (\text{PSP}_i == \text{Handy} or \text{Midfield}, and \text{LSO}_i \le 2.0).
+  - S_{\text{draft}, i} = 0.00 if the runner is an unshielded leader
+    (\text{PSP}_i == \text{Leader}).
+  - Draft-Corrected Aerodynamic Drag (D_{\text{aero}, i} - Formula 5.1):
+    D_{\text{aero}, i} = \frac{1}{2} \cdot \rho \cdot \left(v_{\text{horse}} + v_{\text{wind}} \cdot \cos(\theta_{\text{wind}})\right)^2 \cdot C_d \cdot A \cdot (1.0 - S_{\text{draft}, i})
+    where \rho = 1.225\text{ kg/m}^3 (air density at sea level, adjusted for
+    elevation if altitude > 1000\text{ m} to
+    \rho_{\text{alt}} = \rho \cdot e^{-0.00012 \cdot \text{Altitude}}),
+    v_{\text{horse}} = 15.5\text{ m/s} (typical sprint pace velocity),
+    C_d = 1.05 (aerodynamic drag coefficient of horse and rider), and
+    A = 1.15\text{ m}^2 (frontal surface area). If
+    D_{\text{aero}, i} \ge 220\text{ Newtons}, apply a frailty penalty of
+    \Delta\nu_{\text{drag}, i} = +0.06 to unshielded leaders.
+
+Formula 6: Distance-to-First-Turn Sparing Modifier (\text{DTM}_i) & Pace Density Congestion Modifier (\text{PDCM}_i)
+
+\text{DTM}_i = 1.0 - \min\left(0.60, \max\left(0.0, \frac{D_{\text{turn1}} - 300}{300}\right)\right)
+If D_{\text{turn1}} \ge 400\text{ metres}, starting barrier drag is scaled down
+directly by \text{DTM}_i.
+
+  - Pace Density Congestion Modifier (\text{PDCM}_i - Formula 6.1):
+    \text{CGTDC}_i = \max\left(0.0, 1.0 - \frac{D_{\text{turn1}}}{500}\right)
+    \Phi_{\text{congestion}, i} = \max\left(0.0, \frac{N_{\text{tempo}} - 3}{5}\right) \cdot \left( \frac{B_{\text{compressed}, i}}{N_{\text{active}}} \right)
+    \text{PDCM}_i = \text{CGTDC}_i + (1.0 - \text{CGTDC}_i) \cdot \Phi_{\text{congestion}, i}
+    Apply \text{PDCM}_i as a direct multiplier to the baseline starting barrier
+    penalty. If \text{PDCM}_i \ge 0.60, the wide draw penalty is restored by up
+    to 60%, modelling traffic congestion that prevents a clean crossover despite
+    a long straight run-in.
+
+Formula 7: Same-Trainer Jockey Allocation Priority Index (\text{JTAPI}_i)
+
+Evaluate internal stable hierarchies when a trainer has multiple starters:
+\text{JTAPI}_i = \text{JWR}_i \cdot \text{TWR}_i \cdot \Phi_{\text{intent}}
+where \text{JWR} and \text{TWR} are track-specific win rates. Solve
+\Phi_{\text{intent}} via stable-split decision tree: If
+N_{\text{stable\_starters}} \ge 2, calculate
+\Delta \text{JWR} = \text{JWR}_{\text{target\_runner}} - \max(\text{JWR}_{\text{stable\_mates}}):
+
+  - Case A: \Delta \text{JWR} \ge 5.0\% \implies \Phi_{\text{intent}} = 1.50
+    (Primary Stable Intent / PSI).
+  - Case B: Target runner \text{JWR} is \ge 5.0\% lower than any stablemate's
+    \text{JWR} \implies \Phi_{\text{intent}} = 0.60 (Secondary Stable Intent /
+    SSI).
+  - Case C: All other configurations \implies \Phi_{\text{intent}} = 1.00.
+
+Formula 8: Polytrack Viscoelastic Flotation Surcharge (\text{PVFS}_i)
+
+On synthetic tracks (Silo D), the Elastic Sparing Recoil Engine (ERSE) is
+permanently deactivated. Under warm conditions
+(T_{\text{air}} \ge 16^\circ\text{C}), apply non-linear viscoelastic mass tax:
+\Delta\nu_{\text{poly\_mass}} = 0.08 \cdot \max\left(0, \frac{W_{\text{eff, SML}} - 56.0}{5.5}\right) \cdot \left(1.0 + 0.02 \cdot \max(0, T_{\text{air}} - 15.0)\right) \times \Phi_{\text{CDMS}, i}
+Lightweight competitors (W_{\text{eff, SML}} \le 56.0\text{ kg}) receive
+flotation bonus: \Delta\nu_{\text{flotation}} = -0.06. Both
+\Delta\nu_{\text{poly\_mass}} and \Delta\nu_{\text{flotation}} are subject to
+Class-Damped Viscoelastic Attenuation (Formula 11) if \text{OR}_i \ge 66.
+
+Formula 9: Pinnacle Class Sparing Engine (\text{PCSE}_i)
+
+In elite non-handicap events (\text{MR}_{\text{class}} \ge 100 or
+Pinnacle/Graded status), scale down viscoelastic drag and mass-tax penalties
+based on Merit Rating:
+\Delta\nu_{\text{mass, PCSE}} = \Delta\nu_{\text{mass}} \cdot (1.0 - \omega_{\text{class}, i}) \quad D_{\text{visco, PCSE}} = D_{\text{visco}} \cdot (1.0 - \omega_{\text{class}, i})
+\omega_{\text{class}, i} = \min\left(0.85, \max\left(0.0, \frac{\text{MR}_i - 90}{40}\right)\right)
+
+Formula 10: Pace-Mass Viscoelastic Sieve (\text{PMVS}_i)
+
+Sustaining early pace under high mass on turning synthetic circuits drains
+glycogen. Apply metabolic surcharge:
+\Delta\nu_{\text{PMVS}, i} = 0.15 \cdot \max(0, W_{\text{eff, SML}, i} - 56.0) \cdot (1.0 - \text{MSCI}_{\text{eff}, i}) \cdot I_{\text{pace}, i} \times \Phi_{\text{CDMS}, i}
+where I_{\text{pace}, i} = 1.0 if on-pace (\text{PSP} is Leader or Handy); 0.0
+otherwise. \text{PMVS} is subject to Class-Damped Viscoelastic Attenuation
+(Formula 11) if \text{OR}_i \ge 66.
+
+Formula 11: Class-Damped Viscoelastic Attenuation (\text{CDVA}_i)
+
+Active only on synthetic / Tapeta tracks (Silo D) in ZAF. To prevent warm-wax
+environmental variables from over-penalising class-dominant horses:
+\text{CDVA\_Factor}_i = e^{-0.05 \cdot \max(0, \text{OR}_i - \text{OR}_{\text{mean}})}
+where \text{OR}_i is today's Official Rating (or MR). If the horse holds a class
+rating of \text{OR}_i \ge 66: Apply \text{CDVA\_Factor}_i directly as an
+attenuation multiplier to D_{\text{visco}, i} (Formula 2),
+\Delta\nu_{\text{poly\_mass}} (Formula 8), and \Delta\nu_{\text{PMVS}, i}
+(Formula 10).
+
+Formula 12: Continuous Lifetime Course-Distance Resonance (\text{LCR}_i)
+
+\text{LCR}_i = \left( \frac{\text{C\&D\_Places}_i + 0.5}{\text{C\&D\_Starts}_i + 1} \right) \cdot \ln(\text{C\&D\_Starts}_i + 2)
+where \text{C\&D\_Starts}_i is the total career starts at today's exact track
+and distance, and \text{C\&D\_Places}_i is today's track and distance wins +
+places.
+
+Formula 13: Kinetic Volatility Index (\text{KVI}_i)
+
+Identify unexposed or resuming horses undergoing massive biophysical transitions
+carrying un-spared loads:
+\text{KVI}_i = \left(1.0 - \text{Adaptability\_Factor}_i\right) \cdot \ln\left(\text{Layoff\_Days}_i + 2\right) \cdot \left(\frac{W_{\text{eff, SML}, i}}{54.0}\right)^{2.0} \cdot \Phi_{\text{transition}, i}
+where \text{Adaptability\_Factor}_i = 1.0 if the horse has won on today's
+surface; 0.50 if placed; 0.10 if unexposed or un-placed.
+\Phi_{\text{transition}, i} = 1.80 if today's race represents a turf-sprint
+(\le 1200\text{ m}) to synthetic-route (\ge 1400\text{ m}) transition; 1.00
+otherwise. If \text{KVI}_i \ge 3.50, flag the runner as Highly Volatile
+(\text{HVR}_{\text{status}, i} = \text{True}).
+
+Formula 14: Newtonian Viscoelastic Squeezing Threshold (\text{NVST}_i)
+
+\text{If } \text{HVR}_{\text{status}, i} == \text{True} \text{ AND } W_{\text{eff, SML}, i} \ge 59.5\text{ kg on Synthetic} \implies \Delta\nu_{\text{NVST}, i} = +0.22
+Apply \Delta\nu_{\text{NVST}, i} directly to latent frailty (\nu_i),
+representing the extreme thermodynamic energy tax of the high-mass synthetic
+transition.
+
+Formula 15: Second-Up Syndrome Regression Index (\text{SUSRI}_i) & Dynamic Second-Up Priming Index (\text{DSUPI}_i)
+
+Provides a precise metabolic penalty to horses returning quickly of a peak
+first-up performance off a long layoff (\ge 60\text{ days}), inducing
+cardiorespiratory flatlining:
+\text{SUSRI}_i = \begin{cases} 1.0 + \alpha_{\text{flat}} \cdot \left(\frac{\text{Peak\_EFF}_{t-1}}{\text{DSLS}_1}\right) \cdot e^{-\lambda_{\text{flat}} \cdot \text{DSLS}_2}, & \text{if } \text{Days\_layoff}_i \ge 60 \text{ and } \text{Starts\_prep}_i == 2 \text{ and } \text{DSLS}_2 \le 28 \\ 1.0, & \text{otherwise} \end{cases}
+where \text{Peak\_EFF}_{t-1} = \frac{1.0}{\text{Margin}_{t-1} + 0.50},
+\text{DSLS}_1 is the first-up layoff length, \text{DSLS}_2 is today's start
+interval, \alpha_{\text{flat}} = 15.0, and \lambda_{\text{flat}} = 0.05.
+
+  - Dynamic Second-Up Priming Index (DSUPI): For intermediate freshening cycles
+    (\text{Days\_layoff} \in [45, 75]\text{ days}), if the first-up run was
+    educational (margin beaten \ge 6.0\text{L}), do not apply detraining decay.
+    Treat as a conditioning physical primer, applying a direct frailty discount:
+    \text{DSUPI}_i = \begin{cases} 0.95 \text{ (Sparing Bonus)}, & \text{if } \text{Days\_layoff}_i \in [45, 75] \text{ and } \text{Runs\_this\_prep}_i == 2 \text{ and } W_{\text{eff}} \le 54.0\text{ kg} \\ 1.00, & \text{otherwise} \end{cases}
+
+Formula 16: Distance-Drop Sparing Index (\text{DDSI}_i)
+
+\text{DDSI}_i = 1.0 + \beta_{\text{drop}} \cdot \ln\left( \frac{\text{Distance}_{t-1}}{\text{Distance}_{\text{today}}} \right) \cdot \left(1.0 - \text{Place\_Rate}_i\right)
+where \beta_{\text{drop}} = 0.50, and \text{Place\_Rate}_i is the horse's
+historical career placing percentage. This index modifies the Sovereign Kinetic
+Index (\text{SKI}_i) directly.
+
+Formula 17: Apprentice Mass-to-Somatic Ratio Sparing (\text{AMSRS}_i)
+
+Measures the mechanical efficiency gained on dry turf by pairing a mature horse
+with a high-allowance apprentice, alleviating systemic joint stress:
+\text{AMSRS}_i = \left( \frac{W_{\text{carded}, i} - \text{Claim}_i}{W_{\text{carded}, i}} \right) \cdot \left( \frac{\text{Age}_i}{3.5} \right) \cdot \Phi_{\text{maturation}, i}
+where lower values represent higher energy-saving potential.
+
+Formula 18: Durbanville Lateral Turn Penalty (\text{CL}_{\text{Durb}, i})
+
+Calculates the centrifugal kinetic energy loss (E_{\text{loss}}) on tight
+right-handed turns (turn radius r = 65\text{ m}):
+\text{CL}_{\text{Durb}, i} = \frac{v_i^2 \cdot \theta \cdot \left(w_{\text{lane}} \cdot L_{\text{off}, i}\right)}{r \cdot g}
+where v_i = 15.5\text{ m/s} (typical Durbanville pace velocity),
+w_{\text{lane}} = 1.2\text{ m} (effective lane path width), L_{\text{off}, i} is
+the starting barrier lateral offset index (Lane 1 = 0.2; Lane 2 = 1.2; Lane 3
+= 2.2), and \theta = 2.356\text{ radians} (135^\circ turn arc).
+
+Formula 18.1: Stable Entry Density Pace Modifier (\text{SED}_i) & Stable Pacing Synergy Index (SPSI)
+
+\text{SED}_{\text{stable}} = \frac{N_{\text{stable\_runners}}}{N_{\text{active}}}
+If \text{SED}_{\text{stable}} \ge 0.20, apply a Pace Synergy Bonus
+(\Delta \nu_{\text{PSB}} = -0.04) to all runners from that stable.
+
+  - Stable Pacing Synergy Index (SPSI): If a stable has multiple active starters
+    (\text{Stable\_Runner\_Count} \ge 2), and one stablemate maps as a pacemaker
+    (\text{PSP} == \text{Leader} or \text{Handy}, \text{KGS} \le 1.8) and
+    today's wind is a headwind (\text{WS} \ge 10\text{ km/h},
+    \theta_{\text{wind}} \le 45^\circ), apply a synergy discount to the trailing
+    stablemate, reducing calculated wind-exposure and frailty:
+    \Delta\nu_{\text{SPSI}, i} = -0.06 \cdot \text{SED}_{\text{stable}} \cdot \left(\frac{\text{WS} \cdot \cos(\theta_{\text{wind}})}{10}\right)
+
+Formula 19: Pedigree Distance Progression Index (\text{PDPI}_i) & Distance Transition Strain Index (\text{DTSI}_i)
+
+\text{PDPI}_i = \frac{\left(\text{AWD}_{\text{Sire}, i} \cdot 0.65\right) + \left(\text{AWD}_{\text{DamSire}, i} \cdot 0.35\right)}{D_{\text{today}}}
+
+  - Distance Transition Strain Index (\text{DTSI}_i - Formula 19.1): Measures
+    the cardiorespiratory strain of step-ups in distance. If
+    D_{\text{today}} > D_{\text{last}}, calculate:
+    \text{DTSI}_i = \left( \frac{D_{\text{today}} - D_{\text{last}}}{100} \right)^2 \cdot e^{-0.5 \cdot \text{Starts}_i} \cdot \left(1.5 - \text{PDPI}_i\right)
+    Apply \text{DTSI}_i directly as an addition to the baseline frailty (\nu_i).
+    For unexposed sprinters stepping up to staying trips, DTSI curves upward
+    exponentially, modeling rapid lactic acid accumulation.
+
+Formula 20: Inertial Pocket Deceleration Modifier (\text{IPDM}_i), Pocket Trap Probability Factor (PTPF), Shorter Straight Pocket Trap Surcharge (\text{PTPF}_{\text{Inside}}), Pocket Trap Surcharge (PTPS), Maiden-to-Handicap Class Shock Index (MHCSI), & Lateral Velocity Loss (\Delta V_{\text{lat}, i})
+
+  - Inertial Pocket Deceleration Modifier (\text{IPDM}_i):
+    \text{If } B_{\text{actual}, i} == 1 \text{ AND } \text{KGS}_i \le 2.0 \implies \Delta\nu_{\text{IPDM}, i} = 0.40 \cdot \left(2.0 - \text{KGS}_i\right) \cdot \text{SML}_i
+  - Pocket Trap Probability Factor (PTPF):
+    \text{If } B_{\text{actual}, i} \le 2 \text{ AND } \text{PSP}_{\text{leader}} == \text{Leader} \implies \text{PTPF}_i = +0.10 \cdot (3.0 - B_{\text{actual}, i}) \cdot (1.0 - \text{PDPI}_{\text{leader}})
+  - Shorter Straight Pocket Trap Surcharge (\text{PTPF}_{\text{Inside}} -
+    Formula 20.1): On tight turning courses with a short home straight
+    (L_{\text{straight}} \le 500\text{ m}), the pocket risk for rail-drawn
+    runners is magnified:
+    \text{PTPF}_{\text{Inside}, i} = \text{PTPF}_i \cdot \left(1.0 + \max\left(0.0, \frac{800 - L_{\text{straight}}}{300}\right)\right) \cdot \left(3.0 - B_{\text{actual}, i}\right)
+  - Pocket Trap Surcharge (PTPS - Formula 20.2): If a horse has low tactical
+    early speed (\text{TSI}_i \le 0.50) and is drawn in Barrier 1 or 2 on a
+    turning track, apply:
+    \text{PTPS}_i = \lambda_{\text{pocket}} \cdot (1.0 - \text{TSI}_i) where
+    \lambda_{\text{pocket}} = 0.10 represents the pocketing friction factor.
+  - Maiden-to-Handicap Class Shock Index (MHCSI - Formula 20.3): For any runner
+    transitioning from a maiden win to an open handicap:
+    \text{MHCSI}_i = 1.0 + \alpha_{\text{shock}} \cdot \left( \frac{W_{\text{eff}, i} - 54.0}{54.0} \right) \cdot e^{-\beta_{\text{shock}} \cdot \text{Runs}_i}
+    where \alpha_{\text{shock}} = 0.5, \beta_{\text{shock}} = 0.4, and
+    \text{Runs}_i is the number of career starts. Apply the resulting value as a
+    direct multiplier to the baseline latent frailty (\nu_i).
+  - Lateral Velocity Loss Correction (\Delta V_{\text{lat}, i} - Formula 20.4):
+    Quantify the velocity penalty incurred when a runner must shift laterally to
+    escape traffic:
+    \Delta V_{\text{lat}, i} = -1.0 \cdot \left( V_{\text{mid}} \cdot \sin(\theta_{\text{switch}}) \right) \cdot \left( \frac{W_{\text{eff}, i}}{54.0} \right)
+    where V_{\text{mid}} = 15.5\text{ m/s} and \theta_{\text{switch}} = 15^\circ
+    (\sin(15^\circ) = 0.2588).
+
+Formula 21: Somatic Compaction-Tendon Interaction (SCTI)
+
+Model hoof-to-turf interaction on firm turf using a parabolic strain-energy
+density curve to refine the Elastic Sparing Recoil Engine (ERSE):
+\text{SCTI}_i = \left(\frac{W_{\text{eff}, i}}{54.0}\right)^{1.8} \cdot \left(1.0 - e^{-2.5 \cdot \text{Compaction\_State}}\right)
+where \text{Compaction\_State} = 1.0 if the track rating is "Good" or "Firm"
+(0.0 otherwise). If \text{SCTI}_i \ge 1.15 on dry compacted turf
+(\text{Compaction\_State} == 1), apply the Tendon Sparing Recoil bonus
+\Delta\nu_{\text{recoil}} = -0.10 to represent peak kinetic conservation. If
+W_{\text{eff}, i} \le 55.0\text{ kg}, the elastic tendon recoil is insufficient,
+and a Muscular Fatigue Tax of \Delta\nu_{\text{stamina}} = +0.08 is applied.
+
+Formula 22: Centrifugal Slipstream Preservation (CSPI) & Turn-Radius Centrifugal Tax (TRCT)
+
+  - Centrifugal Slipstream Preservation Index (CSPI - Formula 22.1): On tight
+    turns, reward lightweight draft-shielded runners:
+    \text{CSPI}_i = S_{\text{draft}, i} \cdot \left(\frac{54.0}{W_{\text{eff, SML}, i}}\right)^{1.5} \cdot \left(\frac{100}{R_{\text{turn}}}\right)
+    Add \text{CSPI}_i directly to the Net Thermodynamic Conservation Index
+    (\text{NTCI}_i) score.
+  - Turn-Radius Centrifugal Tax (TRCT - Formula 22.2): Compute the non-linear
+    kinetic energy lost rounding a bend:
+    \text{TRCT}_i = \left(\frac{v_{\text{horse}}^2 \cdot \theta \cdot w_{\text{lane}} \cdot B_{\text{actual}, i}}{R_{\text{turn}} \cdot g}\right) \cdot \left(1.0 - S_{\text{draft}, i}\right)
+    where v_{\text{horse}} = 15.5\text{ m/s}, \theta = 2.356\text{ radians}
+    (135^\circ turn), w_{\text{lane}} = 1.2\text{ m} (effective lane path
+    width), and g = 9.81\text{ m/s}^2. If TRCT \ge 0.04, apply a frailty penalty
+    of \Delta\nu_{\text{turn}} = +0.05 to model micro-slip traction loss.
+
+Phase 4: Sovereign Kinetic Index (SKI) Engine
+
+Section 1: Baseline Ingestion & Metrical Anchors
+
+To prevent static form traps, all mathematical evaluations of raw capacity are
+consolidated into the Sovereign Kinetic Index. This continuous efficiency index
+acts as a baseline "Raw Engine Capacity" index (\text{SKI}_i), which is
+subsequently scaled to compute the Net Thermodynamic Conservation Index
+(\text{NTCI}_i).
+
+Section 2: Raw Nominal Latent Speed (Raw NLS) & Veteran Decay
+
+Calculate base speed potential:
+
+1.  Base Scalar: Initialize with a standard baseline of 80.
+2.  Career Class Adjustments: Add up to +10 based on career win/place
+    percentages and class competitiveness. Deduct up to -10 for high-mileage,
+    non-competitive profiles (Win Rate <5%).
+3.  Recent Performance Peak: Add up to +5 for strong closing sectionals or
+    close-margin finishes (<1.5\text{L}) in higher grades.
+4.  Ex-Import Class Drop Override (PCGM): Apply Regional Gravity Shift Modifier
+    (PCGM): If
+    \text{Circuit\_prior} \in \{\text{Kenilworth}, \text{Durbanville}\} AND
+    \text{Circuit\_current} \in \{\text{Turffontein}, \text{Vaal}, \text{Fairview}, \text{Greyville}\} \implies \text{LPP}_i = \text{LPP}_i + 6.0.
+    Western Cape and Gauteng form is superior to Eastern Cape and KZN form;
+    Cape/Gauteng drop-downs possess an intrinsic Class Gravity Delta (+6.0 NLS)
+    that overrides synthetic debut or long layoff penalties.
+5.  Synthetic-Turf Decoupling: If today's track is Synthetic (Silo D), decouple
+    turf form entirely:
+    \text{Raw NLS}_{\text{synthetic}} = \left(0.70 \cdot \text{NLS}_{\text{synthetic\_historic}}\right) + \left(0.30 \cdot \text{NLS}_{\text{recent\_overall}}\right)
+6.  Castration Hormonal Recoil Adjustment: Multiply Raw NLS by \text{PGRF}_i
+    (Formula 53).
+7.  Detraining Aerobic Decay Adjustment (ZA-JTEM): Deduct \text{CRDI}_i
+    (Formula 54) directly from Raw NLS:
+    \text{Raw NLS}_{\text{calibrated}, i} = \text{Raw NLS}_i \cdot \text{PGRF}_i - \text{CRDI}_i
+    Note: \text{CRDI}_i is completely nullified if ZA-JTEM is triggered.
+8.  Age-Decay Acceleration Factor (ADAF): If horse \text{Age} \ge 6 years, scale
+    down the calibrated speed rating to correct for veteran muscle contraction
+    decline:
+    \text{Raw NLS}_{\text{calibrated}, i} = \text{Raw NLS}_{\text{calibrated}, i} \cdot \left(1.0 - 0.025 \cdot \left(\text{Age}_i - 5\right)\right)
+9.  Distance-Drop Sparing Index (DDSI): Apply \text{DDSI}_i (Formula 16)
+    directly to the calibrated Raw NLS to adjust for trip drop-downs.
+
+Section 3: Twelve Modular Latent Frailty (\nu_i) Adjustments
+
+Baseline frailty \nu_{\text{base}} = 0.50. Calculate the final \nu_i by applying
+these adjustments:
+
+1.  Cardiorespiratory Recovery Decay (\Delta\nu_{\text{decay}})
+      - Rule 1.1: Layoff Sparing Fresh Factor (LSFF, Formula 81). If
+        class-dominant (MR \ge 110) first-up over sprint
+        D \le 1100\text{ m} \implies \Delta\nu_{\text{decay}} = 0.00.
+      - Rule 1.2: Second-Up Syndrome Regression: Apply \text{SUSRI}_i
+        (Formula 15) to scale up baseline frailty if the runner is returning
+        within 28 days of a peak first-up run off a long spell.
+      - Rule 1.2a (Dynamic Second-Up Priming): If intermediate layoff (45-75
+        days), apply \text{DSUPI}_i (Formula 15) frailty discount.
+        Alternatively, apply the bi-phasic cardiorespiratory curve BCM_i(t, d)
+        (Formula 4) to model long-term decay.
+      - Rule 1.3 (Soft-Run Second-Up Stimulus): If first-up run off spell was
+        educational (margin \ge 2.5\text{L} over sprint \le 1200\text{ m}):
+        \Delta\nu_{\text{decay}} = -0.04.
+      - Rule 1.31 (Third-Up Peak): If third-up and second-up margin \le 3.0
+        lengths: \Delta\nu_{\text{cond3}} = -0.06.
+      - Rule 1.4: Altitude-to-Sea-Level Oxygenation Boost (Formula 32). If
+        high-altitude trained coastal entrant, apply
+        \Delta\nu_{\text{ASLOB}} = -0.10, completely overriding travel fatigue
+        and detraining decay.
+      - Rule 1.5 (Late-Season Juvenile Stamina Tax - LSJST): If mixed-age,
+        D \ge 1400\text{ m} in Winter: apply
+        \Delta\nu_{\text{juvenile\_stamina}} (Formula 38) to 2YOs.
+2.  Viscoelastic Ground & Suction Drag (\Delta\nu_{\text{mass}})
+      - Rule 2.1 (Weight-for-Surface Mass Tax): If track is Soft/Heavy, apply
+        linear mass tax cushioned by class drops:
+        \Delta\nu_{\text{mass}} = 0.02 \cdot \left(W_{\text{eff, SML}, i} - 54.0\right) \times \Phi_{\text{CDMS}, i}
+        (Bypassed if track is Good/Firm - Active ERSE State).
+      - Rule 2.2: Female somatic allowance: fillies carrying 57.5 kg on dry,
+        warm turf sprint receive \Delta\nu_{\text{gender\_relief}} = -0.04.
+      - Rule 2.3 (PVFS on Synthetic / SMCP Wet Wax): On Polytrack, permanently
+        deactivate ERSE. If T_{\text{air}} \ge 16^\circ\text{C}, apply
+        \Delta\nu_{\text{poly\_mass}} (Formula 8) and \Delta\nu_{\text{WSWS}, i}
+        (Formula 2). If weight
+        \le 56.0\text{ kg} \implies \Delta\nu_{\text{flotation}} = -0.06. Under
+        warm conditions, if \text{OR}_i \ge 66, apply Formula 11 CDVA
+        attenuation directly. If T_{\text{air}} \le 15^\circ\text{C} with active
+        wetness (SMCP), standard viscoelastic mass drag is completely
+        deactivated (\Delta\nu_{\text{poly\_mass}} = 0.00).
+3.  Centrifugal Home Turn Drag (\Delta\nu_{\text{geometry\_adj}})
+      - Rule 3.1: Projected wide turn path on tight turns
+        (R_{\text{turn}} < 100\text{ m}): calculate turn drag scaled down by
+        course-distance memory:
+        \Delta\nu_{\text{geometry}} = \left[ 0.04 \cdot \left(\text{AvgWides\_turn}\right) \cdot \left(\frac{100}{R_{\text{turn}}}\right) \cdot \text{DTM}_i \right] \cdot \left(1.5 - \text{LCR}_i\right)
+        Then apply Formula 92 to compute \Delta\nu_{\text{geometry\_adj}},
+        discounting wide draw penalties by up to 80% if the runner maps as an
+        elite frontrunner with low surrounding pace density. For Durbanville,
+        add \text{CL}_{\text{Durb}, i} (Formula 18) directly. Add Turn-Radius
+        Centrifugal Tax \text{TRCT}_i (Formula 22.2) if active.
+4.  Pedigree Adaptability Sparing (\Delta\nu_{\text{pedigree}})
+      - Rule 4.1: Wet/stamina pedigree: -0.06 frailty. Add Distance Transition
+        Strain Index \text{DTSI}_i (Formula 19.1) if running a step-up distance.
+5.  Physiological Control and Corrective Gear (\Delta\nu_{\text{gear}})
+      - Rule 5.4: Soft/Heavy turf and gear 'Blinkers AGAIN': -0.05 frailty.
+6.  Preparation, Tempo, and Aerodynamic Drag (\Delta\nu_{\text{tempo}})
+      - Rule 6.8 (Viscoelastic Siltation Tax): If rain-affected turf late in the
+        programme (PRSC), on-pace inside-drawn runners get
+        \Delta\nu_{\text{silt}} = +0.08. Apply Shorter Straight Pocket Trap
+        Surcharge \text{PTPF}_{\text{Inside}, i} (Formula 20.1) or Pocket Trap
+        Surcharge \text{PTPS}_i (Formula 20.2) if active.
+      - Rule 6.13 (Draw-Pace Co-dependence Tax): If front-mapped from wide gate
+        on low compaction track: apply +0.08 frailty (Formula 37).
+      - Rule 6.14 (Stable Pacing Synergy): If headwind and stablemate is
+        leading, apply \Delta\nu_{\text{SPSI}, i} (Formula 18.1) wind-shielding
+        discount. Apply D_{\text{aero}, i} (Formula 5.1) wind drag penalty if
+        active.
+7.  Endocrine and Metabolic Stress (\Delta\nu_{\text{stress}})
+      - Rule 7.2: Standard fatigue: \ge 5 runs in last 40 days \implies +0.06
+        frailty.
+8.  Age and Sex Viscosity Scale (\Delta\nu_{\text{age\_sex}})
+      - Rule 8.4 (Sophomore vs. Older Deficit): In mixed-age maiden turf
+        races, 2YOs get +0.08 frailty.
+      - Rule 8.5 (Sex-Based Aerobic Capacity Modifier): In mixed-sex turf routes
+        \ge 1800\text{ m} under dry compaction, females get pacing modifier
+        \text{SPRM}_{\text{female}} = 0.90.
+9.  Kinetic Volatility Surcharge (\Delta\nu_{\text{KVI}})
+      - Rule 9.1: If \text{HVR}_{\text{status}, i} == \text{True} and
+        W_{\text{eff, SML}, i} \ge 59.5\text{ kg} on synthetic, apply the
+        extreme NVST penalty (\Delta\nu_{\text{NVST}, i} = +0.22) directly to
+        the latent frailty to correct the kinetic rating.
+10. Inertial Pocket Deceleration Modifier (\Delta\nu_{\text{IPDM}})
+      - Rule 10.1: If inside-drawn (B_{\text{actual}} == 1) and slow away
+        (\text{KGS} \le 2.0), apply \Delta\nu_{\text{IPDM}, i} (Formula 20) and
+        Pocket Trap Probability Factor \text{PTPF}_i (Formula 20) to latent
+        frailty to adjust for box-in risk behind a fading pacemaker. Apply
+        Maiden-to-Handicap Class Shock Index \text{MHCSI}_i (Formula 20.3) if
+        active.
+
+Phase 4.5: Calibrated Net Thermodynamic Conservation Index (NTCI)
+
+  - Formula A: Core NTCI Calculation:
+    \text{NTCI}_{\text{base}, i} = \text{SKI}_i \cdot \left(1.0 - \nu_i\right)
+  - Formula B: Compacted Surface Propulsion Index (\text{CSPI}_i):
+    \text{CSPI}_i = \text{NTCI}_{\text{base}, i} \cdot \text{AMSRS}_i \cdot \text{PDPI}_i
+  - Formula C: Straight-Course Headwind Drafting (\text{SCHDS}_i):
+    \text{NTCI}_{\text{wind\_adj}, i} = \text{NTCI}_{\text{base}, i} + \text{DSB}_i
+  - Formula D: Somatic Exposure & Hardiness Filter (\text{SEHF}_i):
+    \text{If } S_i < 10 \implies \text{EDP}_i = -3.0 \cdot \left(10 - S_i\right); \text{ if } S_i \ge 10 \implies \text{EDP}_i = 0.0
+    \text{NTCI}_{\text{final}, i} = \text{NTCI}_{\text{base}, i} + \text{DSB}_i + \text{EDP}_i
+    Apply Centrifugal Slipstream Preservation Index CSPI_i (Formula 22.1)
+    directly to \text{NTCI}_{\text{final}, i} if active on tight turns.
+  - Formula E: Net Kinetic Potential (\text{NKP}_{\text{isolated}, i}):
+    \text{NKP}_{\text{isolated}, i} = W_{\text{alloc}, i} - 3.5 \cdot \text{Drag Penalty}_i \quad \text{where } \text{Drag Penalty}_i = W_{\text{eff, SML}, i} \cdot \left(1.0 - \text{Compaction\_State}\right)
+  - Formula F: Thermodynamic Kinetic Surplus (\text{TKS}_i):
+    \text{TKS}_i = \frac{\text{NTCI}_{\text{final}, i} - \text{NTCI}_{\text{field\_mean}}}{\sigma_{\text{NTCI}}}
+
+Phase 5: Filter Hierarchy & Veto Codex
+
+Universal Mandates
+
+  - MANDATE 0 (Severe Data Deficit Abort): If the pre-flight boilerplate scanner
+    registers H_{\text{form}} \le 0.05 AND starting gate variance
+    \text{Var}_{\text{B}} == 0, and the live-search recovery fails to
+    successfully reconstruct at least 80% of core form metrics, immediately
+    quarantine the race, halt execution, and output a standard "DATA
+    INSUFFICIENT FOR PREDICTION" notice. No selections may be produced.
+  - MANDATE 1: Lame, Eased Down, or Cardiac Arrhythmia last start = KILL
+    (Absolute Exotic Kill - AEK).
+  - MANDATE 2: Career starts 15+ AND career wins zero = KILL (AEK) (unless Class
+    == Maiden and CFB criteria met, which downgrades to WOV).
+  - MANDATE 4 (Straight Track Override): Straight sprint (\le 1200\text{ m}),
+    standard rail geometry is inverted. High barriers and middle draws
+    (Barriers 5–10) possess drag advantages. Reclassify middle/outside draws as
+    Harmonic. Inside rail penalty is reduced by 50% on Soft straight tracks.
+  - MANDATE 5 (Maximum Proven Distance): Distance Delta must be based on the
+    proven placing threshold \text{PSI}_i (Formula 1). Stepping +200m beyond
+    \text{PSI}_i in 1800\text{ m}+ race = STAMINA VETO (Win-Only Veto - WOV).
+    Exemption: Bypassed on tight-turning tracks if the Sovereign Rail Shortening
+    Coefficient (SRSC - Formula 69) is triggered for barriers 1-2.
+  - MANDATE 6 (STZ Backmarker Demotion): On tight provincial turning tracks
+    (C_{\text{track}} < 1800\text{ m}), backmarkers (\text{PSP} \ge 8.0) drawing
+    Barrier 1, 2, or 3 cannot be designated as 1A Sovereign due to pocketing
+    risk. Demote to 1B, and promote the most versatile/forward-mapped runner
+    (\text{PSP} \le 5.0) to 1A with an intact P(S_3).
+  - MANDATE 11 (GPR Activation): If \text{Field\_Average\_Win\_Rate} < 5\%
+    (e.g., all active runners are maidens), immediately trigger GPR.
+    Unconditionally suspend V0.1, V6, V55, and V59. Reset the model to
+    prioritise Immediate Kinetic Matches.
+  - MANDATE 21 (Micro-Field Sieve Amplification): If N_{\text{active}} \le 4 AND
+    track is rain-affected, the biological cost of mass is scaled by a factor
+    of 2.0. Under this micro-field condition, any runner carrying
+    W_{\text{eff}} \ge 56.0\text{ kg} is unconditionally disqualified from 1A/1B
+    priority selection.
+  - MANDATE 22 (Somatic Mass Saturation Disqualification): For female
+    competitors (Fillies or Mares) over distances
+    D_{\text{target}} \ge 1400\text{ metres}, any candidate carrying an actual
+    effective mass of W_{\text{eff}} \ge 62.0\text{ kg} is unconditionally
+    disqualified from the 1A Sovereign designation, regardless of Base Merit
+    Rating or Jockey-Trainer Synergy Index, and demoted to Active Contender or
+    Exotic Reserve.
+
+Dual-Tiered Classification Sieve
+
+  - Absolute Exotic Kill (AEK): V0, V0.1, V1, V2, V6, V8, V10, V11, V18, V19,
+    V55, V60, V61, V62, V73, V80, V81, V83.
+  - Win-Only Veto (WOV): V3, V5, V12, V29, V34, V42, V43, V44, V56, V57, V58,
+    V59, V63, V64, V65, V66, V67, V68, V69, V70, V71, V72, V74, V75, V76, V77,
+    V78, V79, V82, B84, V85, V86, V87, V89, V92, V93, V94, V96.
+
+Veto Codex Definitions
+
+  - V0: Lame/Arrhythmia. (AEK).
+  - V0.1: 15+ starts, 0 wins. (AEK).
+  - V5: 1st-up >150 days no trial. (WOV). (Waived if Gauteng Private Gallop
+    Layoff Bypass (GGLB) or ZA-JTEM is active, if \text{JIFM} \ge 0.35, or if
+    LSFF Formula 81 is active).
+  - V29 (Placer's Ceiling): 5+ starts, 0 wins, 3+ placings. (WOV). (Exotic
+    Placer Lock: Bypassed on 1C/1D placements as they represent robust
+    finishers, or if GPR is active, or under stable-transfer trainer pivot).
+  - V44: Declining arc + 90+ days off. (WOV).
+  - V80 (Inside Siltation Trap for Heavy Weights): Wet turf late in meeting
+    carrying W_{\text{eff}} \ge 59.0\text{ kg} from inside gate \le 3 under
+    active wet conditions. (AEK). Note: Permanently deactivated on firm/dry turf
+    under the DCHL Highway Lock.
+  - V83 (Post-Gelding Endocrine Recoil Collapse): Active if runner is 2nd-up off
+    gelding surgery layoff with interval \le 45\text{ days} and finished
+    close/won first-up. (AEK).
+  - V85 (Acute Detraining Collapse): Resuming second-up off spell
+    \ge 75\text{ days} where \text{CRDI} \ge 15.0 on Soft turf. (WOV). (Waived
+    if PCSE, LSFF or ZA-JTEM are active).
+  - V86 (Jockey Restraint Risk): Fast gate-speeder (\text{KGS} \le 2.0)
+    partnered with a conservative "Hold-Up" jockey. (WOV).
+  - V87 (Unshielded Wind-Blast Exposure): Wind velocity \ge 25\text{ km/h}, wind
+    angle relative to home straight \le 30 degrees, target distance
+    \ge 1400\text{ m}, and runner is unshielded pace leader
+    (\text{PSP}_i == \text{Leader}). (WOV).
+  - V89 (Spacing Spurt Detraining Trap): Active if runner is entering third run
+    of preparation off spell of \ge 90 days, with spacing interval of 35 to 75
+    days between previous run and today's race. (WOV).
+  - V92 (Severe Class-Form Divergence): Disqualify if finishing positions \ge 10
+    or margins \ge 10 lengths in all of last 3 starts. (WOV).
+  - V93 (Pinnacle Class Defsqueeze): Active if Merit Rating is \ge 15 points
+    below the cohort peak in non-handicap terms
+    (\text{MR}_{\text{max}} - \text{MR}_i \ge 15), and runner carries
+    \ge 58.0\text{ kg}. (WOV).
+  - V94 (Zero-Entropy Layout Squeeze): Active if H_{\text{form}} == 0 in
+    classified stakes and runner carries top-weight \ge 61.5\text{ kg} first-up
+    off spell \ge 90 days. (WOV).
+  - V96 (Handicap Under-Sufferance Surcharge - HUSS): Absolute Win-Only Veto
+    (WOV) applied to any 2YO or 3YO competing against older horses if their
+    allocated weight puts them "Under Sufferance" (carrying more weight than
+    their official NHA rating dictates).
+
+Phase 6: Deterministic Selection Tree & Operational Sparing Loops (DETS Execution V1.3)
+
+              [ START: INDIVIDUAL RUNNER INGESTION ]
+                                │
+                                ▼
+           [ NODE 0.9: ZERO-VARIANCE BOILERPLATE CHECK ]
+            Does the form profile have zero entropy (H_form == 0)?
+            ├── YES ──► Route to MSHS Engine (Formula 7) & Baseline Profile IV.
+            │            * Proceed directly to Node 5.
+            └── NO  ──► Route to ZEPS Engine (Formula 8) & Baseline Profile I/II/III.
+                        * Apply MHCSI class shock penalty (Formula 20.3) if active.
+                        * Proceed to Node 1.
+                                │
+                                ▼
+             [ NODE 1: COMPACT FIELD SIZE AUDIT ]
+              Is Active Field N_active <= 7?
+              ├── YES ──► Calculate PTPC_i (Formula 20) and S_sfs (Formula 57).
+              │            Is PTPC_i >= 0.15?
+              │            ├── YES ──► Flag as PML (Pace Monopoly).
+              │            │           * Proceed directly to Node 5.
+              │            └── NO  ───► Proceed to Node 1.2.
+              └── NO ───► Proceed to Node 1.2.
+                                │
+                                ▼
+             [ NODE 1.2: DEW-POINT TRACTION & WIND CHECK ]
+              Is Wind Speed WS >= 25 km/h AND Wind Angle theta_wind <= 30 degrees?
+              ├── YES ──► Is the runner unshielded (PSP_i == Leader)?
+              │            ├── YES ──► Apply WDSF_i Aerodynamic Drag penalty. Calculate D_aero_i (Formula 5.1). Apply V87 (WOV).
+              │            └── NO  ──► Apply WDSF_i Drafting bonus. Proceed to SBC.
+              └── NO  ──► Proceed to SBC.
+              │
+              Is today's race post-sunset AND Relative_Humidity >= 85%?
+              ├── YES ──► Apply SBC Dew-Point lateral slip drag penalty (Formula 57).
+              │            * Wide draws (B_actual >= 6) are penalised. 
+              │            * Winners map to inside rail. Proceed to Node 1.3.
+              └── NO  ──► Proceed to Node 1.3.
+                                │
+                                ▼
+             [ NODE 1.3: GATE-TO-TURN COUPLING CHECK ]
+              Is Distance to First Turn (D_turn1) >= 400 metres?
+              ├── YES ──► Calculate CGTDC_i and PDCM_i (Formula 6.1). Scale down barrier penalty.
+              │           * Recalculate UCLV_adj_i (Formula 57) using PDCM_i.
+              │           * Proceed to Node 1.4.
+              └── NO  ──► Retain standard starting barrier centrifugal penalty. Proceed to Node 1.4.
+                                │
+                                ▼
+             [ NODE 1.4: STABLE RECRUITMENT DENSITY PACE CHECK ]
+              Is Stable Entry Density (SED) >= 0.25?
+              ├── YES ──► Apply Pace Synergy Bonus (Delta nu_PSB = -0.04) to all stable runners.
+              │            Check SPSI (Formula 18.1) synergy discount.
+              └── NO  ──► Proceed to Node 1.5.
+                                │
+                                ▼
+             [ NODE 1.5: POST-GELDING SURGICAL RECOIL ]
+              Is Runs_Post_Gelding == 2 AND Gelding_Interval_Days_i <= 45?
+              ├── YES ──► Apply PGRF_i = 0.80 (Formula 53).
+              │            * Assess V83 (Absolute Exotic Kill).
+              │            * Halt execution: Proceed directly to Exclusions.
+              └── NO ───► Proceed to Node 1.8.
+                                │
+                                ▼
+             [ NODE 1.8: LATE-SEASON JUVENILE STAMINA FILTER ]
+              Is today's distance >= 1400m AND Age_i == 2 AND Class is Mixed-Age?
+              ├── YES ──► Apply Late-Season Juvenile Stamina Tax (Formula 38) and JMD (Formula 76).
+              │            * Apply biological scaling modifier C_bio.
+              │            * Add +0.12 frailty surcharge (unconditional stamina decay).
+              │            * Proceed to Node 2.
+              └── NO ───► Proceed to Node 2.
+                                │
+                                ▼
+             [ NODE 2: VISCOELASTIC SILTATION & SUCTION SIEVE ]
+              Is track rated Soft/Heavy?
+              ├── YES ──► Calculate VSDI_i (Formula 46) incorporating Class Sparing Buffer Phi_CDMS_i (Formula 96).
+              │            Is VSDI_i >= 1.25?
+              │            ├── YES ──► Is Sire AWD >= 1800m (European Exemption)?
+              │            │           ├── YES ──► Apply 50% discount to VSDI_i.
+              │            │           │           Proceed to Node 2.2.
+              │            │           └── NO ───► Apply Siltation Anchor / Mud Surcharge.
+              │            │                       * Unconditional 1A/1B Disqualification.
+              │            │                       * If VSDI_i >= 1.50, apply V82 (WOV).
+              │            │                       * Proceed to Node 2.2.
+              │            └── NO ───► Proceed to Node 2.2.
+              └── NO ───► Is today's surface Synthetic (Silo D)?
+                           ├── YES ──► Is Temp <= 15C under rain/humidity (SMCP Wet-Wax Compaction)?
+                           │            ├── YES ──► Deactivate D_visco viscoelastic penalty and PMVS mass tax.
+                           │            │           * High-mass runners carry weight without suction penalty.
+                           │            │           * Proceed to Node 2.2.
+                           │            └── NO  ──► Is Weight >= 59.0kg?
+                           │                        ├── YES ──► Is OR_i >= 66?
+                           │                        │           ├── YES ──► Apply Formula 11 CDVA attenuation.
+                           │                        │           │           * Scale down D_visco, PMVS, and PVFS penalties.
+                           │                        │           │           * Proceed to Node 2.2.
+                           │                        │           └── NO  ──► Apply unattenuated D_visco viscoelastic penalty (Formula 2).
+                           │                        │                       * Apply unattenuated PMVS (Formula 10) and PVFS (Formula 8) penalties.
+                           │                        │                       * Apply WSWS (Formula 2) if Temp >= 20C.
+                           │                        │                       * Proceed to Node 2.2.
+                           │                        └── NO  ──► Apply PVFS mass tax / flotation (Formula 8) with Phi_CDMS_i.
+                           │                                    * Apply Formula 11 attenuation if OR_i >= 66.
+                           │                                    * Proceed to Node 2.2.
+                           └── NO ───► Proceed to Node 2.2.
+                                │
+                                ▼
+             [ NODE 2.2: SOIL WEAR RAILING & SILTATION (PRSC) FILTER ]
+              Is Rail_Position == "True" AND Season == "Winter"?
+              ├── YES ──► Is track wet?
+              │            ├── YES ──► Is race k >= 5 (Late-day worn turf)?
+              │            │            ├── YES ──► Is runner mapped in Lanes 1 or 2?
+              │            │            │            ├── YES ──► Apply Inside Bog Penalty WRDC_inside = +0.15 (Formula 1).
+              │            │            │            │           * Increase soil resistance by 15% (PRSC).
+              │            │            │            │           * Proceed to Node 2.3.
+              │            │            │            └── NO  ──► Assign ITC = 1.0 (Fresh Turf outer lanes 4+).
+              │            │            │                        * Upgrade wide-drawn runners. Proceed to Node 2.3.
+              │            │            └── NO  ───► Proceed to Node 2.3.
+              │            └── NO  ───► Apply DCHL Highway Lock (Track is Good/Firm -> Dry Compaction Inside Rail Sparing).
+              │                        * Inside-drawn runners (Lanes 1 and 2) receive inside ground-saving bonus.
+              │                        * Zero out bog trap penalties. Proceed to Node 2.3.
+              └── NO ───► Proceed to Node 2.3.
+                                │
+                                ▼
+             [ NODE 2.3: INSIDE TRAFFIC TRAP CHECK ]
+              Is runner drawn in Barrier 1 or 2 AND designated as a slow starter (SLHI >= 0.40)?
+              ├── YES ──► VOID DCHL inside rail bonus.
+              │            * Apply IDTRS (Inside Draw Traffic Risk Surcharge).
+              │            * Apply PTPF_Inside pocket trap surcharge (Formula 20.1) if straight is short.
+              │            * Apply PTPS pocket trap surcharge (Formula 20.2).
+              │            * Proceed to Node 2.5.
+              └── NO ───► Proceed to Node 2.5.
+                                │
+                                ▼
+             [ NODE 2.5: ROOT-MAT COHESION AND LIGHTWEIGHT FLOTATION ]
+              Is track rated Soft/Heavy AND W_eff <= 54.0kg AND PSP_i == Leader?
+              ├── YES ──► Calculate ITC_i (Formula 61) and MCL_i (Formula 40).
+              │            * Leader gets ITC = 1.0. Apply Flotation lightweight bonus (-0.10).
+              │            * Proceed to Node 3.
+              └── NO ───► Proceed to Node 3.
+                                │
+                                ▼
+             [ NODE 3: SOMATIC MATURATION SIEVE ]
+              Is race date in May, June, or July? AND Is Age_i == 3?
+              ├── YES ──► Activate LSAE (Formula 3). Suspend WFA maturation penalties.
+              │            * SML_i scales down effective carried mass.
+              │            * Check NMSI mass saturation surcharge (Formula 3.1) if actual weight >= 60.0kg.
+              │            * Proceed to Node 4.
+              └── NO ───► Is Age == 3 AND Starts == 1 AND Layoff >= 90?
+                           ├── YES ──► Calculate MBTR_i (Formula 52).
+                           │            Is MBTR_i == 1.0?
+                           │            ├── YES ──► Set Layoff Decay = 0.00.
+                           │            │           * Nullify V5/V44.
+                           │            │           * Proceed to Node 4.
+                           │            └── NO ───► Proceed to Node 4.
+                           └── NO ───► Proceed to Node 4.
+                                │
+                                ▼
+             [ NODE 4: METABOLIC INTENT & DETRAINING SIEVE (ZA-JTEM) ]
+              Is Layoff >= 75 Days?
+              ├── YES ──► Is ZA-JTEM active (Trainer layoff SR >= 12% AND Stable Jockey Booked)?
+              │            ├── YES ──► Nullify cardiorespiratory decay (CRDI = 0.00, CRRD = 0.00, BCM = 0.00).
+              │            │           * Deactivate V5 / V44. Set PVI = 1.00. Apply HGC (+3.5 LPP).
+              │            │           * Proceed to Node 4.1.
+              │            └── NO ───► Is LSFF active (Formula 81)?
+              │                        ├── YES ──► Nullify layoff decay (Delta nu_decay = 0.00). Proceed to Node 4.1.
+              │                        └── NO ───► Calculate JIFM_i (Formula 48) and CRDI_i (Formula 54). Calculate BCM_i (Formula 4.1).
+              │                                    Is JIFM_i >= 0.35?
+              │                                    ├── YES ──► Flag as PSI (Primed Stable Intent).
+              │                                    │           * Nullify Layoff Cardiorespiratory Decay.
+              │                                    │           * Deactivate V5 / V44 Vetoes.
+              │                                    │           * Proceed to Node 4.1.
+              │                                    └── NO ───► Apply standard Layoff Decay and BCM_i.
+              │                                                * Is CRDI_i >= 15.0 on Soft turf?
+              │                                                * YES ──► Assess V85 (Win-Only Veto).
+              │                                                * Apply standard Layoff Vetoes (V5/V44).
+              │                                                * Proceed to Node 4.1.
+              └── NO ───► Proceed to Node 4.1.
+                                │
+                                ▼
+             [ NODE 4.1: PINNACLE STAKES CLASS INTEGRITY ]
+              Is Merit Rating >= 100 AND Class is non-handicap?
+              ├── YES ──► Activate Pinnacle Class Sparing Engine (Formula 9).
+              │            * Scale down mass tax and viscoelastic suction.
+              │            * Apply LSFF (Formula 81) and PCDT (Formula 83).
+              │            * Proceed to Node 4.2.
+              └── NO ───► Proceed to Node 4.2.
+                                │
+                                ▼
+             [ NODE 4.2: STABLE INTENT MULTI-STARTER AUDIT ]
+              Are there multiple active runners entered by the same trainer?
+              ├── YES ──► Calculate Same-Trainer Jockey Allocation Priority Index (JTAPI) (Formula 7).
+              │            * Flag Primary Stable Intent (PSI) or Secondary Stable Intent (SSI).
+              │            * Proceed to Node 4.5.
+              └── NO ───► Proceed to Node 4.5.
+                                │
+                                ▼
+             [ NODE 4.5: JOCKEY RESTRAINT RISK ]
+              Is KGS_i <= 2.0 AND Jockey_Style == "Hold-Up"?
+              ├── YES ──► Calculate JRRI_i (Formula 56).
+              │            * Reduce E_Tank by 15%. Apply frailty surcharge +0.10.
+              │            * Assess V86 (Win-Only Veto).
+              │            * Proceed to Node 4.75.
+              └── NO ───► Proceed to Node 4.75.
+                                │
+                                ▼
+             [ NODE 4.75: MATERNAL CLASS GRAVITY OVERRIDE ]
+              Is Distance >= 2000m AND Class_dam == "Elite G1 Winner"?
+              ├── YES ──► Calculate MCGO_i = 1.0 (Formula 59).
+              │            * Suspend all AWD and Sire Stamina Index penalties.
+              │            * Upgrade E_Tank by +10%.
+              │            * Proceed to Node 5.
+              └── NO ───► Proceed to Node 5.
+                                │
+                                ▼
+             [ NODE 5: SPATIAL RESONANCE & INTERFERENCE SIEVE ]
+              Did horse suffer severe checking/blocking last start?
+              ├── YES ──► Calculate MPDI_i (Formula 51).
+              │            Is MPDI_i >= 1.25 AND Beaten Margin <= 4.0L?
+              │            ├── YES ──► Flag as PF (Phantom Freshen).
+              │            │           * Ignore previous finishing position.
+              │            │           * Add +0.08 baseline Frailty (energy conserved).
+              │            │           * Proceed to LCR check.
+              │            └── NO ───► Proceed to LCR check.
+              └── NO ───► Proceed to LCR check.
+              │
+              Is Track Circumference < 1800m AND Barrier >= 8?
+              ├── YES ──► Compute Continuous Lifetime Course-Distance Resonance (LCR_i) (Formula 12) and UCLV_adj_i (Formula 57).
+              │            Is LCR_i >= 1.0?
+              │            ├── YES ──► Discount Wide-Draw & CFET penalties by 80%.
+              │            │           * Proceed to Node 5.4.
+              │            └── NO ───► Apply standard Geometric Drag and UCLV penalties.
+              │                        * Proceed to Node 5.5.
+              └── NO ───► Proceed to Node 5.4.
+                                │
+                                ▼
+             [ NODE 5.4: SOMATIC CAPACITY SCALAR ]
+              Is runner 3YO+ carrying W_eff >= 59.0kg?
+              ├── YES ──► Calculate Somatic Mass Leverage SML_i (Formula 3).
+              │            * Apply SML_i divisor to W_eff (Scale down metabolic load).
+              │            * Proceed to Node 5.5.
+              └── NO ───► Apply standard Newtonian mass penalties. Proceed to Node 5.5.
+                                │
+                                ▼
+             [ NODE 5.5: THE ZERO-VARIANCE SOVEREIGN LOCK (MCL & SMT) ]
+              Is track rated Good/Firm AND SSI >= 1.15?
+              ├── YES ──► Execute Pre-Race mass-recoil adjustments (ERSE Protocol):
+              │            * Are Somatic Mass Saturation Limit (SMSL Formula 90) criteria met?
+              │            * YES ──► Apply Somatic Saturation Surcharge. Deactivate ERSE recoil bonus.
+              │            * NO ───► If W_eff >= 59.0kg, apply Somatic Compaction-Tendon Interaction SCTI_i (Formula 21).
+              │            * If W_eff <= 56.0kg, apply Muscular Fatigue Tax (Delta nu_stamina = +0.08).
+              │            * Proceed to Node 5.6.
+              └── NO ───► Proceed to Node 5.6.
+              │
+              Is track rated Soft/Heavy AND today's distance >= 1400m?
+              ├── YES ──► Is MCL_i >= 65.0?
+              │            ├── YES ──► Is Jockey-Trainer Synergy Index (JTSI_i) >= 0.25?
+              │            │           ├── YES ──► Bypass Disqualification (Synergy Cushion). Proceed to Node 6.
+              │            │           └── NO  ──► UNCONDITIONAL 1A SOVEREIGN DISQUALIFICATION. Demote runner.
+              │            └── NO ───► Proceed to Node 5.6.
+              └── NO ───► Proceed to Node 5.6.
+              │
+              Is surface Polytrack?
+              ├── YES ──► Is Weight < 54.0kg AND T_air >= 16C?
+              │            ├── YES ──► Proceed to Node 6 (Permit Flotation).
+              │            └── NO  ──► Is Weight < 54.0kg AND T_air < 12C?
+              │                        ├── YES ──► UNCONDITIONAL 1A SOVEREIGN DISQUALIFICATION (Slippage Danger).
+              │                        └── NO  ──► Proceed to Node 6.
+              └── NO ───► Proceed to Node 6.
+                                │
+                                ▼
+             [ NODE 6: THERMODYNAMIC SPARING GATE (LOOP 1 - SELECTION) ]
+              Execute Loop 1: Winner Selection.
+              Calculate Proximity-Deviation Score Delta_baseline_i.
+              Calculate Net Thermodynamic Conservation Index (NTCI_base_i) [Formula A].
+              Calculate Thermodynamic Kinetic Surplus (TKS_i) [Formula F].
+              Isolate candidate i with max continuous NTCI_base_i score as temporary 1A.
+              Proceed to Node 6.5.
+                                │
+                                ▼
+             [ NODE 6.5: AGILE PLACING SECURITY AUDIT (LOOP 2 - TPSV) ]
+              Execute Loop 2: Top-3 Placing Security Verification.
+              Calculate APRI_1A (Formula 73) and WCL_1A (Formula 62) of selected winner.
+              Verify threshold: Is APRI_1A >= 0.80 AND WCL_1A >= 55%?
+              ├── YES ──► Pass: Winner validated for Top-3 placement robustness. Proceed to Node 6.6.
+              └── NO  ──► Fail: Volatile selection detected. Trigger Loop 2 feedback loop.
+                          * Execute Agile Loop E (Dynamic Pivot).
+                          * Audit and rank the next highest-scoring contender j with stable placing profile (APRI_j >= 0.85).
+                          * Promote contender j to 1A Sovereign; demote volatile candidate to 1B Shield.
+                          * Re-verify Loop 2 metrics for newly promoted 1A. Proceed to Node 6.6.
+                                │
+                                ▼
+             [ NODE 6.6: QUARTET PLACING ALIGNMENT (LOOP 3 - QEPAL) ]
+              Execute Loop 3: Quartet Exact-Placing Alignment.
+              Establish target placing positions (1A, 1B, 1C, 1D) based on continuous NTCI_final rankings.
+              Perform the 1B-to-1A Sovereign Pivot Sieve (SPS-Rules 1 through 5) to audit physical, stable, and environmental interactions.
+              Is any SPS Rule triggered?
+              ├── YES ──► Fail: Ordering conflict detected. Trigger Loop 3 feedback loop.
+              │           * Execute Sovereign-Shield Swap (SSS), swapping the conflicted 1A and 1B roles.
+              │           * If SPS-Rule 5 is active (unexposed volatile fav), apply Delta nu_KVI penalty to demoted runner.
+              │           * Perform physical-mass check: Is 1C an immature sophomore filly carrying <= 55.5kg on firm turf?
+              │           │   ├── YES ──► Apply Muscular Fatigue Tax (+0.08) and swap 1C with 1D Siltation Grinder.
+              │           │   └── NO  ──► Proceed to final convergence.
+              │           * Execute Step 3.5 (Thermodynamic Feedback Convergence), iteratively recalculating and re-centering TKS and projected TAT.
+              │           * Re-verify Loop 3 exact alignment. Proceed to Node 7.
+              └── NO  ──► Pass: No ordering conflicts. Top 3 are physically aligned in the top final 4 in exact predicted order. Proceed to Node 7.
+                                │
+                                ▼
+             [ NODE 7: COGNITIVE SUPPORT & FAVORITE SHIELD ]
+              Calculate Bold/Favorite Shield Index (SFC_i) (Formula 31).
+              Does runner have SFC_i <= 2.50?
+              ├── YES ──► UNCONDITIONAL VETO OF WIN-ONLY LAY STATUS.
+              │           * Protect public-backed class favorite from lay designation.
+              └── NO ───► End.
+
+Phase 9: Survival Sieve & Portfolio Strategy
+
+Step 1 — The Kill Phase
+
+Apply Hard Vetoes, Hard Kills, and Mandates. Check Overrides before executing
+kills. Apply the Place-Sparing Loophole to retain
+high-weight/preparation-fatigue runners in the Exotic Residual Matrix.
+SFC-Efficient Favourites (\text{SFC}_i \le 2.5) are exempt from layout and
+winless vetoes unless physical injury/lameness (V0) is active.
+
+  - V29 Place Sparing Loophole: Runners disqualified from win-only status due to
+    V29 (Placer's Ceiling) are spared from exotic kills and mapped directly as
+    high-probability 1C/1D residuals.
+
+Step 1.5 — Cohort Re-Centering Loop (Loop D)
+
+If any runner is excluded via an Absolute Exotic Kill (AEK) during Step 1,
+immediately remove their raw NTCI score from the cohort pool and recalculate the
+final field mean (\text{NTCI}_{\text{field\_mean}}) and standard deviation
+(\sigma_{\text{NTCI}}) before proceeding to Step 2.
+
+Step 2.5 — The 1B-to-1A Sovereign Pivot Sieve (SPS)
+
+Prior to executing Step 3, the engine must perform a deterministic audit on the
+top-rated 1A and 1B candidates. If any of the following five "Symmetry Leak"
+conditions are met, execute an automatic Sovereign-Shield Swap (SSS), upgrading
+the 1B candidate to 1A Sovereign status, and demoting the 1A candidate to 1B:
+
+1.  SPS-Rule 1 (Debutant Greenness Sieve): If the 1A candidate is a debutant
+    (\text{Starts} == 0), the 1B candidate has active racing experience
+    (\text{Starts} \ge 2), and the track state is Good/Firm (compaction-sparing
+    active), execute SSS.
+2.  SPS-Rule 2 (Pacemaker-Inertia Sieve): In routes or stayers' events
+    (\ge 1600\text{ m}), if the 1A candidate is an unshielded pace leader
+    (\text{PSP} == \text{Leader} or \text{Handy}, \text{LSO} \le 1.5) carrying
+    \ge 59.0\text{ kg} and the 1B candidate is a draft-shielded pocket runner
+    (S_{\text{draft}} = 0.42) carrying \le 55.5\text{ kg}, execute SSS.
+3.  SPS-Rule 3 (Wet-Wax Flotation Sieve): On synthetic tracks (Silo D) under
+    SMCP/HLTS wet-lubricated conditions, if the 1A candidate carries
+    \ge 59.0\text{ kg} and the 1B candidate carries a flotation-relieved weight
+    of \le 52.0\text{ kg} via an apprentice claim, execute SSS.
+4.  SPS-Rule 4 (Hormonal Recoil Sieve): If the 1A candidate is returning off a
+    recent gelding surgery layoff (\text{Runs\_Post\_Gelding} \in \{1, 2\},
+    \text{Gelding\_Interval\_Days} \le 60) and the 1B candidate is in active
+    racing fitness (\text{DSLS} \le 21\text{ days}), execute SSS.
+5.  SPS-Rule 5 (Symmetry Volatility Sieve): If the 1A candidate is designated as
+    Highly Volatile (\text{HVR}_{\text{status}, 1\text{A}} == \text{True}) due
+    to an extreme \text{KVI}_{\text{1A}} \ge 3.50 turf-to-synthetic route
+    transition carrying an un-spared load of W_{\text{eff}} \ge 59.5\text{ kg},
+    and the 1B candidate is an exposed, fit, and highly resonant local benchmark
+    class anchor (\text{Starts} \ge 6, \text{LCR}_{1\text{B}} \ge 1.15,
+    \text{HVR}_{\text{status}, 1\text{B}} == \text{False}), unconditionally
+    execute SSS.
+
+Step 3 — Define the Locked Engine
+
+Identify the governing physical law. State the Tier 1 archetype or Baseline
+Engine.
+
+Step 3.5 — Thermodynamic Feedback Convergence Loop
+
+Recalculate each horse's net kinetic reserve (NKR) and expected terminal
+acceleration (\text{TAT}_{\text{proj}}) using the reconfigured formulas in
+Phase 3.7. Continue recalculation until the final NTCI values stabilise:
+\max_i \left| \text{NTCI}_i^{(n)} - \text{NTCI}_i^{(n-1)} \right| \le 10^{-4}
+
+Step 4 — Natural Sorting
+
+Sort survivors based strictly on the continuous Net Thermodynamic Conservation
+Index (\text{NTCI}_{\text{base}, i}) score in descending order.
+
+Step 5 — Strategy Divergence Allocation (Placing Security & Near-Miss Sparing)
+
+To expand predictions to a secure Quartet (Top-4) exact finishing order,
+partition survivors into four distinct thermodynamic/tactical roles:
+
+  - 1A Sovereign (1st Place - The Class & Intent Peak): Assigned to the survivor
+    with the highest continuous NTCI score, subject to safety checks in DETS
+    Node 6.5. This selection requires \text{APRI}_{\text{1A}} \ge 0.80 and
+    \text{WCL}_{\text{1A}} \ge 55\%. Must be ranked 1st, 2nd, or 3rd in IPBI.
+    Career Place Consistency (CPC) must be \ge 40\%. Drawn in the outer-third
+    (for clean-air momentum) or inner-third (for rail control), never the
+    middle-third dead zone. Partnered with the primary stable jockey (PJAS = 1)
+    in multi-entry configurations. Under handicap conditions, must sit in the
+    mid-weight bulk (55.0 - 58.0kg). If APRI fails, execute Loop E dynamic
+    pivot.
+  - 1B Shield (2nd Place - The Tactical Symmetry Threat): Assigned to the
+    highest-ranked survivor possessing an opposing tactical mapping profile
+    to 1A to safeguard the portfolio against track-bias shifts:
+      - If 1A maps as early speed (PSP == Leader), 1B MUST be selected from
+        off-pace/closing profiles (PSP is Midfield or Backmarker).
+      - If 1A is an unexposed Maiden (starts \le 3), 1B MUST be the
+        highest-rated exposed benchmark runner (starts \ge 6 with
+        \text{CPC} \ge 40\%).
+      - If no tactical symmetry threat is present, default to the second-highest
+        NTCI scorer, or the handicap top-weight carrier (60.0kg) ridden by an
+        elite senior rider.
+  - 1C Harmonic Placer (3rd Place - The Weight-Relief/Ceiling Placer): Assigned
+    to the runner that lacks win-torque but possesses ground-saving spatial
+    advantages. Must map to the inner-third of the starting gates
+    (B_{\text{actual}} 1 to 3). Profile matches either:
+    1.  The Placer's Ceiling (V29 active): high place rate, zero wins.
+    2.  Late-card closing apprentice relief: Race \ge 5, apprentice claim
+        \ge 1.5\text{kg}, mapped off-pace.
+    3.  Minimum base weight juvenile (53.5kg) in mixed-age maidens.
+  - 1D Siltation Grinder (4th Place - The Exposed Fitness Anchor): The
+    frame-filler. Requires maximum race-fitness: Days Since Last Start
+    \le 21\text{ days} AND Career Starts \ge 10. Must draw the inner-third
+    (B_{\text{actual}} 1 to 3) for ground-saving. Carries median weight (55.0
+    - 57.0kg). Alternatively, assign to a major metropolitan class dropper
+    (PCGM) or premium un-trialled layoff stablemate (ZA-JTEM) passing late
+    fatigue checks.
+
+Phase 11: Execution Sequence — 5-PASS Protocol
+
+The LLM must execute the 5-Pass Sequence below in order. All raw workings,
+formulas, and intermediate arithmetic for PASS 0, PASS 1, PASS 2, and PASS 3
+MUST be printed out in full detail as visible blocks before the final
+Omni-Forensic Report (PASS 4) is produced. No summarisation, truncation, or
+omission of these workings is permitted.
+
+  - PASS 0: Data Ingest, State Mapping & Structural Calibration
+      - Perform direct card ingestion and write out exact variables collected
+        for every horse, including active metadata on local track shape, and
+        track rating.
+      - Grounded Parameters Record: Output active state flags: \text{IDF\_V4},
+        \text{IDF\_DCHL}, \text{IDF\_GEAR}.
+      - Scan for zero-variance boilerplate fields and output
+        \text{Var}_{\text{B}} and H_{\text{form}}.
+  - PASS 1: Multi-Stage Sieve & Kinetic Calculations
+      - Apply the twelve frailty modifiers to each active runner. Show the
+        step-by-step reduction from Raw NLS to \text{SKI}_i and the final
+        \text{NTCI}_i. Explicitly write down the mathematical conversion of mass
+        (effective weight corrections) and turn geometry.
+      - Must explicitly state if a Topographical Elevation modifier (UPMI, REDS,
+        or TARSS) is active, proving the z-axis of the track has been assessed.
+      - If \text{Var}_{\text{B}} == 0, output step-by-step calculations for the
+        Combined Boilerplate-Resilient Index (\text{BRI}_i) and the Stable
+        Intent Score (\text{SIS}_i), checking the Pathway class to dynamically
+        adjust DRF weight distributions.
+      - Show the integration of pre-race ERSE Tendon Recoil bonuses and
+        DTM-adjusted UCLV turn drag metrics. Show temporal track temperature
+        corrections and deactivation or attenuation of synthetic viscoelastic
+        drag under SMCP / Formula 11 (CDVA). Show the exact calculation of
+        Proximity-Deviation Score \Delta_{\text{baseline}, i} relative to the
+        designated \mathbf{B}_k target. Show the lifetime track-distance
+        resonance \text{LCR}_i log calculations and class-drop mass sparing
+        \Phi_{\text{CDMS}, i} factors. Show calculations for Somatic Mass
+        Saturation Limit (SMSL Formula 90), deactivating tendon recoil and
+        adding surcharges. Show SBC Dew-Point slip drag, PRSC Inside Bog Trap,
+        and dynamic \text{KVI}_i (Formula 13) and \Delta\nu_{\text{NVST}, i}
+        (Formula 14) calculations.
+  - PASS 2: Deterministic Override & Track State Validation
+      - Detail mathematical resolutions of environmental offsets, class drop
+        leverages, and spatial inversions (such as CPT modifications, Placer's
+        Ceiling exceptions, or Fresh Turf locks). Print the active status of
+        Mandates. Explicitly audit the Compaction Sparing state: verify if
+        Compaction state is Good/Firm (DCHL active) and confirm that all
+        associated winter bog trap penalties have been deactivated.
+      - Must explicitly print the result of the Late Scratching / Jockey Change
+        Asynchronous Refresh check (LSPRN).
+  - PASS 3: APRI Placing Security & Portfolio Covariance Analysis
+      - Solve and print the projected Terminal Acceleration Threshold
+        (\text{TAT}_{\text{proj}}) and the Agile Portfolio Robustness Index
+        (APRI) to confirm if the 1A candidate meets the baseline requirement
+        (\text{TAT}_{\text{proj}} \ge 1.5\text{ m/s}^2, and
+        \text{APRI} \ge 0.80, passing 100% of DETS and MSEA Gates). Ensure 1B
+        tactical inverse criteria, SPSC covariance, and the 1B-to-1A Pivot Sieve
+        (SPS-Rule 5) are calculated and detailed.
+  - PASS 4: Final Canvas Render
+      - Generate the complete Omni-Forensic Report, omitting the large
+        Equine-Dyna Latent Kinetic Matrix table. Proceed directly to Section 8:
+        Full Field Designation Mapping.
+
+Phase 12: Output Format — ZAF Omni-Forensic Report V1.3
+
+TRACK: [Name], [Country] | RACE: [#] | DISTANCE: [m] | CLASS: [Class/MR] SILO: [A/B/C/D/E] ITP-CFH STATUS: [SMI Active / DCHL Active / WTCR Active / FTL Active / SMCP Wet-Wax Active / SBC Dew-Point Active / PRSC Bog Active] ENVIRONMENT: [Weather] | HYSTERESIS: [Static/Wetting/Drying] | Temp: [Temp]C | Relative Humidity: [Humidity]% | Dew Point: [Dew_Point]C TRACK DETAILS: Rating: [Rating] | Rail: [Position] | Circumference: [Circumference]m | Turn Radius: [R_turn]m | Straight: [L_straight]m FRAILTY FIELD PROFILE (θ_mean): [Value]
+
+1. Deterministic Lock (Matrix Hunter Scan)
+- Fired Matrix: [Fired Matrix (1-31) or "BASELINE ENGINE ACTIVE"]
+- Locking Engine: [Biology / Geometry / Kinetic / Physics]
+- PATTERN TYPE: [Pattern Name from Phase 8]
+- CTG ALIGNMENT INDEX (CTGI): [Value]
+- SOVEREIGN ENERGY CONSERVATION INDEX (SECI): [Value / standard deviations above mean]
+- NET THERMODYNAMIC CONSERVATION INDEX (NTCI): [Value / standard deviations above mean]
+- AGILE PORTFOLIO ROBUSTNESS INDEX (APRI): [Value]
+- DYNAMIC SECONDARY VALIDATION INDEX (DSVI): [Value]
+- TARGET QUARTET CONFIGURATION: 1A Sovereign [Name] to win; 1B Shield [Name] for 2nd; 1C Harmonic Placer [Name] for 3rd; 1D Siltation Grinder [Name] for 4th.
+- DETERMINISTIC ANALYSIS: [Provide a 2-sentence mathematical proof explaining how environmental variables, geometry, regional class delta, stable ridership intent, and weight-to-energy ratios justify the projection, referencing SMCP, SBC, PRSC, Formula 11 CDVA, LSAE, and the newly integrated 1B-to-1A Pivot Sieve (SPS-Rule 5) where applicable.]
+
+2. The Survivor Sieve
+- Eliminated (AEK - Absolute Exotic Kills): [Name (Reason/Veto Code / In-Race Exclusion)]
+- Eliminated (WOV - Win-Only Vetoes): [Name (Reason/Veto Code / In-Race Exclusion)]
+- Survivor Cluster: [Name, Name]
+
+3. 1A Sovereign (1st - Win/Place Anchor)
+- Name: [Name] (Eff. Barrier: [#], Eff. Weight: [#]kg, W_visco: [#]kg, VERI: [Value], SPLI: [Value])
+- Physics Driver: [Governing DYNA law - e.g. SPS-Swapped Maturation Sparing / LSAE Somatic Maturation / ASLOB Altitude Oxygenation / SMCP Wet-Wax Sparing / CDVA Class Sparing / DCHL Sparing / ERSE Tendon Sparing / SCHDS Drafting Lock / TFG Topographical Sparing]
+- ITP-Cox Metrics: IFS: [Value], nu: [Value], theta: [Value], NTCI: [Value], APRI: [Value]
+- Natural Sorting Alignment: [1 sentence explanation based on continuous NTCI dominance / SPS Sweep Priority]
+- Terminal Acceleration (TAT): [Projected Value - Must be >= 1.5 m/s^2]
+- Why Inevitable: [1 sentence uncontested law based on strict placing-robustness (Top 4 security) hierarchies]
+
+4. 1B Shield (2nd - Symmetry Threat)
+- Name: [Name] (Eff. Barrier: [#], Eff. Weight: [#]kg, W_visco: [#]kg, VERI: [Value], SPLI: [Value])
+- Role: [Tactical Inverse or Exposed Benchmark profile mapped to protect against sudden track-bias shifts, calculated via SPSC Covariance]
+
+5. 1C Harmonic Placer (3rd - Ground-Saving Sparing)
+- Name: [Name] (Eff. Barrier: [#], Eff. Weight: [#]kg, W_visco: [#]kg, VERI: [Value], SPLI: [Value])
+- Sparing Profile: [V29 Placer's Ceiling exception / Late-day apprentice claim closer / Low-mass juvenile on-pace saving ground inner-third]
+
+6. 1D Siltation Grinder (4th - Fitness/Spatial Anchor)
+- Name: [Name] (Eff. Barrier: [#], Eff. Weight: [#]kg, W_visco: [#]kg, VERI: [Value], SPLI: [Value])
+- Sparing Profile: [Inner-third barrier ground-saver, carrying median weight with DSLS <= 21 days and career starts >= 10, or Cape Drop-down/ZA-JTEM stable intent backup]
+
+7. Mortal Lay (Mortal Violation)
+- Name: [Name / None]
+- Flaw: [Veto/Matrix reason]
+
+8. Investment Portfolio Strategy (Top-4 Exacta/Trifecta/Quartet Hedging)
+- Primary Bet Type: [WIN / EACH-WAY] (Each-Way mandatory if APRI < 0.85 or speed map dictates high-tempo frontrunner risk).
+- Selection: 1A Sovereign [Horse Name]
+- Swinger (Que-Po) Anchor: Swinger [1A] with [1B] and [1C] (To secure returns on placing near-misses).
+- Exacta / Trifecta Structure: Exacta: 1A / 1B, 1C. Trifecta: 1A / 1B, 1C / 1C, 1D.
+- Quartet (First Four) Betting Directive: [Boxed/Combination or Roving banker staking strategy using 1A, 1B, 1C, and 1D to capitalize on exact thermodynamic finishes.]
+
+9. Full Field Designation Mapping
+
+| Predicted Status | Horse Name | SPLI Score | ERI Score | SPLI Zone | Eff. Barrier | Eff. Mass (kg) | W\_visco (kg) | VERI Today | NP\_i Score | LSO Zone | HLI Value | eta\_slip | VSDI Score | SMD Score | PTA Score | JIFM Score | PTPC Score | LCR Score | MPDI Score | MBTR Score | PGRF Score | CRDI Score | S\_sgt Score | JRRI Score | UCLV Score | STFF Score | MCGO Score | JTSI Score | WDSF Score | SED Score | APRI Score | DSVI Score | NTCI Score | CKS Score | ERC Score | BRI Score | WLS Score | CSSI Score | CWEI Score | SEDI Score | CSPI Score | NKP\_isolated | SML Score | LSJST Score | IRWFC Score | Phi\_CDMS | ZA-JTEM  | SBC\_Slip | PRSC\_Bog | SWSR\_Rec | AMTR\_Eff  | SPSC\_Cov |
+| :--------------- | :--------- | :--------- | :-------- | :-------- | :----------- | :------------- | :------------ | :--------- | :---------- | :------- | :-------- | :-------- | :--------- | :-------- | :-------- | :--------- | :--------- | :-------- | :--------- | :--------- | :--------- | :--------- | :----------- | :--------- | :--------- | :--------- | :--------- | :--------- | :--------- | :-------- | :--------- | :--------- | :--------- | :-------- | :-------- | :-------- | :-------- | :--------- | :--------- | :--------- | :--------- | :------------ | :-------- | :---------- | :---------- | :-------- | :------- | :-------- | :-------- | :-------- | :--------- | :-------- |
+| \[Status\]       | \[Name\]   | \[Score\]  | \[Score\] | \[Zone\]  | \[\#\]       | \[\#\]         | \[\#\]        | \[\#\]     | \[Score\]   | \[Zone\] | \[Value\] | \[\#\]    | \[Score\]  | \[Score\] | \[Score\] | \[Score\]  | \[Score\]  | \[Score\] | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\]    | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\] | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\] | \[Score\] | \[Score\] | \[Score\] | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\]  | \[Score\]     | \[Score\] | \[Score\]   | \[Score\]   | \[Score\] | \[Flag\] | \[Score\] | \[Score\] | \[Score\] | \[Weight\] | \[Score\] |
